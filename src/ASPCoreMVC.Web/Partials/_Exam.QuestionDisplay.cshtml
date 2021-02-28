@@ -1,0 +1,8 @@
+﻿@model ASPCoreMVC.TCUEnglish.ExamDataLibraries.ExamQuestionContainerDTO
+gwrgwgrwgr
+@if (ViewData["OnlyDisplay"] == null || (!(bool)ViewData["OnlyDisplay"]))
+{
+    @Html.AntiForgeryToken()
+}
+
+@Model.Id

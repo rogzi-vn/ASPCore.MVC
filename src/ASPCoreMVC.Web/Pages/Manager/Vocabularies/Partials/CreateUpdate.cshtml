@@ -1,0 +1,103 @@
+﻿@model ASPCoreMVC.TCUEnglish.Vocabularies.VocabularyDTO
+@{
+    var vocabuaries = (List<ASPCoreMVC.TCUEnglish.VocabularyTopics.VocabularyTopicDTO>)ViewBag.VocabularyTopics;
+    var wordClasses = (List<ASPCoreMVC.TCUEnglish.WordClasses.WordClassDTO>)ViewBag.WordClasses;
+}
+@Html.AntiForgeryToken()
+<div class="">
+    @if (Model.Id != Guid.Empty)
+    {
+        <input type="hidden" asp-for="Id" />
+    }
+    @if (Model.IsConfirmed)
+    {
+        <input type="hidden" asp-for="IsConfirmed" />
+        <input type="hidden" asp-for="ConfirmedTime" />
+        <input type="hidden" asp-for="ConfirmerId" />
+    }
+    <input type="hidden" id="default-media-path" value="@Model.PronounceAudio" />
+    <input type="hidden" asp-for="PronounceAudio" id="media-path-hidden" />
+    <div class="form-group">
+        <label asp-for="Word" class="mb-1"></label>
+        <input asp-for="Word" class="form-control">
+        <div class="form-text text-danger small">
+            <span asp-validation-for="Word"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-lg-12">
+            <div class="form-group">
+                <label asp-for="WordClassId" class="mb-1"></label>
+                <div class="d-flex">
+                    <div class="flex-grow-1  mr-2">
+                        <select asp-for="WordClassId" class="form-control selectpicker bb-selector"
+                                data-live-search="true">
+                            @foreach (var item in wordClasses)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-text text-danger small">
+                    <span asp-validation-for="WordClassId"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-12">
+            <div class="form-group">
+                <label asp-for="VocabularyTopicId" class="mb-1"></label>
+                <div class="d-flex">
+                    <div class="flex-grow-1  mr-2">
+                        <select asp-for="VocabularyTopicId" class="form-control selectpicker bb-selector"
+                                data-live-search="true">
+                            @foreach (var item in vocabuaries)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-text text-danger small">
+                    <span asp-validation-for="VocabularyTopicId"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="PronounceAudio"></label>
+        <div id="selected-audio" class="text-center">
+        </div>
+        <div class="form-text text-danger small mt-2 text-center">
+            <span asp-validation-for="PronounceAudio"></span>
+        </div>
+        <div class="text-center mt-2">
+            <button type="button"
+                    class="btn btn-info btn-choose-file btn-sm shadow-sm btn-block"
+                    data-for="media-path-hidden" data-callback="audioSelectedEvent"
+                    data-extensions="mp3,wav,ogg">
+                @L["Change audio"]
+            </button>
+            <button id="set-default-audio" type="button"
+                    class="btn btn-danger btn-sm shadow-sm btn-block"
+                    onclick="loadAudio()">
+                @L["Remove"]
+            </button>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Pronounce" class="mb-1"></label>
+        <textarea asp-for="Pronounce" class="form-control editor-vt"
+                  editor-mint="true" editor-height="100"></textarea>
+        <div class="form-text text-danger small">
+            <span asp-validation-for="Pronounce"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Explain" class="mb-1"></label>
+        <textarea asp-for="Explain" class="form-control editor-vt"></textarea>
+        <div class="form-text text-danger small">
+            <span asp-validation-for="Explain"></span>
+        </div>
+    </div>
+</div>

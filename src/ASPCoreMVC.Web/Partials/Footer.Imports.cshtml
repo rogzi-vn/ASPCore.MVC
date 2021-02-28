@@ -1,0 +1,55 @@
+﻿<!-- Bootstrap core JavaScript-->
+<script src="/dist/vendor/jquery/jquery.min.js"></script>
+
+<script src="/plugins/jquery-loading-overlay-2.1.7/loadingoverlay.min.js"></script>
+
+<script src="/plugins/jquery-ui/jquery-ui.min.js"></script>
+<script src="/plugins/elfinder/js/elfinder.full.min.js"></script>
+
+
+<script src="/dist/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="/dist/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="/dist/js/sb-admin-2.min.js"></script>
+
+<script src="/dist/js/jquery.validate.min.js"></script>
+<script src="/dist/js/jquery.validate.unobtrusive.min.js"></script>
+
+<script src="/plugins/noty/noty.min.js"></script>
+
+<script src="/plugins/bootstrap-extends/bootstrap-select.min.js"></script>
+<script src="/plugins/bootstrap-extends/bootstrap-datepicker.min.js"></script>
+
+<script src="/dist/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/dist/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<script src="/plugins/ckeditor/ckeditor.js"></script>
+
+<script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+<script src="/dist/js/aspcore.mvc.modal.form.js"></script>
+
+<script src="/plugins/mime/mime@latest.js"></script>
+
+<script src="/dist/js/sidebar-menu.custom.js"></script>
+<script src="/dist/js/aspcore.mvc.custom.js"></script>
+
+
+<script>
+    var images = document.getElementsByTagName("img");
+    for (var i = 0; i < images.length; i++) {
+        if (images[i].src == undefined || images[i].src == null || images[i].src == '') {
+                images[i].src = '@await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE)';
+            } else {
+                images[i].onerror = function () {
+                    this.onerror = null;
+                    this.src = '@await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE)';
+            }
+        }
+    }
+</script>
+
+@Html.ShowToasts()

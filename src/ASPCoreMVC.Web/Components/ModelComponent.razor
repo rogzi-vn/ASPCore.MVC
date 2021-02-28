@@ -1,0 +1,44 @@
+﻿@code {
+    [Parameter] public string Id { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string ConfirmText { get; set; } = "Confirm";
+    [Parameter] public string CancelText { get; set; } = "Cancel";
+    [Parameter] public string DeleteText { get; set; } = "Delete";
+    [Parameter] public bool NoConfirm { get; set; } = false;
+    [Parameter] public bool NoCancel { get; set; } = false;
+    [Parameter] public bool NoDelete { get; set; } = true;
+    [Parameter] public string ConfirmClass { get; set; } = "btn btn-primary";
+    [Parameter] public string CancelClass { get; set; } = "btn btn-secondary";
+    [Parameter] public string DeleteClass { get; set; } = "btn btn-danger";
+    [Parameter] public string Class { get; set; } = "";
+}
+
+<div class="modal fade" id="@Id" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered @Class" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary">
+                <h5 class="modal-title text-white">@Title</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="@Id-content">
+
+            </div>
+            <div class="modal-footer">
+                @if (!NoDelete)
+                {
+                    <button class="@DeleteClass btn-sm shadow-sm mr-auto" type="button" id="@Id-del-no-sub">@DeleteText</button>
+                }
+                @if (!NoCancel)
+                {
+                    <button class="@CancelClass d-inline-block btn-sm shadow-sm" type="button" data-dismiss="modal">@CancelText</button>
+                }
+                @if (!NoConfirm && NoDelete)
+                {
+                    <button class="@ConfirmClass d-inline-block btn-sm shadow-sm" type="button" id="@Id-confirm-no-sub">@ConfirmText</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+﻿@{
+    var modalTitle = (string)ViewBag.ModalTitle;
+    var modalContent = (string)ViewBag.ModalContent;
+    var examStartPath = (string)ViewBag.ExamStartPath;
+}
+<div class="modal-header bg-gradient-primary">
+    <h5 class="modal-title text-white">@modalTitle</h5>
+    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+<div class="modal-body">
+
+    @if (modalContent.IsNullOrEmpty())
+    {
+        <div class="text-gray-800 text-center">There are no tips or instructions</div>
+    }
+    else
+    {
+        <div class="border border-primary p-3 row m-2">
+            @Html.Raw(modalContent)
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    @if (!examStartPath.IsNullOrEmpty())
+    {
+        <button onclick="startExam('@examStartPath');"
+                class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm mr-auto">
+            <i class="fas fa-star fa-sm text-white mr-1"></i> @L["Start attempt"]
+        </button>
+    }
+    <button class="btn btn-primary d-inline-block btn-sm shadow-sm" type="button" data-dismiss="modal">@L["Close"]</button>
+</div>

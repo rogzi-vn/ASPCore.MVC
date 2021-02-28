@@ -1,0 +1,61 @@
+﻿@page "/manager/exam-categories/{exId:Guid}/skill-categories/{skillCatId:Guid}/skill-parts/{skillPartId:Guid}/exam-data-libraries"
+@model ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.ExamDataLibrariesIndexModel
+
+@{
+    Model.SetBreadcrumbBtn(L["Create new"].Value,
+    $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories/{Model.CurrentSkillCategory.Id}/skill-parts/{Model.CurrentSkillPart.Id}/exam-data-libraries/create",
+    icon: "fas fa-plus",
+    c: "btn-primary");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+        new string[] { L["Exam categories"].Value, $"/manager/exam-categories" },
+        new string[] { Model.CurrentExamCategory.Name, $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories" },
+        new string[] { Model.CurrentSkillCategory.Name, $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories/{Model.CurrentSkillCategory.Id}/skill-parts" },
+        new string[] { Model.CurrentSkillPart.Name });
+
+    var createQuestionGroupModalId = "addQuestionGroup";
+}
+
+@section Styles {
+}
+
+@section Scripts {
+    <script src="/dist/js/te.datalibs.js"></script>
+    <script>
+        editQuestionPath = `@Html.Raw($"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories/{Model.CurrentSkillCategory.Id}/skill-parts/{Model.CurrentSkillPart.Id}/exam-data-libraries/update")`;
+        currentSkillPartId = '@Model.CurrentSkillPart.Id';
+        createQuestionGroupModalId = '@createQuestionGroupModalId';
+        syncQuestions('@Model.CurrentSkillPart.Id');
+        syncQuestionGroups('@Model.CurrentSkillPart.Id');
+        createQuestionGroupTitle = '@L["Create question group"]';
+        updateQuestionGroupTitle ='@L["Update question group"]';
+    </script>
+}
+<!-- Page Heading -->
+
+<div class="row">
+    <div class="col-12 col-lg-5" id="question-groups">
+
+    </div>
+    <div class="col-12 col-lg-7" id="questions">
+
+    </div>
+</div>
+
+<component type="typeof(FormModelComponent)"
+           render-mode="ServerPrerendered"
+           param-DeleteNoSubmit="true"
+           param-Id="@("addQuestionGroup")"
+           param-Title="@("Create question group")"
+           param-Callback="@("questionGroupSynced")" />
+
+<component type="typeof(ModelComponent)"
+           render-mode="ServerPrerendered"
+           param-Id="@("preview-question")"
+           param-NoConfirm="true"
+           param-NoCancel="false"
+           param-NoDelete="false"
+           param-CancelClass="@("btn btn-primary")"
+           param-Class="@("modal-lg")"
+           param-Title="@("Preview question")" />

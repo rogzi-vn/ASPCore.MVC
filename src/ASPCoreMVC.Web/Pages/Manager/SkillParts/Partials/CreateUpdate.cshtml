@@ -1,0 +1,246 @@
+﻿@using ASPCoreMVC.TCUEnglish.SkillParts
+@model ASPCoreMVC.Web.Pages.Manager.SkillParts.Partials.SkillPartCreateUpdateModel
+@{
+    Model.SetBreadcrumbBtn(L["Discard &amp; Go back"].Value,
+        $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories/{Model.CurrentSkillCategory.Id}/skill-parts",
+        icon: "fas fa-arrow-left",
+        c: "btn-danger");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+        new string[] { L["Exam categories"].Value, $"/manager/exam-categories" },
+        new string[] { Model.CurrentExamCategory.Name, $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories" },
+        new string[] { Model.CurrentSkillCategory.Name, $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories/{Model.CurrentSkillCategory.Id}/skill-parts" },
+        new string[] { Model.SkillPartDTO.Id != Guid.Empty ? L["Edit skill part"].Value : L["Create skill part"].Value });
+
+    var deleteUrl = $"/api​/app​/skill-category​/{Model.SkillPartDTO.Id}";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        @if (Model.SkillPartDTO.Id != Guid.Empty)
+        {
+            @Html.Raw(L["Edit skill part"].Value + " " + $"\"{Model.SkillPartDTO.Name}\"")
+        }
+        else
+        {
+            @L["Create skill part"]
+        }
+    </h1>
+</div>
+
+<form method="post">
+    @if (Model.SkillPartDTO.Id != Guid.Empty)
+    {
+        <input type="hidden" asp-for="SkillPartDTO.Id" />
+    }
+    <input type="hidden" asp-for="SkillPartDTO.ExamSkillCategoryId" />
+    <input type="hidden" asp-for="SkillPartDTO.Order" />
+    <input type="hidden" asp-for="IsEditable" />
+    <div class="row mb-4">
+        <div class="col-lg-8 order-2 order-lg-1 mt-4 mt-lg-0">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <label asp-for="SkillPartDTO.Instructions"></label>
+                        <span onclick="showUserManual(event,
+                            '@String.Format(L["About {0}"].Value, Vistark.GetDisplayName<CreateUpdateSkillPartDTO>(x=>x.Instructions))',
+                            '/ui/helpers/user-manuals/skill-part-instructions-prop');"
+                              data-toggle="tooltip" data-placement="top"
+                              title="@L["More details"]">
+                            <i class="fas fa-question-circle align-middle shake-infinite-sm"></i>
+                        </span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <textarea asp-for="SkillPartDTO.Instructions" class="editor" editor-mint="true" editor-height="200"></textarea>
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillPartDTO.Instructions"></span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card shadow mt-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <label asp-for="SkillPartDTO.Tips"></label>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <textarea asp-for="SkillPartDTO.Tips" class="editor"></textarea>
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillPartDTO.Tips"></span>
+                        </div>
+                    </div>
+                    @if (Model.IsEditable)
+                    {
+                        <button type="button"
+                                class="btn btn-danger float-left mt-2 d-block d-lg-none btn-sm shadow-sm"
+                                onclick="deleteConfirm('/api/app/skill-part/@Model.SkillPartDTO.Id',skillCatDeleted,'@(String.Format(L["Skill part \"{0}\" has been deleted."].Value,Model.SkillPartDTO.Name))')">
+                            @L["Delete"]
+                        </button>
+                    }
+                    <button type="submit" class="btn btn-primary float-right mt-2 d-block d-lg-none btn-sm shadow-sm">@L["Save Changes"]</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-4 order-1 order-lg-2">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">@L["Properties"]</h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label asp-for="SkillPartDTO.Name" class="mb-1"></label>
+                        <input asp-for="SkillPartDTO.Name" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillPartDTO.Name"></span>
+                        </div>
+                    </div>
+                    @if (Model.IsEditable)
+                    {
+                        @* Không cho phép sửa trường này để tránh làm rối dữ liệu, chỉ nhập 1 lần khi thêm *@
+                        <div class="form-group">
+                            <label asp-for="SkillPartDTO.MasterContentType" class="mb-1"></label>
+                            <select asp-for="SkillPartDTO.MasterContentType" class="form-control selectpicker" data-live-search="true">
+                                @foreach (var item in Enum.GetValues(typeof(ASPCoreMVC.Common.MasterContentTypes)))
+                                {
+                                    <option value="@((int)item)">@L[item.ToString()]</option>
+                                }
+                            </select>
+                            <div class="form-text text-danger small">
+                                <span asp-validation-for="SkillPartDTO.MasterContentType"></span>
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group">
+                        <label asp-for="SkillPartDTO.ArticleEditor" class="mb-1"></label>
+                        <span onclick="showUserManual(event,
+                            '@String.Format(L["About {0}"].Value, Vistark.GetDisplayName<CreateUpdateSkillPartDTO>(x=>x.ArticleEditor))',
+                            '/ui/helpers/user-manuals/skill-part-editor-layout-prop');"
+                              data-toggle="tooltip" data-placement="top"
+                              title="@L["More details"]">
+                            <i class="fas fa-question-circle align-middle shake-infinite-sm"></i>
+                        </span>
+                        <select asp-for="SkillPartDTO.ArticleEditor" class="form-control selectpicker" data-live-search="true">
+                            @foreach (var item in Enum.GetValues(typeof(ASPCoreMVC.Common.EditorDisplayOptions)))
+                            {
+                                <option value="@((int)item)">@L[item.ToString()]</option>
+                            }
+                        </select>
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillPartDTO.ArticleEditor"></span>
+                        </div>
+                    </div>
+                    @if (Model.IsEditable)
+                    {
+                        @* Không cho phép sửa trường này để tránh làm rối dữ liệu, chỉ nhập 1 lần khi thêm *@
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       asp-for="SkillPartDTO.IsHaveQuestionText">
+                                <label class="custom-control-label" asp-for="SkillPartDTO.IsHaveQuestionText">
+                                </label>
+                                <span onclick="showUserManual(event,
+                                        '@String.Format(L["About {0}"].Value, Vistark.GetDisplayName<CreateUpdateSkillPartDTO>(x=>x.IsHaveQuestionText))',
+                                        '/ui/helpers/user-manuals/skill-part-display-question-text-prop');"
+                                      data-toggle="tooltip" data-placement="top"
+                                      title="@L["More details"]">
+                                    <i class="fas fa-question-circle align-middle shake-infinite-sm"></i>
+                                </span>
+                            </div>
+                        </div>
+                    }
+                    @if (Model.IsEditable)
+                    {
+                        @* Không cho phép sửa trường này để tránh làm rối dữ liệu, chỉ nhập 1 lần khi thêm *@
+                        <div class="form-group">
+                            <label asp-for="SkillPartDTO.AnswerType" class="mb-1"></label>
+                            <select asp-for="SkillPartDTO.AnswerType" class="form-control selectpicker" data-live-search="true">
+                                @foreach (var item in Enum.GetValues(typeof(ASPCoreMVC.Common.AnswerTypes)))
+                                {
+                                    <option value="@((int)item)">@L[item.ToString()]</option>
+                                }
+                            </select>
+                            <div class="form-text text-danger small">
+                                <span asp-validation-for="SkillPartDTO.AnswerType"></span>
+                            </div>
+                        </div>
+                    }
+                    @if (Model.IsEditable)
+                    {
+                        @* Không cho phép sửa trường này để tránh làm rối dữ liệu, chỉ nhập 1 lần khi thêm *@
+                        <div class="form-group">
+                            <label asp-for="SkillPartDTO.TrueAnswerType" class="mb-1"></label>
+                            <select asp-for="SkillPartDTO.TrueAnswerType" class="form-control selectpicker" data-live-search="true">
+                                @foreach (var item in Enum.GetValues(typeof(ASPCoreMVC.Common.TrueAnswerTypes)))
+                                {
+                                    <option value="@((int)item)">@L[item.ToString()]</option>
+                                }
+                            </select>
+                            <div class="form-text text-danger small">
+                                <span asp-validation-for="SkillPartDTO.TrueAnswerType"></span>
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group">
+                        <label asp-for="SkillPartDTO.NumDisplay" class="mb-1"></label>
+                        <input type="number" asp-for="SkillPartDTO.NumDisplay" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillPartDTO.NumDisplay"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SkillPartDTO.NumSubQues" class="mb-1"></label>
+                        <input type="number" asp-for="SkillPartDTO.NumSubQues" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillPartDTO.NumSubQues"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SkillPartDTO.NumAns" class="mb-1"></label>
+                        <input type="number" asp-for="SkillPartDTO.NumAns" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillPartDTO.NumAns"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SkillPartDTO.LimitTimeInMinutes" class="mb-1"></label>
+                        <input type="number" asp-for="SkillPartDTO.LimitTimeInMinutes" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillPartDTO.LimitTimeInMinutes"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SkillPartDTO.MaxScores" class="mb-1"></label>
+                        <input type="number" asp-for="SkillPartDTO.MaxScores" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillPartDTO.MaxScores"></span>
+                        </div>
+                    </div>
+                    @if (Model.SkillPartDTO.Id != Guid.Empty)
+                    {
+                        <button type="button"
+                                class="btn btn-danger float-left mt-2 d-none d-lg-block btn-sm shadow-sm"
+                                onclick="deleteConfirm('/api/app/skill-part/@Model.SkillPartDTO.Id',skillCatDeleted,'@(String.Format(L["Skill part \"{0}\" has been deleted."].Value,Model.SkillPartDTO.Name))')">
+                            @L["Delete"]
+                        </button>
+                    }
+                    <button type="submit" class="btn btn-primary float-right mt-2 d-none d-lg-block btn-sm shadow-sm">@L["Save Changes"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function skillCatDeleted(res) {
+        setTimeout(function () {
+            window.location = '/manager/exam-categories/@Model.CurrentExamCategory.Id/skill-categories/@Model.CurrentSkillCategory.Id/skill-parts';
+        }, 1000);
+    }
+</script>

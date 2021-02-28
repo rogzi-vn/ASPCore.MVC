@@ -1,0 +1,71 @@
+﻿@code {
+
+}
+@code {
+    [Parameter] public string Id { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string FormAction { get; set; } = "";
+    [Parameter] public string FormMethod { get; set; } = "POST";
+    [Parameter] public string ConfirmText { get; set; } = "Confirm";
+    [Parameter] public string CancelText { get; set; } = "Cancel";
+    [Parameter] public string DeleteText { get; set; } = "Delete";
+    [Parameter] public bool NoConfirm { get; set; } = false;
+    [Parameter] public bool NoCancel { get; set; } = false;
+    [Parameter] public bool NoDelete { get; set; } = true;
+    [Parameter] public string ConfirmClass { get; set; } = "btn btn-primary";
+    [Parameter] public string CancelClass { get; set; } = "btn btn-secondary";
+    [Parameter] public string DeleteClass { get; set; } = "btn btn-danger";
+    [Parameter] public bool DeleteNoSubmit { get; set; } = false;
+    [Parameter] public string Callback { get; set; }
+    [Parameter] public string DataType { get; set; } = "json";
+    [Parameter] public bool MultiplePart { get; set; } = false;
+    [Parameter] public string Class { get; set; } = "";
+
+    string EncryptType()
+    {
+        if (MultiplePart)
+            return "multipart/form-data";
+        else
+            return "application/x-www-form-urlencoded";
+    }
+}
+
+<form action="@FormAction" method="@FormMethod" enctype="@EncryptType()" class="auto-dwd-from"
+      f-data-type="@DataType"
+      f-callback="@Callback">
+    <div class="modal fade" id="@Id" tabindex="-1" role="dialog" aria-hidden="true"
+         data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered @Class" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-primary">
+                    <h5 class="modal-title text-white">@Title</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="@Id-content">
+
+                </div>
+                <div class="modal-footer">
+                    @if (!NoDelete && !DeleteNoSubmit)
+                    {
+                        <button class="@DeleteClass mr-auto" type="submit">@DeleteText</button>
+                    }
+                    @if (DeleteNoSubmit)
+                    {
+                        <button class="@DeleteClass btn-sm shadow-sm mr-auto" type="button" id="@Id-del-no-sub">@DeleteText</button>
+                    }
+                    @if (!NoCancel)
+                    {
+                        <button class="@CancelClass d-inline-block btn-sm shadow-sm" type="button" data-dismiss="modal">@CancelText</button>
+                    }
+                    @if (!NoConfirm && NoDelete)
+                    {
+                        <button class="@ConfirmClass d-inline-block btn-sm shadow-sm" type="submit">@ConfirmText</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+

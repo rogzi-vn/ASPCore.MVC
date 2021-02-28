@@ -1,0 +1,36 @@
+﻿@{
+    var breadcrumbs = (List<ASPCoreMVC.Web.Models.BreadcrumbVM>)ViewData["Breadcrumb"];
+    var btnHref = (string)ViewData["BreadcrumbBtnHref"] ?? "";
+    var btnClass = (string)ViewData["BreadcrumbBtnClass"] ?? "btn-primary";
+    var btnText = (string)ViewData["BreadcrumbBtnText"] ?? "Create new";
+    var btnIcon = (string)ViewData["BreadcrumbBtnIcon"] ?? "fas fa-plus";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item align-self-center"><a href="/">@L["Home"]</a></li>
+        @if (breadcrumbs != null && breadcrumbs.Count > 0)
+        {
+            for (int i = 0; i < breadcrumbs.Count; i++)
+            {
+                if (i >= breadcrumbs.Count - 1)
+                {
+                    <li class="breadcrumb-item align-self-center active" aria-current="page">@Html.Raw(breadcrumbs[i].Title)</li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item align-self-center">
+                        <a href="@(breadcrumbs[i].Href)">@Html.Raw(breadcrumbs[i].Title)</a>
+                    </li>
+                }
+            }
+        }
+        @if (!btnHref.IsNullOrEmpty())
+        {
+            <li class="breadcrumb-item align-self-center ml-auto no-before">
+                <a href="@btnHref" class="d-block btn btn-sm shadow-sm @btnClass">
+                    <i class="@btnIcon fa-sm text-white mr-1"></i> @Html.Raw(btnText)
+                </a>
+            </li>
+        }
+    </ol>
+</nav>

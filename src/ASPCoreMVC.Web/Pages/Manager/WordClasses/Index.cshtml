@@ -1,0 +1,32 @@
+﻿@page
+@model ASPCoreMVC.Web.Pages.Manager.WordClasses.WordClassIndexModel
+
+@{
+    Model.SetBreadcrumbBtn(L["Create new"].Value,
+        $"javascript:showWcModal();",
+        icon: "fas fa-plus",
+        c: "btn-primary");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+        new string[] { L["Word classes"].Value });
+}
+
+@section Scripts {
+    <script src="/dist/js/te.wordclass.js"></script>
+    <script>
+        cWcT = "@L["Create word class"]";
+        uWcT = "@L["Update word class"]";
+        syncWc('1','');
+    </script>
+}
+
+<div id="word-classes">
+</div>
+
+<component type="typeof(FormModelComponent)"
+           render-mode="ServerPrerendered"
+           param-DeleteNoSubmit="true"
+           param-Id="@("ce-wc")"
+           param-Title="@("Create word classes")"
+           param-Callback="@("wcSynced")" />

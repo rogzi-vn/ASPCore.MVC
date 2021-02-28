@@ -1,0 +1,476 @@
+﻿body {
+    color: #7d7d7d;
+}
+
+.avatar-container {
+    width: 150px;
+    height: 150px;
+    display: block;
+    margin: 0 auto;
+}
+
+.avatar-img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 150px !important; /* any size */
+    max-height: 150px !important; /* any size */
+    margin: auto;
+    position: relative;
+}
+
+.avatar-overbutton {
+    width: 24px;
+    height: 24px;
+    border-radius: 100%;
+    position: absolute;
+    top: 9px;
+    right: 9px;
+    transition: background 0.3s ease-in-out;
+}
+
+    .avatar-overbutton:hover {
+        background-color: #5555ff !important;
+        transition: background 0.3s ease-in-out;
+    }
+
+.avatar-shadow {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+    .avatar-shadow:hover {
+        box-shadow: 0 0.15rem 1.75rem 0 #0094ff90 !important;
+        transition: box-shadow 0.3s ease-in-out;
+    }
+
+/* START BOOSTRAP DATEPICKER */
+.datepicker {
+    border-radius: 0;
+    padding: 0;
+}
+
+.datepicker-days table thead,
+.datepicker-days table tbody,
+.datepicker-days table tfoot {
+    padding: 10px;
+    display: list-item;
+}
+
+.datepicker-days table thead,
+.datepicker-months table thead,
+.datepicker-years table thead,
+.datepicker-decades table thead,
+.datepicker-centuries table thead {
+    background: #3546b3;
+    color: #ffffff;
+    border-radius: 0;
+}
+
+    .datepicker-days table thead tr:nth-child(2n + 0) td,
+    .datepicker-days table thead tr:nth-child(2n + 0) th {
+        border-radius: 3px;
+    }
+
+    .datepicker-days table thead tr:nth-child(3n + 0) {
+        text-transform: uppercase;
+        font-weight: 300 !important;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+.table-condensed > tbody > tr > td,
+.table-condensed > tbody > tr > th,
+.table-condensed > tfoot > tr > td,
+.table-condensed > tfoot > tr > th,
+.table-condensed > thead > tr > td,
+.table-condensed > thead > tr > th {
+    padding: 11px 13px;
+}
+
+.datepicker-months table thead td,
+.datepicker-months table thead th,
+.datepicker-years table thead td,
+.datepicker-years table thead th,
+.datepicker-decades table thead td,
+.datepicker-decades table thead th,
+.datepicker-centuries table thead td,
+.datepicker-centuries table thead th {
+    border-radius: 0;
+}
+
+.datepicker td,
+.datepicker th {
+    border-radius: 50%;
+    padding: 0 12px;
+}
+
+.datepicker-days table thead,
+.datepicker-months table thead,
+.datepicker-years table thead,
+.datepicker-decades table thead,
+.datepicker-centuries table thead {
+    background: #3546b3;
+    color: #ffffff;
+    border-radius: 0;
+}
+
+.datepicker table tr td.active,
+.datepicker table tr td.active:hover,
+.datepicker table tr td.active.disabled,
+.datepicker table tr td.active.disabled:hover {
+    background-image: none;
+}
+
+.datepicker .prev,
+.datepicker .next {
+    color: rgba(255, 255, 255, 0.5);
+    transition: 0.3s;
+    width: 37px;
+    height: 37px;
+}
+
+    .datepicker .prev:hover,
+    .datepicker .next:hover {
+        background: transparent;
+        color: rgba(255, 255, 255, 0.99);
+        font-size: 21px;
+    }
+
+.datepicker .datepicker-switch {
+    font-size: 24px;
+    font-weight: 400;
+    transition: 0.3s;
+}
+
+    .datepicker .datepicker-switch:hover {
+        color: rgba(255, 255, 255, 0.7);
+        background: transparent;
+    }
+
+.datepicker table tr td span {
+    border-radius: 2px;
+    margin: 3%;
+    width: 27%;
+}
+
+    .datepicker table tr td span.active,
+    .datepicker table tr td span.active:hover,
+    .datepicker table tr td span.active.disabled,
+    .datepicker table tr td span.active.disabled:hover {
+        background-color: #3546b3;
+        background-image: none;
+    }
+
+.dropdown-menu {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+}
+
+.datepicker-dropdown.datepicker-orient-top:before {
+    border-top: 7px solid rgba(0, 0, 0, 0.1);
+}
+/* END BOOSTRAP DATEPICKER */
+
+@media only screen and (max-width: 768px) {
+    div.dataTables_wrapper div.dataTables_paginate ul.pagination,
+    div .dataTables_wrapper div.dataTables_paginate ul.pagination {
+        justify-content: unset !important;
+    }
+}
+
+#ex-cat-conf-container .btn-outline-info:hover {
+    color: #36b9cc;
+    background-color: #36b9cc;
+    border-color: #36b9cc;
+}
+
+.hover-effect {
+    transition: opacity 0.3s;
+}
+
+    .hover-effect:hover {
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.3s;
+    }
+
+    .hover-effect:active {
+        cursor: move;
+        opacity: 0.8;
+        transition: opacity 0.3s;
+    }
+
+.f-small {
+    font-size: 1rem;
+    vertical-align: middle;
+}
+
+.modal-full {
+    max-width: 94%;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+/* ============== SEPARATOR ============= */
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+    .separator::before,
+    .separator::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e6e6e6;
+    }
+
+    .separator:not(:empty)::before {
+        margin-right: 0.25em;
+    }
+
+    .separator:not(:empty)::after {
+        margin-left: 0.25em;
+    }
+/* ============= SEPARATOR ============== */
+
+.table-bordered thead td,
+.table-bordered thead th {
+    border-bottom-width: 0px;
+}
+
+.dataTables_filter label,
+.dataTables_length label {
+    margin-bottom: 0px;
+    font-size: 80%;
+    font-weight: 400;
+}
+
+.form-control:focus {
+    color: #6e707e;
+    background-color: #fff;
+    border-color: #bac8f3;
+    outline: 0;
+    box-shadow: 0 0 0 1px rgb(78 115 223 / 25%);
+}
+
+.paginate_button {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+}
+
+.dataTables_info {
+    font-size: 80%;
+    font-weight: 400;
+}
+
+.table.dataTable,
+table.tb {
+    margin-top: 16px !important;
+    margin-bottom: 16px !important;
+    color: #000;
+}
+
+    table.dataTable tr.odd,
+    table.tb tr:nth-child(odd) {
+        background-color: #ffffff;
+    }
+
+    table.dataTable tr.even,
+    table.tb tr:nth-child(even) {
+        background-color: #c8dce033;
+    }
+
+    table.tb tr:first-child {
+        background-color: unset;
+    }
+
+    table.dataTable tr,
+    table.tb tr {
+        background-color: #c8dce033;
+        -webkit-transition: background-color 0.3s ease-out, color 0.3s ease-out;
+        -moz-transition: background-color 0.3s ease-out, color 0.3s ease-out;
+        -o-transition: background-color 0.3s ease-out, color 0.3s ease-out;
+        transition: background-color 0.3s ease-out, color 0.3s ease-out;
+    }
+
+    table.dataTable tbody tr:hover,
+    table.dataTable tbody tr.active,
+    table.tb tbody tr:hover,
+    table.tb tbody tr.active {
+        cursor: pointer;
+        background-color: #5352eddd;
+        color: #fff;
+        -webkit-transition: background-color 0.3s ease-out, color 0.3s ease-out;
+        -moz-transition: background-color 0.3s ease-out, color 0.3s ease-out;
+        -o-transition: background-color 0.3s ease-out, color 0.3s ease-out;
+        transition: background-color 0.3s ease-out, color 0.3s ease-out;
+    }
+
+/* .dataTables_filter {
+    margin-left: -0.5rem;
+} */
+
+@media screen and (max-width: 767px) {
+    .dataTables_filter {
+        margin-top: 0.75rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .modal-lg-unlimit {
+        max-width: 100%;
+    }
+}
+
+.modal {
+    padding-left: 17px;
+}
+
+.no-before:before {
+    display: none !important;
+}
+
+.card-header h6 label {
+    margin-bottom: 0px !important;
+}
+
+
+/* =========== START SHAKE EFFECT =========== */
+.shake-infinite {
+    animation: shake 2s;
+    animation-iteration-count: infinite;
+}
+
+.shake-infinite-sm {
+    animation: shake-sm 1s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes shake {
+    0% {
+        transform: translate(1px, 1px) rotate(0deg);
+    }
+
+    10% {
+        transform: translate(-1px, -2px) rotate(-1deg);
+    }
+
+    20% {
+        transform: translate(-3px, 0px) rotate(1deg);
+    }
+
+    30% {
+        transform: translate(3px, 2px) rotate(0deg);
+    }
+
+    40% {
+        transform: translate(1px, -1px) rotate(1deg);
+    }
+
+    50% {
+        transform: translate(-1px, 2px) rotate(-1deg);
+    }
+
+    60% {
+        transform: translate(-3px, 1px) rotate(0deg);
+    }
+
+    70% {
+        transform: translate(3px, 1px) rotate(-1deg);
+    }
+
+    80% {
+        transform: translate(-1px, -1px) rotate(1deg);
+    }
+
+    90% {
+        transform: translate(1px, 2px) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(1px, -2px) rotate(-1deg);
+    }
+}
+
+@keyframes shake-sm {
+    0% {
+        transform: translate(0.3px, 0,3px) rotate(0deg);
+    }
+
+    10% {
+        transform: translate(-0.3px, -0.6px) rotate(-0.3deg);
+    }
+
+    20% {
+        transform: translate(-0.9px, 0px) rotate(1deg);
+    }
+
+    30% {
+        transform: translate(0.9px, 0.6px) rotate(0deg);
+    }
+
+    40% {
+        transform: translate(0.3px, -0.3px) rotate(0.3deg);
+    }
+
+    50% {
+        transform: translate(-0.3px, 0.6px) rotate(-0.3deg);
+    }
+
+    60% {
+        transform: translate(-0.9px, 0.3px) rotate(0deg);
+    }
+
+    70% {
+        transform: translate(0.9px, 0.3px) rotate(-0.3deg);
+    }
+
+    80% {
+        transform: translate(-0.3px, -0.3px) rotate(0.3deg);
+    }
+
+    90% {
+        transform: translate(0.3px, 0.6px) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(0.3px, -0.6px) rotate(-0.3deg);
+    }
+}
+/* =========== END SHAKE EFFECT =========== */
+
+.media-question-image {
+    min-width: 200px;
+    min-height: 0px;
+    max-height: 100%;
+    max-width: 600px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.q-at .card .card-header[data-toggle=collapse]::after {
+    top: 7px;
+}
+
+.hover-correct-ans {
+    cursor: pointer;
+    -webkit-transition: color 0.3s ease-out;
+    -moz-transition: color 0.3s ease-out;
+    -o-transition: color 0.3s ease-out;
+    transition: color 0.3s ease-out;
+}
+
+    .hover-correct-ans:hover, .hover-correct-ans:active, .correct-ans {
+        color: #57e21d !important;
+        -webkit-transition: color 0.3s ease-out;
+        -moz-transition: color 0.3s ease-out;
+        -o-transition: color 0.3s ease-out;
+        transition: color 0.3s ease-out;
+    }
+
+    .hover-correct-ans i, .hover-correct-ans span {
+        pointer-events: none;
+    }

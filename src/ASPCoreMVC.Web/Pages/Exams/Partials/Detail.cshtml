@@ -1,0 +1,28 @@
+﻿<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header bg-gradient-primary">
+            <h6 class="modal-title text-white">@ViewBag.ModalName</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            @Html.Raw(ViewBag.ModalContent)
+        </div>
+        <div class="modal-footer">
+            @if (ViewBag.ShowManagerButton)
+            {
+                <a href="/manager/exams/parts/@ViewBag.Id/data"
+                   class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm mr-auto">
+                    <i class="fas fa-database fa-sm text-white mr-1"></i> Data manager
+                </a>
+            }
+            <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm" data-dismiss="modal">Close</button>
+            <a href="@Html.Raw(ViewBag.StartExamUrl)"
+               onclick="$.LoadingOverlay('show');"
+               class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm">
+                <i class="fas fa-star fa-sm text-white mr-1"></i> Start
+            </a>
+        </div>
+    </div>
+</div>

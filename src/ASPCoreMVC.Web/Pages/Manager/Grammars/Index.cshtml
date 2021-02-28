@@ -1,0 +1,50 @@
+﻿@page
+@model ASPCoreMVC.Web.Pages.Manager.Grammars.GrammarIndexModel
+@{
+
+    Model.SetBreadcrumb(
+        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+        new string[] { L["Grammars"].Value });
+}
+
+@section Scripts {
+    <script src="/dist/js/te.grammars.js"></script>
+    <script>
+        ceGcModalId = "add-gc";
+        ceGgModalId = "add-gg";
+
+        createGrammarCategoryTitle = "Create grammar category";
+        updateGrammarCategoryTitle = "Update grammar category";
+
+        cgt = "Create grammar";
+        ugt = "Update grammar";
+
+        syncGrammarCategories();
+        syncGrammar();
+    </script>
+}
+
+
+<div class="row">
+    <div class="col-12 col-lg-5" id="grammar-cats">
+
+    </div>
+    <div class="col-12 col-lg-7" id="grammars">
+
+    </div>
+</div>
+
+
+<component type="typeof(FormModelComponent)"
+           render-mode="ServerPrerendered"
+           param-DeleteNoSubmit="true"
+           param-Id="@("add-gc")"
+           param-Title="@("Create grammar group")"
+           param-Callback="@("gcSynced")" />
+
+<component type="typeof(FormModelComponent)"
+           render-mode="ServerPrerendered"
+           param-DeleteNoSubmit="true"
+           param-Id="@("add-gg")"
+           param-Title="@("Create grammar")"
+           param-Callback="@("ggSynced")" />

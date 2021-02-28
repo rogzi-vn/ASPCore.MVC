@@ -1,0 +1,90 @@
+﻿@model Volo.Abp.Application.Dtos.PagedResultDto<ASPCoreMVC.TCUEnglish.ExamDataLibraries.ExamQuestionContainerDTO>
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">@L["Questions"] (@Model.TotalCount) - @ViewBag.GroupName</h6>
+        <button class="btn btn-info btn-sm shadow-sm" id="remove-selected-question-group-btn">@L["Show all"]</button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <input type="hidden" id="qi-current-count" value="@Model.TotalCount" />
+            <div class="input-group">
+                <input type="text" class="form-control bg-light border-0 small"
+                       id="search-questions-inp"
+                       value="@ViewBag.Filter"
+                       placeholder="Search for question..." aria-label="Search">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" id="search-questions-btn">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="separator my-2" id="gi-list-state">@ViewBag.ListState</div>
+            @if (Model.Items.Count <= 0)
+            {
+                <p class="p-4 text-center" style="font-style: italic;">
+                    @L["No questions have been created yet."]
+                    @if (!((string)ViewBag.Filter).IsNullOrEmpty())
+                    {
+                        <br />
+                        <a href="javascript:syncDefaultQuestions();"
+                           class="d-inline-block btn btn-sm btn-primary shadow-sm mt-4"
+                           style="font-style: normal;">
+                            @L["Show All"]
+                        </a>
+                    }
+                </p>
+            }
+            else
+            {
+                <table class="table tb table-bordered" width="100%" cellspacing="0">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th class="no-sort text-center" width="60">#</th>
+                            <th>@L["Question name"]</th>
+                            <th class="no-sort text-center" width="130">@L["Action"]</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @{
+                            var i = 1;
+                        }
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr class="q-item-in-list" data-id="@item.Id">
+                                <td class="align-middle text-center">@(((ViewBag.p - 1) * AppTheme.Limit) +  i++)</td>
+                                <td class="align-middle"
+                                    data-toggle="tooltip" data-placement="bottom" title="@L["Open editor"] for '@item.Name'">
+                                    @item.Name
+                                </td>
+
+                                <td class="text-center prevent-default">
+                                    <div class="row justify-content-around px-2">
+                                        <div class="col-12 p-md-0 row justify-content-center">
+                                            <button data-id="@item.Id"
+                                                    onclick="pd(event);"
+                                                    data-toggle="tooltip" data-placement="bottom" title="@L["Open preview or delete question"] '@item.Name'"
+                                                    class="btn btn-success btn-sm d-inline col-11 shadow-sm q-preview">
+                                                <i class="fas fa-eye mr-1"></i> <span class="d-none d-sm-inline">@L["Preview"]</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @if (Model.Items.Count > 0)
+                {
+                    <div class="card-footer bg-white d-flex justify-content-center align-items-center">
+                        <ul class="pagination pagination-flat pagination-sm justify-content-between mt-2 mt-sm-0">
+                            @Html.Raw(ViewBag.Pagination)
+                        </ul>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

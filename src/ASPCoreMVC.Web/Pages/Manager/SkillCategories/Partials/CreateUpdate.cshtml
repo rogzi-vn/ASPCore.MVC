@@ -1,0 +1,111 @@
+﻿@model ASPCoreMVC.Web.Pages.Manager.SkillCategories.Partials.SkillCategoryCreateUpdateModel
+@{
+    Model.SetBreadcrumbBtn(L["Discard &amp; Go back"].Value,
+        $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories",
+        icon: "fas fa-arrow-left",
+        c: "btn-danger");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+        new string[] { L["Exam categories"].Value, $"/manager/exam-categories" },
+        new string[] { Model.CurrentExamCategory.Name, $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories" },
+        new string[] { Model.SkillCategoryDTO.Id != Guid.Empty ? L["Edit skill category"].Value : L["Create skill category"].Value });
+
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        @if (Model.SkillCategoryDTO.Id != Guid.Empty)
+        {
+            @Html.Raw(L["Edit skill"].Value + " " + $"\"{Model.SkillCategoryDTO.Name}\"")
+        }
+        else
+        {
+            @L["Create new skill"]
+        }
+    </h1>
+</div>
+
+<form method="post">
+    @if (Model.SkillCategoryDTO.Id != Guid.Empty)
+    {
+        <input type="hidden" asp-for="SkillCategoryDTO.Id" />
+    }
+    <input type="hidden" asp-for="SkillCategoryDTO.ExamCategoryId" />
+    <input type="hidden" asp-for="SkillCategoryDTO.Order" />
+    <div class="row mb-4">
+        <div class="col-lg-8 order-2 order-lg-1 mt-4 mt-lg-0">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <label asp-for="SkillCategoryDTO.Tips"></label>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <textarea asp-for="SkillCategoryDTO.Tips" class="editor"></textarea>
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillCategoryDTO.Tips"></span>
+                        </div>
+                    </div>
+                    @if (Model.SkillCategoryDTO.Id != Guid.Empty)
+                    {
+                        <button type="button"
+                                class="btn btn-danger float-left mt-2 d-block d-lg-none btn-sm shadow-sm"
+                                onclick="deleteConfirm('/api/app/skill-category/@Model.SkillCategoryDTO.Id',skillCatDeleted,'@(String.Format(L["Skill category \"{0}\" has been deleted."].Value,Model.SkillCategoryDTO.Name))')">
+                            @L["Delete"]
+                        </button>
+                    }
+                    <button type="submit" class="btn btn-primary float-right mt-2 d-block d-lg-none btn-sm shadow-sm">@L["Save Changes"]</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 order-1 order-lg-2">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">@L["Properties"]</h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label asp-for="SkillCategoryDTO.Name" class="mb-1"></label>
+                        <input asp-for="SkillCategoryDTO.Name" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillCategoryDTO.Name"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SkillCategoryDTO.LimitTimeInMinutes" class="mb-1"></label>
+                        <input type="number" asp-for="SkillCategoryDTO.LimitTimeInMinutes" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillCategoryDTO.LimitTimeInMinutes"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SkillCategoryDTO.MaxScores" class="mb-1"></label>
+                        <input type="number" asp-for="SkillCategoryDTO.MaxScores" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="SkillCategoryDTO.MaxScores"></span>
+                        </div>
+                    </div>
+                    @if (Model.SkillCategoryDTO.Id != Guid.Empty)
+                    {
+                        <button type="button"
+                                class="btn btn-danger float-left mt-2 d-none d-lg-block btn-sm shadow-sm"
+                                onclick="deleteConfirm('/api/app/skill-category/@Model.SkillCategoryDTO.Id',skillCatDeleted,'@(String.Format(L["Skill category \"{0}\" has been deleted."].Value,Model.SkillCategoryDTO.Name))')">
+                            @L["Delete"]
+                        </button>
+                    }
+                    <button type="submit" class="btn btn-primary float-right mt-2 d-none d-lg-block btn-sm shadow-sm">@L["Save Changes"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function skillCatDeleted(res) {
+        setTimeout(function () {
+            window.location = '/manager/exam-categories/@Model.CurrentExamCategory.Id/skill-categories';
+        }, 1000);
+    }
+</script>

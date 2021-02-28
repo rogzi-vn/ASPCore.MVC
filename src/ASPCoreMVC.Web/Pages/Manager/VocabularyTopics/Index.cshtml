@@ -1,0 +1,33 @@
+﻿@page
+@model ASPCoreMVC.Web.Pages.Manager.VocabularyTopics.VocabularyTopicsIndexModel
+
+@{
+    Model.SetBreadcrumbBtn(L["Create new"].Value,
+        $"javascript:showVtModal();",
+        icon: "fas fa-plus",
+        c: "btn-primary");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+        new string[] { L["Vocabulary topics"].Value });
+}
+
+@section Scripts {
+    <script src="/dist/js/te.vt.js"></script>
+    <script>
+        cVtT = "@L["Create vocabulary topic"]";
+        uVtT = "@L["Update vocabulary topic"]";
+        syncVt('1', '');
+        isConfirmable = true;
+    </script>
+}
+
+<div id="vocabulary-topics">
+</div>
+
+<component type="typeof(FormModelComponent)"
+           render-mode="ServerPrerendered"
+           param-DeleteNoSubmit="true"
+           param-Id="@("ce-vt")"
+           param-Title="@("Create vocabulary topics")"
+           param-Callback="@("vtSynced")" />

@@ -1,0 +1,103 @@
+﻿@model ASPCoreMVC.Web.Pages.Manager.ExamCategories.Partials.ExamCategoryCreateUpdateModel
+@{
+    Model.SetBreadcrumbBtn(L["Discard &amp; Go back"].Value,
+        $"/manager/exam-categories",
+        icon: "fas fa-arrow-left",
+        c: "btn-danger");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+        new string[] { L["Exam categories"].Value, $"/manager/exam-categories" },
+        new string[] { Model.ExamCategoryDTO.Id != Guid.Empty ? L["Edit exam category"].Value : L["Create exam category"].Value });
+
+
+}
+
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        @if (Model.ExamCategoryDTO.Id == Guid.Empty)
+        {
+            @L["Create exam category"]
+        }
+        else
+        {
+            @Html.Raw(L["Edit exam category"].Value + " " + $"\"{Model.ExamCategoryDTO.Name}\"")
+        }
+    </h1>
+</div>
+
+<form method="post">
+    @if (Model.ExamCategoryDTO.Id != Guid.Empty)
+    {
+        <input type="hidden" asp-for="ExamCategoryDTO.Id" />
+    }
+    <div class="row mb-4">
+        <div class="col-lg-8 order-2 order-lg-1 mt-4 mt-lg-0">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <label asp-for="ExamCategoryDTO.Tips"></label>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <textarea asp-for="ExamCategoryDTO.Tips" class="editor"></textarea>
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="ExamCategoryDTO.Tips"></span>
+                        </div>
+                    </div>
+                    @if (Model.ExamCategoryDTO.Id != Guid.Empty)
+                    {
+                        <button type="button"
+                                class="btn btn-danger float-left mt-2 d-block d-lg-none btn-sm shadow-sm"
+                                onclick="deleteConfirm('/api/app/exam-category/@Model.ExamCategoryDTO.Id',exCatDeleted,'@(String.Format(L["Exam category \"{0}\" has been deleted."].Value,Model.ExamCategoryDTO.Name))')">
+                            @L["Delete"]
+                        </button>
+                    }
+                    <button type="submit" class="btn btn-primary float-right mt-2 d-block d-lg-none btn-sm shadow-sm">@L["Save Changes"]</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 order-1 order-lg-2">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">@L["Properties"]</h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label asp-for="ExamCategoryDTO.Name" class="mb-1"></label>
+                        <input asp-for="ExamCategoryDTO.Name" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="ExamCategoryDTO.Name"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ExamCategoryDTO.Description" class="mb-1"></label>
+                        <textarea asp-for="ExamCategoryDTO.Description" class="form-control" rows="13"></textarea>
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="ExamCategoryDTO.Description"></span>
+                        </div>
+                    </div>
+                    @if (Model.ExamCategoryDTO.Id != Guid.Empty)
+                    {
+                        <button type="button"
+                                class="btn btn-danger float-left mt-2 d-none d-lg-block btn-sm shadow-sm"
+                                onclick="deleteConfirm('/api/app/exam-category/@Model.ExamCategoryDTO.Id',exCatDeleted,'@(String.Format(L["Exam category \"{0}\" has been deleted."].Value,Model.ExamCategoryDTO.Name))')">
+                            @L["Delete"]
+                        </button>
+                    }
+                    <button type="submit" class="btn btn-primary float-right mt-2 d-none d-lg-block btn-sm shadow-sm">@L["Save Changes"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function exCatDeleted(res) {
+        setTimeout(function () {
+            window.location = '/manager/exam-categories';
+        }, 1000);
+    }
+</script>

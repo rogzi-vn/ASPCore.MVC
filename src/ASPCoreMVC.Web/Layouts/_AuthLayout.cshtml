@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html lang="@System.Globalization.CultureInfo.CurrentCulture.Name">
+
+<head>
+    <partial name="@AppTheme.HeaderImports" />
+    @RenderSection("Styles", false)
+    @Html.PageStyles()
+</head>
+
+<body class="bg-gradient-primary">
+
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    <partial name="@AppTheme.FooterImports" />
+    @RenderSection("Scripts", false)
+    @Html.PageScripts()
+</body>
+
+</html>

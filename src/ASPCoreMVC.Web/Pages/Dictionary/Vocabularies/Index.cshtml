@@ -1,0 +1,13 @@
+﻿@page
+@model ASPCoreMVC.Web.Pages.Dictionary.Vocabularies.DicVocaIndexModel
+@{
+    Model.SetBreadcrumbBtn(L["Contribute"].Value,
+        $"javascript:showWcModal();",
+        icon: "fas fa-plus",
+        c: "btn-primary");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+        new string[] { L["Word classes"].Value });
+}
+adfdfdaf DicVocaIndexModel

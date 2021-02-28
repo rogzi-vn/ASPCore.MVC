@@ -1,0 +1,93 @@
+@page "/manager/exam-categories/{exCatId:Guid}/skill-categories"
+@model ASPCoreMVC.Web.Pages.Manager.SkillCategories.SkillCategoriesIndexModel
+@{
+    Model.SetBreadcrumbBtn(L["Create new"].Value,
+        $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories/create",
+        icon: "fas fa-plus",
+        c: "btn-primary");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+        new string[] { L["Exam categories"].Value, $"/manager/exam-categories" },
+        new string[] { Model.CurrentExamCategory.Name });
+}
+
+@section Styles {
+}
+
+@section Scripts {
+}
+<!-- Page Heading -->
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">@L["Skill categories"]</h6>
+        <a href="/manager/@Model.CurrentExamCategory.Id/skill-categories/create" class="float-md-right mt-2 m-md-0 d-md-none btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white mr-1"></i> @L["Create new"]
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+
+            @if (Model.SkillCategories.Count <= 0)
+            {
+                <div class="text-gray-600 text-center">@L["No skills have been created yet."]</div>
+            }
+            else
+            {
+                <table class="table tb table-bordered mb-4" width="100%" cellspacing="0">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th>@L["Skill Name"]</th>
+                            <th class="text-center">@L["Time"]</th>
+                            <th class="text-center">@L["Max scores"]</th>
+                            <th class="no-sort text-center" width="200">@L["Action"]</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.SkillCategories)
+                        {
+                            <tr class="clickable-row" data-href="/manager/exam-categories/@Model.CurrentExamCategory.Id/skill-categories/@item.Id/skill-parts">
+                                <td class="align-middle">@item.Name</td>
+                                <td class="align-middle text-center">
+                                    @item.LimitTimeInMinutes
+                                    <sub>
+                                        <span>
+                                            (@L["minutes"])
+                                        </span>
+                                    </sub>
+                                </td>
+                                <td class="align-middle text-center">
+                                    @item.MaxScores
+                                    <sub>
+                                        <span>
+                                            (@L["stars"])
+                                        </span>
+                                    </sub>
+                                </td>
+                                <td class="text-center">
+                                    <div class="row justify-content-around px-2">
+                                        <div class="col-12 col-md-6 p-md-0 row justify-content-center">
+                                            <a href="/manager/exam-categories/@Model.CurrentExamCategory.Id/skill-categories/update/@item.Id"
+                                               class="btn btn-warning btn-sm d-inline col-11 shadow-sm">
+                                                <i class="fas fa-edit mr-1"></i> <span class="d-none d-sm-inline">@L["Edit"]</span>
+                                            </a>
+                                        </div>
+                                        <div class="col-12 mt-2 mt-md-0 col-md-6 p-md-0 row justify-content-center">
+                                            <button type="button"
+                                                    onclick="loadExamTipsHelper(event, '@ASPCoreMVC.Common.HelperTipsTypes.SkillCategory', '@item.Id', false);"
+                                                    class="btn btn-info btn-sm d-inline col-11 shadow-sm">
+                                                <i class="fas fa-info-circle mr-1"></i> <span class="d-none d-sm-inline">@L["Tips"]</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

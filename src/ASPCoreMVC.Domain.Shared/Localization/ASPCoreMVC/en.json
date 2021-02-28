@@ -1,0 +1,26 @@
+{
+  "culture": "en",
+  "texts": {
+    "TextAnswer": "Text answer",
+    "ImageAnswer": "Image answer",
+    "AudioAnswer": "Audio answer",
+    "RecorderAnswer": "Recorder answer",
+    "WriteAnswer": "Write answer",
+    "FillAnswer": "Fill answer",
+    "FullOption": "Full options",
+    "Simpify": "Simpify",
+    "Ignore": "Ignore",
+    "Hide": "Hide",
+    "Male": "Male",
+    "Female": "Female",
+    "Image": "Image",
+    "Audio": "Audio",
+    "Video": "Video",
+    "Article": "Article",
+    "Grammar": "Grammar",
+    "OnlyOneCorrect": "Only one correct answer",
+    "MultiplePickOneCorrect": "Multiple correct & pick one",
+    "MultiplePickFullCorrect": "Multiple correct & pick full",
+    "FullPickOneCorrect": "All are correct & pick one"
+  }
+}
