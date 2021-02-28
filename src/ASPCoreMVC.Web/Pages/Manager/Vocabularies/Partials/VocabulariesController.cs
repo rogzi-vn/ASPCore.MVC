@@ -77,8 +77,8 @@ namespace ASPCoreMVC.Web.Pages.Manager.Vocabularies.Partials
         [Route("create")]
         public async Task<IActionResult> GetCreateAsync()
         {
-            ViewBag.VocabularyTopics = (await _VocabularyTopicService.GetAll()).Data;
-            ViewBag.WordClasses = (await _WordClassService.GetAll()).Data;
+            ViewBag.VocabularyTopics = (await _VocabularyTopicService.GetAllVocabularyTopics()).Data;
+            ViewBag.WordClasses = (await _WordClassService.GetAllWordClasses()).Data;
             return PartialView("~/Pages/Manager/Vocabularies/Partials/CreateUpdate.cshtml",
                 new VocabularyDTO
                 {
@@ -92,8 +92,8 @@ namespace ASPCoreMVC.Web.Pages.Manager.Vocabularies.Partials
             var res = await _VocabularyService.GetAsync(id);
             if (res.Success)
             {
-                ViewBag.VocabularyTopics = (await _VocabularyTopicService.GetAll()).Data;
-                ViewBag.WordClasses = (await _WordClassService.GetAll()).Data;
+                ViewBag.VocabularyTopics = (await _VocabularyTopicService.GetAllVocabularyTopics()).Data;
+                ViewBag.WordClasses = (await _WordClassService.GetAllWordClasses()).Data;
                 return PartialView("~/Pages/Manager/Vocabularies/Partials/CreateUpdate.cshtml", res.Data);
             }
             else

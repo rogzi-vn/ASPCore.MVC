@@ -1,0 +1,22 @@
+﻿@model ASPCoreMVC.TCUEnglish.Grammars.GrammarDTO
+
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header bg-gradient-primary">
+            <h6 class="modal-title text-white">@Model.Name</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="border border-info p-3">
+                @Html.Raw(Model.Structure)
+            </div>
+            <hr />
+            @Html.Raw(Model.About)
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm" data-dismiss="modal">@L["Close"]</button>
+        </div>
+    </div>
+</div>

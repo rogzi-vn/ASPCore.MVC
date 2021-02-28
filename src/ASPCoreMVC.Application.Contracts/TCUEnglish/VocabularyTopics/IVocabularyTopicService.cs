@@ -10,6 +10,6 @@ namespace ASPCoreMVC.TCUEnglish.VocabularyTopics
     {
         public Task<ResponseWrapper<bool>> PutConfirm(Guid id);
         public Task<ResponseWrapper<bool>> PutNoConfirm(Guid id);
-        public Task<ResponseWrapper<List<VocabularyTopicDTO>>> GetAll();
+        public Task<ResponseWrapper<List<VocabularyTopicDTO>>> GetAllVocabularyTopics();
     }
 }

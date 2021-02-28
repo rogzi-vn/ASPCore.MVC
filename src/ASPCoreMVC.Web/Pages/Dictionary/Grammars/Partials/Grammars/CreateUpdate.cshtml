@@ -1,0 +1,30 @@
+﻿@model ASPCoreMVC.TCUEnglish.Grammars.GrammarDTO
+@Html.AntiForgeryToken()
+<div class="">
+    @if (Model.Id != Guid.Empty)
+    {
+        <input type="hidden" asp-for="Id" />
+    }
+    <input type="hidden" asp-for="GrammarCategoryId" />
+    <div class="form-group">
+        <label asp-for="Name" class="mb-1"></label>
+        <input asp-for="Name" class="form-control">
+        <div class="form-text text-danger small">
+            <span asp-validation-for="Name"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Structure" class="mb-1"></label>
+        <textarea asp-for="Structure" class="form-control editor-gg" editor-mint="true" editor-height="150"></textarea>
+        <div class="form-text text-danger small">
+            <span asp-validation-for="Structure"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="About" class="mb-1"></label>
+        <textarea asp-for="About" class="form-control editor-gg"></textarea>
+        <div class="form-text text-danger small">
+            <span asp-validation-for="About"></span>
+        </div>
+    </div>
+</div>

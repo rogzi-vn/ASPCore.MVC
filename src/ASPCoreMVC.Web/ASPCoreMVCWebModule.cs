@@ -261,6 +261,8 @@ namespace ASPCoreMVC.Web
                 app.UseErrorPage();
             }
 
+            app.UseHttpsRedirection();
+
             app.UseCorrelationId();
             app.UseVirtualFiles();
             app.UseRouting();

@@ -66,7 +66,7 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
             }
         }
 
-        public async Task<ResponseWrapper<List<VocabularyBaseDTO>>> GetAll()
+        public async Task<ResponseWrapper<List<VocabularyBaseDTO>>> GetAllVocabularies()
         {
             return new ResponseWrapper<List<VocabularyBaseDTO>>()
                 .SuccessReponseWrapper(ObjectMapper.Map<

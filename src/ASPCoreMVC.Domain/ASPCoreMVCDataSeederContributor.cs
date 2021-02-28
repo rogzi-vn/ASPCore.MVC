@@ -3,6 +3,7 @@ using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamQuestionGroups;
 using ASPCoreMVC.TCUEnglish.ExamSkillCategories;
 using ASPCoreMVC.TCUEnglish.ExamSkillParts;
+using ASPCoreMVC.TCUEnglish.GrammarCategories;
 using ASPCoreMVC.TCUEnglish.VocabularyTopics;
 using ASPCoreMVC.TCUEnglish.WordClasses;
 using System;
@@ -28,6 +29,7 @@ namespace ASPCoreMVC
 
         private readonly IRepository<WordClass, Guid> _WordClassRepository;
         private readonly IRepository<VocabularyTopic, Guid> _VocabularyTopicRepository;
+        private readonly IRepository<GrammarCategory, Guid> _GrammarCategoryRepository;
         public ASPCoreMVCDataSeederContributor(
             IRepository<AppFile, Guid> AppFileRepository,
             IRepository<ExamCategory, Guid> _ExamCategoryRepository,
@@ -35,7 +37,8 @@ namespace ASPCoreMVC
             IRepository<ExamSkillPart, Guid> _ExamSkillPartRepository,
             IRepository<ExamQuestionGroup, Guid> _ExamQuestionGroupRepository,
             IRepository<WordClass, Guid> _WordClassRepository,
-            IRepository<VocabularyTopic, Guid> _VocabularyTopicRepository)
+            IRepository<VocabularyTopic, Guid> _VocabularyTopicRepository,
+            IRepository<GrammarCategory, Guid> _GrammarCategoryRepository)
         {
             _AppFileRepository = AppFileRepository;
 
@@ -45,6 +48,7 @@ namespace ASPCoreMVC
             this._ExamQuestionGroupRepository = _ExamQuestionGroupRepository;
             this._WordClassRepository = _WordClassRepository;
             this._VocabularyTopicRepository = _VocabularyTopicRepository;
+            this._GrammarCategoryRepository = _GrammarCategoryRepository;
 
         }
         public async Task SeedAsync(DataSeedContext context)
@@ -53,6 +57,15 @@ namespace ASPCoreMVC
             await SeedBaseData(context);
             await SeedWordClasses(context);
             await SeedVocabularyTopics(context);
+            await SeedGrammarCategories(context);
+        }
+
+        private async Task SeedGrammarCategories(DataSeedContext context)
+        {
+            if (await _GrammarCategoryRepository.CountAsync() <= 0)
+            {
+                await _GrammarCategoryRepository.InsertManyAsync(DefaultGrammarCategories.GrammaraCategories);
+            }
         }
 
         private async Task SeedWordClasses(DataSeedContext context)

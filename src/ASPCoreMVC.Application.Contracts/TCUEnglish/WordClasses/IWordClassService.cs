@@ -10,6 +10,6 @@ namespace ASPCoreMVC.TCUEnglish.WordClasses
     public interface IWordClassService : IWrapperCrudAppService<
         WordClassDTO, Guid, GetWordClassDTO>
     {
-        public Task<ResponseWrapper<List<WordClassDTO>>> GetAll();
+        public Task<ResponseWrapper<List<WordClassDTO>>> GetAllWordClasses();
     }
 }

@@ -15,6 +15,6 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
         public Task<ResponseWrapper<PagedResultDto<VocabularyBaseDTO>>> GetBaseListAsync(GetVocabularyDTO input);
         public Task<ResponseWrapper<bool>> PutConfirm(Guid id);
         public Task<ResponseWrapper<bool>> PutNoConfirm(Guid id);
-        public Task<ResponseWrapper<List<VocabularyBaseDTO>>> GetAll();
+        public Task<ResponseWrapper<List<VocabularyBaseDTO>>> GetAllVocabularies();
     }
 }

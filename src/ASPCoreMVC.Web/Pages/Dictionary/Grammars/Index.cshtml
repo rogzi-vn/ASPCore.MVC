@@ -1,13 +1,63 @@
 ﻿@page
 @model ASPCoreMVC.Web.Pages.Dictionary.Grammars.DicGramIndexModel
 @{
+    var gcs = (Volo.Abp.Application.Dtos.PagedResultDto<ASPCoreMVC.TCUEnglish.GrammarCategories.GrammarCategoryBaseDTO>)
+        ViewData["GrammarCategories"];
+
     Model.SetBreadcrumbBtn(L["Contribute"].Value,
         $"javascript:showWcModal();",
         icon: "fas fa-paper-plane",
         c: "btn-primary");
 
     Model.SetBreadcrumb(
-        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
-        new string[] { L["Word classes"].Value });
+        new string[] { L["Dictionary"].Value, "#" },
+                new string[] { L["Grammars"].Value }
+        );
 }
-adfdafdaf
+
+@section Scripts {
+    <script src="/dist/js/te.user-grammars.js"></script>
+    <script>
+        cWcT = "@L["Contribute user grammar"]";
+        syncVt(null,'1','');
+    </script>
+}
+
+<div class="row">
+    <div class="col-12 col-md-7" id="grammars-container"></div>
+    <div class="col-12 col-md-5">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@L["Grammar categories"] (@gcs.TotalCount)</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+
+                    @if (gcs.TotalCount <= 0)
+                    {
+                        <p class="p-4 text-center" style="font-style: italic;">
+                            @L["No word classes have been created yet."]
+                        </p>
+                    }
+                    else
+                    {
+                        <div class="w-100 btn btn-outline-info my-2 p-3 align-middle text-left" id="sync-grammar-">
+                            @L["All"] (<span id="gc-counting-">0</span>)
+                        </div>
+                        @foreach (var item in gcs.Items)
+                        {
+                            <div class="w-100 btn btn-outline-info my-2 p-3 align-middle text-left" id="sync-grammar-@item.Id">
+                                @item.Name (<span id="gc-counting-@item.Id">0</span>)
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="grammar-detail" tabindex="-1" role="dialog" aria-hidden="true">
+
+</div>

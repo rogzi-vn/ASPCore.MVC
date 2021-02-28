@@ -17,7 +17,7 @@ namespace ASPCoreMVC.TCUEnglish.WordClasses
     {
         public WordClassService(IRepository<WordClass, Guid> repo) : base(repo) { }
 
-        public async Task<ResponseWrapper<List<WordClassDTO>>> GetAll()
+        public async Task<ResponseWrapper<List<WordClassDTO>>> GetAllWordClasses()
         {
             return new ResponseWrapper<List<WordClassDTO>>()
                 .SuccessReponseWrapper(ObjectMapper.Map<

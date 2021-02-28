@@ -17,7 +17,7 @@ namespace ASPCoreMVC.TCUEnglish.VocabularyTopics
     {
         public VocabularyTopicService(IRepository<VocabularyTopic, Guid> repo) : base(repo) { }
 
-        public async Task<ResponseWrapper<List<VocabularyTopicDTO>>> GetAll()
+        public async Task<ResponseWrapper<List<VocabularyTopicDTO>>> GetAllVocabularyTopics()
         {
             return new ResponseWrapper<List<VocabularyTopicDTO>>()
                 .SuccessReponseWrapper(ObjectMapper.Map<

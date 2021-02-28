@@ -53,5 +53,21 @@ namespace ASPCoreMVC.TCUEnglish.Grammars
             return new ResponseWrapper<
                 PagedResultDto<GrammarBaseDTO>>(res, "Successful");
         }
+
+        public async Task<ResponseWrapper<long>> GetCount(Guid ggId)
+        {
+            var q = await Repository.GetQueryableAsync();
+            if (ggId != Guid.Empty)
+            {
+                q = q.Where(x => x.GrammarCategoryId == ggId);
+            }
+            return new ResponseWrapper<long>().SuccessReponseWrapper(q.LongCount(), "Successful");
+        }
+
+        public async Task<ResponseWrapper<long>> GetCountAll()
+        {
+            var q = await Repository.GetQueryableAsync();
+            return new ResponseWrapper<long>().SuccessReponseWrapper(q.LongCount(), "Successful");
+        }
     }
 }
