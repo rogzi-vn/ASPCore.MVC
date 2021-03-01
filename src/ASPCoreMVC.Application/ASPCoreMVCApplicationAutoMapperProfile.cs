@@ -3,6 +3,8 @@ using ASPCoreMVC.AppUsers;
 using ASPCoreMVC.TCUEnglish.AppFiles;
 using ASPCoreMVC.TCUEnglish.ExamAnswers;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
+using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
+using ASPCoreMVC.TCUEnglish.ExamCatInstructs;
 using ASPCoreMVC.TCUEnglish.ExamDataLibraries;
 using ASPCoreMVC.TCUEnglish.ExamQuestionContainers;
 using ASPCoreMVC.TCUEnglish.ExamQuestionGroups;
@@ -11,8 +13,11 @@ using ASPCoreMVC.TCUEnglish.ExamSkillCategories;
 using ASPCoreMVC.TCUEnglish.ExamSkillParts;
 using ASPCoreMVC.TCUEnglish.GrammarCategories;
 using ASPCoreMVC.TCUEnglish.Grammars;
+using ASPCoreMVC.TCUEnglish.MesGroups;
+using ASPCoreMVC.TCUEnglish.MessGroups;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
+using ASPCoreMVC.TCUEnglish.UserMessages;
 using ASPCoreMVC.TCUEnglish.UserNotes;
 using ASPCoreMVC.TCUEnglish.Vocabularies;
 using ASPCoreMVC.TCUEnglish.VocabularyTopics;
@@ -83,6 +88,13 @@ namespace ASPCoreMVC
 
             CreateMap<UserNote, UserNoteDTO>().ReverseMap();
             CreateMap<UserNote, UserNoteBaseDTO>();
+
+            CreateMap<ExamCatInstructor, ExamCatInstructDTO>().ReverseMap();
+            CreateMap<ExamCatInstructor, CreateUpdateExamCatInstructDTO>().ReverseMap();
+
+            CreateMap<MessGroup, MessGroupDTO>().ReverseMap();
+
+            CreateMap<UserMessage, UserMessageDTO>().ReverseMap();
         }
     }
 }

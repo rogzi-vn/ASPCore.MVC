@@ -84,19 +84,5 @@ namespace ASPCoreMVC.Web.Pages.Dictionary.Notes.Partials
             else
                 return PartialView(AppTheme.ContentNothing);
         }
-
-        [HttpGet]
-        [Route("{id:Guid}/detail")]
-        public async Task<IActionResult> Detail(Guid id)
-        {
-            if (id == Guid.Empty)
-                return PartialView(AppTheme.ContentNothing);
-
-            var res = await _UserNoteService.GetAsync(id);
-            if (res.Success && res.Data != null)
-                return PartialView("~/Pages/Notes/Partials/Detail.cshtml", res.Data);
-            else
-                return PartialView(AppTheme.ContentNothing);
-        }
     }
 }

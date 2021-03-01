@@ -1,0 +1,32 @@
+﻿@page
+@model ASPCoreMVC.Web.Pages.Manager.Users.IndexModel
+@{
+    Model.SetBreadcrumbBtn(L["Create new"].Value,
+        $"javascript:showVtModal();",
+        icon: "fas fa-plus",
+        c: "btn-primary");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+        new string[] { L["Users"].Value });
+}
+
+@section Scripts {
+    <script src="~/dist/js/te.roles.js"></script>
+    <script>
+        cVtT = "Create role";
+        uVtT = "Update role";
+        syncVt('1', '');
+    </script>
+}
+
+<div class="row">
+    <div class="col-12 col-lg-7"></div>
+    <div class="col-12 col-lg-5" id="role-collection"></div>
+</div>
+
+<component type="typeof(FormModelComponent)"
+           render-mode="ServerPrerendered"
+           param-DeleteNoSubmit="true"
+           param-Id="@("ce-vt")"
+           param-Callback="@("vtSynced")" />

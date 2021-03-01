@@ -1,6 +1,6 @@
-﻿const vtBaseAPI = "/api/app/user-note";
-const vtCreateModalPartial = "/notes/create";
-const vtUpdateModalPartial = "/notes/update";
+﻿const vtBaseAPI = "/api/identity/roles";
+const vtCreateModalPartial = "/manager/roles/create";
+const vtUpdateModalPartial = "/manager/roles/update";
 var ceVtModalId = 'ce-vt';
 
 var cVtT = "";
@@ -15,13 +15,13 @@ function syncVt(p = defVt.p, filter = defVt.filter) {
         p: p,
         filter: filter
     };
-    $("#note-cats").load(`/notes/display?p=${p}&filter=${filter}`, function () {
+    $("#role-collection").load(`/manager/roles/display?p=${p}&filter=${filter}`, function () {
         // Init search action
         initSearchVt();
-        // Init note clicked
-        detailtNotes();
         // Init edit action
         initEditVt();
+        // initAddEvent
+        initAddEvent();
         // Init tooltips
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
@@ -33,26 +33,8 @@ function syncDefVt() {
     syncVt('1', '');
 }
 
-function detailtNotes() {
-    $(".q-item-in-list").click(event => {
-        var p = $(event.currentTarget);
-        var id = p.data('id');
-        if (id) {
-            fetch(`${vtBaseAPI}/${id}`).then(res => res.json()).then(res => {
-                if (res.success) {
-                    $("#note-title").html(res.data.title);
-                    $("#note-content").html(res.data.content);
-                    showToast('success', res.message);
-                } else {
-                    if (res.message) {
-                        showToast('error', res.message);
-                    } else {
-                        showToast('error', 'Can not show detail for this note');
-                    }
-                }
-            });
-        }
-    });
+function initAddEvent() {
+    $("#add-role-btn").click(() => showVtModal());
 }
 
 function initSearchVt() {
@@ -87,7 +69,7 @@ function showVtModal(event, id) {
             $(`#${ceVtModalId}`).modal('show');
             $(`#${ceVtModalId}-del-no-sub`).addClass("d-none");
             // bind editor
-            bindCKEditor("editor-vt", true);
+            bindCKEditor("editor-vt");
         });
     } else {
         pd(event);
@@ -114,10 +96,12 @@ function showVtModal(event, id) {
             // Hiển thị hộp thoại
             $(`#${ceVtModalId}`).modal('show');
             // bind editor
-            bindCKEditor("editor-vt", true);
+            bindCKEditor("editor-vt");
         });
     }
 }
 function vtSynced(res) {
     syncVt();
+    // Hiển thị hộp thoại
+    $(`#${ceVtModalId}`).modal('hide');
 }

@@ -1,14 +1,14 @@
-﻿@model Volo.Abp.Application.Dtos.PagedResultDto<ASPCoreMVC.TCUEnglish.UserNotes.UserNoteBaseDTO>
+﻿@model Volo.Abp.Application.Dtos.PagedResultDto<Volo.Abp.Identity.IdentityRoleDto>
 @{
-    string noRecords = "No notes have been created yet.";
+    string noRecords = "No roles have been created yet.";
 }
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">@L["Notes"] (@Model.TotalCount)</h6>
-        @*<div class="">
-                <button type="button" class="btn btn-success btn-sm shadow-sm" id="add-grammar-btn"><i class="fa fa-plus"></i></button>
-            </div>*@
+        <h6 class="m-0 font-weight-bold text-primary">@L["Roles"] (@Model.TotalCount)</h6>
+        <div class="">
+            <button type="button" class="btn btn-success btn-sm shadow-sm" id="add-role-btn"><i class="fa fa-plus"></i></button>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -17,7 +17,7 @@
                 <input type="text" class="form-control bg-light border-0 small"
                        id="search-vt-inp"
                        value="@ViewBag.Filter"
-                       placeholder="Search for note..." aria-label="Search">
+                       placeholder="Search for role..." aria-label="Search">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="button" id="search-vt-btn">
                         <i class="fas fa-search fa-sm"></i>
@@ -46,7 +46,7 @@
                     <thead class="bg-primary text-white">
                         <tr>
                             <th class="no-sort text-center" width="60">#</th>
-                            <th>@L["Note Name"]</th>
+                            <th>@L["Role Name"]</th>
                             <th class="no-sort text-center" width="100">@L["Action"]</th>
                         </tr>
                     </thead>
@@ -57,11 +57,10 @@
                         }
                         @foreach (var item in Model.Items)
                         {
-                            <tr class="q-item-in-list" data-id="@item.Id"
-                                data-toggle="tooltip" data-placement="bottom" title="@L["Show note"] '@item.Title'">
+                            <tr class="q-item-in-list" data-id="@item.Id">
                                 <td class="align-middle text-center">@(((ViewBag.p - 1) * AppTheme.Limit) +  i++)</td>
                                 <td class="align-middle">
-                                    @item.Title
+                                    @item.Name
                                 </td>
 
                                 <td class="text-center prevent-default">

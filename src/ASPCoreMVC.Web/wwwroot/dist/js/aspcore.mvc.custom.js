@@ -124,11 +124,11 @@ $('.editor').each(function () {
     bindEditor(this);
 });
 
-function bindCKEditor(className) {
+function bindCKEditor(className, isUserEditor = false) {
     $(`.${className}`).each(function () {
         var thisId = $(this).attr('id').valueOf();
         if (thisId) {
-            var editor = bindEditor(this);
+            var editor = bindEditor(this, isUserEditor);
             editor.on('change', function () {
                 $(`#${thisId}`).val(editor.getData());
             });
