@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ASPCoreMVC._Commons;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamDataLibraries;
+using ASPCoreMVC.TCUEnglish.Grammars;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +20,8 @@ namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
 
         private readonly IExamDataLibraryService _ExamDataLibraryService;
 
+        private readonly IGrammarService _GrammarService;
+
         [BindProperty]
         public ExamQuestionContainerDTO Container { get; set; }
         [BindProperty]
@@ -25,17 +29,20 @@ namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
         public ExamCategoryBaseDTO CurrentExamCategory { get; set; }
         public SkillCategoryBaseDTO CurrentSkillCategory { get; set; }
         public SkillPartBaseDTO CurrentSkillPart { get; set; }
+        public List<GrammarSimpify> Grammars { get; set; }
 
         public ExamDataCreateUpdateModel(
             IExamCategoryService examCategoryService,
             ISkillCategoryService skillCategoryService,
             ISkillPartService skillPartService,
-            IExamDataLibraryService examDataLibraryService)
+            IExamDataLibraryService examDataLibraryService,
+            IGrammarService grammarService)
         {
             _ExamCategoryService = examCategoryService;
             _SkillCategoryService = skillCategoryService;
             _SkillPartService = skillPartService;
             _ExamDataLibraryService = examDataLibraryService;
+            _GrammarService = grammarService;
         }
 
         public async Task<IActionResult> OnGetAsync(Guid? exId, Guid? skillCatId, Guid? skillPartId, Guid? id)
@@ -65,6 +72,7 @@ namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
                 return Redirect($"/manager/exam-categories/{exId}/skill-categories/{skillCatId}/skill-parts/{skillPartId}/exam-data-libraries");
             }
             Container = res.Data;
+
             return Page();
         }
 
@@ -115,6 +123,17 @@ namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
                 return $"/manager/exam-categories/{exId}/skill-categories/{skillCatId}/skill-parts";
             }
             CurrentSkillPart = skPart.Data;
+
+            if (CurrentSkillPart.MasterContentType == Common.MasterContentTypes.Grammar)
+            {
+                var res = await _GrammarService.GetAllSimpifyAsync();
+                if (!res.Success || res.Data == null)
+                {
+                    ToastError(res.Message);
+                    return "";
+                }
+                Grammars = res.Data;
+            }
 
             return null;
         }

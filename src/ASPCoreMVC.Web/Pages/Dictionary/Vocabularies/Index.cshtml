@@ -3,10 +3,58 @@
 @{
     Model.SetBreadcrumbBtn(L["Contribute"].Value,
         $"javascript:showWcModal();",
-        icon: "fas fa-plus",
+        icon: "fas fa-paper-plane",
         c: "btn-primary");
 
     Model.SetBreadcrumb(
-        new string[] { L["Vocabularies"].Value });
+    new string[] { L["Dictionary"].Value, "#" },
+    new string[] { L["Vocabularies"].Value });
 }
-adfdfdaf DicVocaIndexModel
+
+@section Styles {
+    <style>
+        svg text {
+            cursor: pointer;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="/dist/js/te.vocab.js"></script>
+    <script type="text/javascript">
+        syncVt('1', '');
+        var texts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Vocabs.Select(x => x.Word).ToArray()));
+        drawTagCloud("#tag-cloud", texts);
+        initTooltipForTagCloud();
+        onSreenSizeChange(function () {
+            drawTagCloud("#tag-cloud", texts);
+            initTooltipForTagCloud();
+        });
+
+        function initTooltipForTagCloud() {
+            $("svg text").each(function () {
+                var text = $(this).html();
+                $(this).attr('data-toggle','tooltip');
+                $(this).attr('data-placement','bottom');
+                $(this).attr('title', '@L["Search for word "] "' + text + '"');
+                $(this).tooltip();
+                $(this).click(function () {
+                    syncVt('1', text);
+                });
+            });
+        }
+
+    </script>
+}
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">@L["Search vocabulary"]</h6>
+    </div>
+    <div class="card-body row">
+        <div class="col-12 col-lg-8" id="vocabs">
+
+        </div>
+        <div class="col-12 col-lg-4 p-0 border border-second" id="tag-cloud">
+        </div>
+    </div>
+</div>

@@ -19,6 +19,11 @@ using ASPCoreMVC.TCUEnglish.WordClasses;
 using ASPCoreMVC.TCUEnglish.AppFiles;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ASPCoreMVC.TCUEnglish.ExamQuestionContainers;
+using ASPCoreMVC.TCUEnglish.UserNotes;
+using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
+using ASPCoreMVC.TCUEnglish.MesGroups;
+using ASPCoreMVC.TCUEnglish.UserMessages;
+using ASPCoreMVC.TCUEnglish.MemberInstructors;
 
 namespace ASPCoreMVC.EntityFrameworkCore
 {
@@ -48,6 +53,12 @@ namespace ASPCoreMVC.EntityFrameworkCore
         public DbSet<VocabularyTopic> VocabularyTopics { get; set; }
         public DbSet<WordClass> WordClasses { get; set; }
         public DbSet<AppFile> AppFiles { get; set; }
+
+        public DbSet<UserNote> UserNotes { get; set; }
+        public DbSet<ExamCatInstructor> ExamCatInstructors { get; set; }
+        public DbSet<MessGroup> MessGroups { get; set; }
+        public DbSet<UserMessage> UserMessages { get; set; }
+        public DbSet<MemberInstructor> MemberInstructors { get; set; }
 
         /* Add DbSet properties for your Aggregate Roots / Entities here.
          * Also map them inside ASPCoreMVCDbContextModelCreatingExtensions.ConfigureASPCoreMVC

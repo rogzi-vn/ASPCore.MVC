@@ -22,6 +22,13 @@ namespace ASPCoreMVC.TCUEnglish.Grammars
 
         }
 
+        public async Task<ResponseWrapper<List<GrammarSimpify>>> GetAllSimpifyAsync()
+        {
+            var res = await Repository.GetListAsync();
+            return new ResponseWrapper<List<GrammarSimpify>>()
+                .SuccessReponseWrapper(ObjectMapper.Map<List<Grammar>, List<GrammarSimpify>>(res), "Successful");
+        }
+
         public async Task<ResponseWrapper<PagedResultDto<GrammarBaseDTO>>> GetBase(Guid ggId)
         {
             var list = ObjectMapper.Map<List<Grammar>, List<GrammarBaseDTO>>(

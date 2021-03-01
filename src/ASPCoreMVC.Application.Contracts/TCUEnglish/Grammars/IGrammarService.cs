@@ -15,5 +15,6 @@ namespace ASPCoreMVC.TCUEnglish.Grammars
         public Task<ResponseWrapper<long>> GetCount(Guid ggId);
         public Task<ResponseWrapper<long>> GetCountAll();
         public Task<ResponseWrapper<PagedResultDto<GrammarBaseDTO>>> GetBaseListAsync(GetGrammarDTO inp);
+        public Task<ResponseWrapper<List<GrammarSimpify>>> GetAllSimpifyAsync();
     }
 }

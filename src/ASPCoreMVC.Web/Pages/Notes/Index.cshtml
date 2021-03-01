@@ -1,0 +1,43 @@
+﻿@page
+@model ASPCoreMVC.Web.Pages.Notes.IndexModel
+@{
+    Model.SetBreadcrumbBtn(L["Create new"].Value,
+    $"javascript:showVtModal();",
+    icon: "fas fa-plus",
+    c: "btn-primary");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Notes"].Value });
+}
+
+@section Scripts {
+    <script src="/dist/js/te.note-cates.js"></script>
+    <script>
+        cVtT = "Create Note";
+        uVtT = "Update Note";
+        syncVt('1', '');
+    </script>
+}
+
+<div class="row">
+    <div class="col-12 col-lg-7">
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary" id="note-title">@L["No note selected"]</h6>
+            </div>
+            <div class="card-body" id="note-content">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-5" id="note-cats">
+
+    </div>
+</div>
+
+<component type="typeof(FormModelComponent)"
+           render-mode="ServerPrerendered"
+           param-DeleteNoSubmit="true"
+           param-Id="@("ce-vt")"
+           param-Callback="@("vtSynced")" />

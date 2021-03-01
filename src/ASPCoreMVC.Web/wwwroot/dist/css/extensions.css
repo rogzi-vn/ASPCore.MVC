@@ -474,3 +474,20 @@ table.tb {
     .hover-correct-ans i, .hover-correct-ans span {
         pointer-events: none;
     }
+
+.voice-speaker {
+    cursor: pointer;
+    -webkit-transition: color 0.3s ease-out;
+    -moz-transition: color 0.3s ease-out;
+    -o-transition: color 0.3s ease-out;
+    transition: color 0.3s ease-out;
+}
+
+    .voice-speaker:hover {
+        color: rgb(255, 127, 14);
+        cursor: pointer;
+        -webkit-transition: color 0.3s ease-out;
+        -moz-transition: color 0.3s ease-out;
+        -o-transition: color 0.3s ease-out;
+        transition: color 0.3s ease-out;
+    }

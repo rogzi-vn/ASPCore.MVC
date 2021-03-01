@@ -1,0 +1,59 @@
+﻿@model Volo.Abp.Application.Dtos.PagedResultDto<ASPCoreMVC.TCUEnglish.Vocabularies.VocabularySearchResultDTO>
+@{
+    string noRecords = "Input your word to search";
+}
+<div class="table-responsive">
+    <div class="input-group">
+        <input type="text" class="form-control bg-light border-0 small"
+               id="search-vt-inp"
+               value="@ViewBag.Filter"
+               placeholder="Search for word..." aria-label="Search">
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="button" id="search-vt-btn">
+                <i class="fas fa-search fa-sm"></i>
+            </button>
+        </div>
+    </div>
+    <div class="separator my-2" id="gi-list-state">@ViewBag.ListState</div>
+    @if (Model.TotalCount <= 0)
+    {
+        <p class="p-4 text-center" style="font-style: italic;">
+            @L[noRecords]
+            @if (!((string)ViewBag.Filter).IsNullOrEmpty())
+            {
+                <br />
+                <a href="javascript:syncDefVt();"
+                   class="d-inline-block btn btn-sm btn-primary shadow-sm mt-4"
+                   style="font-style: normal;">
+                    @L["Show All"]
+                </a>
+            }
+        </p>
+    }
+    else
+    {
+        <div>
+            @foreach (var item in Model.Items)
+            {
+                var str = new string[] { item.TopicName, item.WordClassName }.JoinAsString(", ");
+                <div>
+                    <h2 class="text-dark font-weight-bold mb-0">@Html.Raw(item.Word)</h2>
+                    <div class="font-weight-bold my-2">@str</div>
+                    <div class="">
+                        <i class="fas fa-volume-up mr-2 voice-speaker"
+                           data-audio="@item.PronounceAudio"
+                           data-toggle="tooltip" data-placement="bottom" title="@L["Pronunciation"]"></i> @Html.Raw(item.Pronounce)
+                    </div>
+                    <div class="border border-warning my-2 p-2">
+                        @Html.Raw(item.Explain)
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="card-footer bg-white d-flex justify-content-center align-items-center">
+            <ul class="pagination pagination-flat pagination-sm justify-content-between mt-2 mt-sm-0">
+                @Html.Raw(ViewBag.Pagination)
+            </ul>
+        </div>
+    }
+</div>

@@ -83,7 +83,13 @@ $('.db-table').DataTable({
 });
 
 /* ================ CK EDITOR ==================== */
-function bindEditor(e) {
+function bindEditor(e, isUserEditor = false) {
+    var fileBrower = "";
+    if (isUserEditor) {
+        fileBrower = '/ckeditor-browser-user';
+    } else {
+        fileBrower = '/ckeditor-browser';
+    }
     var height = 300;
     var isMint = false;
     try {
@@ -103,7 +109,7 @@ function bindEditor(e) {
             'preview',
             'imageresize',
         ],
-        filebrowserBrowseUrl: '/ckeditor-browser',
+        filebrowserBrowseUrl: fileBrower,
     };
     if (isMint) {
         _conf.toolbar = [
@@ -146,6 +152,18 @@ $(document).ajaxSend(function (event, jqxhr, settings) {
 $(document).ajaxComplete(function (event, jqxhr, settings) {
     $.LoadingOverlay('hide');
 });
+
+const nativeFetch = window.fetch;
+window.fetch = function (...args) {
+    $.LoadingOverlay('show');
+    var x = nativeFetch.apply(window, args);
+    x.then(function () {
+        $.LoadingOverlay('hide');
+    }).catch(function () {
+        $.LoadingOverlay('hide');
+    });
+    return x;
+}
 
 /* ============== SWEET ALERT 2 ============ */
 function deleteConfirm(
@@ -295,3 +313,56 @@ $(".prevent-default").each(function () {
 });
 //======================================================//
 
+function drawTagCloud(selector, texts = []) {
+    $(selector).html("");
+    var fill = d3.scale.category20();
+
+    var w = $(selector).width();
+
+    var layout = d3.layout.cloud()
+        .size([w, w])
+        .words(texts.map(function (d) {
+            return { text: d, size: 10 + Math.random() * 90 };
+        }))
+        .padding(5)
+        .rotate(function () { return ~~(Math.random() * 2) * 90; })
+        .font("Impact")
+        .fontSize(function (d) { return d.size; })
+        .on("end", draw);
+
+    layout.start();
+
+    function draw(words) {
+        d3.select(selector).append("svg")
+            .attr("width", layout.size()[0])
+            .attr("height", layout.size()[1])
+            .append("g")
+            .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+            .selectAll("text")
+            .data(words)
+            .enter().append("text")
+            .style("font-size", function (d) { return d.size + "px"; })
+            .style("font-family", "Impact")
+            .style("fill", function (d, i) { return fill(i); })
+            .attr("text-anchor", "middle")
+            .attr("transform", function (d) {
+                return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+            })
+            .text(function (d) { return d.text; });
+    }
+}
+
+function onSreenSizeChange(changeCallback) {
+    $(window).on('resize', function () {
+        var win = $(this); //this = window
+        if (win.height() < 600) { changeCallback(); }
+        if (win.height() >= 600) { changeCallback(); }
+        if (win.height() >= 768) { changeCallback(); }
+        if (win.height() >= 992) { changeCallback(); }
+        if (win.width() >= 1280) { changeCallback(); }
+    });
+}
+
+function playAudio(url) {
+    new Audio(url).play();
+}

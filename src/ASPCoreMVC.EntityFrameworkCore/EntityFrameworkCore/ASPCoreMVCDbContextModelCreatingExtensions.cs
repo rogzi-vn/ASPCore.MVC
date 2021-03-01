@@ -14,6 +14,11 @@ using Microsoft.EntityFrameworkCore;
 using Volo.Abp;
 using Volo.Abp.EntityFrameworkCore.Modeling;
 using ASPCoreMVC.TCUEnglish.ExamQuestionContainers;
+using ASPCoreMVC.TCUEnglish.UserNotes;
+using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
+using ASPCoreMVC.TCUEnglish.MesGroups;
+using ASPCoreMVC.TCUEnglish.UserMessages;
+using ASPCoreMVC.TCUEnglish.MemberInstructors;
 
 namespace ASPCoreMVC.EntityFrameworkCore
 {
@@ -191,6 +196,56 @@ namespace ASPCoreMVC.EntityFrameworkCore
 
                 //Configure other properties (if you are using the fluent API)
                 b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+            });
+            builder.Entity<UserNote>(b =>
+            {
+                b.ToTable(ASPCoreMVCConsts.DbTablePrefix + nameof(UserNote), ASPCoreMVCConsts.DbSchema);
+                //Configure the base properties
+                b.ConfigureByConvention();
+
+                //Configure other properties (if you are using the fluent API)
+                b.Property(x => x.Title).IsRequired().HasMaxLength(128);
+            });
+
+            builder.Entity<ExamCatInstructor>(b =>
+            {
+                b.ToTable(ASPCoreMVCConsts.DbTablePrefix + nameof(ExamCatInstructor), ASPCoreMVCConsts.DbSchema);
+                //Configure the base properties
+                b.ConfigureByConvention();
+
+                b.HasOne<ExamCatInstructor>().WithMany().HasForeignKey(x => x.ExamCategoryId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<MessGroup>(b =>
+            {
+                b.ToTable(ASPCoreMVCConsts.DbTablePrefix + nameof(MessGroup), ASPCoreMVCConsts.DbSchema);
+                //Configure the base properties
+                b.ConfigureByConvention();
+                b.Property(x => x.GroupName).IsRequired().HasMaxLength(128);
+                b.Property(x => x.Members).IsRequired();
+                b.Property(x => x.Starter).IsRequired();
+            });
+
+            builder.Entity<UserMessage>(b =>
+            {
+                b.ToTable(ASPCoreMVCConsts.DbTablePrefix + nameof(UserMessage), ASPCoreMVCConsts.DbSchema);
+                //Configure the base properties
+                b.ConfigureByConvention();
+
+                b.HasOne<MessGroup>().WithMany().HasForeignKey(x => x.MessGroupId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<MemberInstructor>(b =>
+            {
+                b.ToTable(ASPCoreMVCConsts.DbTablePrefix + nameof(MemberInstructor), ASPCoreMVCConsts.DbSchema);
+                //Configure the base properties
+                b.ConfigureByConvention();
+
+                b.Property(x => x.MemeberId).IsRequired();
+                b.Property(x => x.ExamCatInstructorId).IsRequired();
+                b.HasOne<ExamCatInstructor>().WithMany()
+                .HasForeignKey(x => x.ExamCatInstructorId)
+                .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

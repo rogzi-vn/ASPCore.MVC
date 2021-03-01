@@ -3,7 +3,7 @@
 }
 @code {
     [Parameter] public string Id { get; set; }
-    [Parameter] public string Title { get; set; }
+    [Parameter] public string Title { get; set; } = "";
     [Parameter] public string FormAction { get; set; } = "";
     [Parameter] public string FormMethod { get; set; } = "POST";
     [Parameter] public string ConfirmText { get; set; } = "Confirm";

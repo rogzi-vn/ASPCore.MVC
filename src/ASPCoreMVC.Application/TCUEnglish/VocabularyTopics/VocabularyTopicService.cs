@@ -55,6 +55,7 @@ namespace ASPCoreMVC.TCUEnglish.VocabularyTopics
         protected override async Task<IQueryable<VocabularyTopic>> CreateFilteredQueryAsync(GetVocabularyTopicDTO input)
         {
             var query = await Repository.GetQueryableAsync();
+            query = query.Where(x => x.IsConfirmed);
             return query.Where(x => input.Filter.IsNullOrEmpty() || x.Name.Contains(input.Filter));
         }
     }

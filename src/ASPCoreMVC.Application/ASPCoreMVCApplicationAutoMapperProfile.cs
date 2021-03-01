@@ -13,6 +13,7 @@ using ASPCoreMVC.TCUEnglish.GrammarCategories;
 using ASPCoreMVC.TCUEnglish.Grammars;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
+using ASPCoreMVC.TCUEnglish.UserNotes;
 using ASPCoreMVC.TCUEnglish.Vocabularies;
 using ASPCoreMVC.TCUEnglish.VocabularyTopics;
 using ASPCoreMVC.TCUEnglish.WordClasses;
@@ -66,6 +67,7 @@ namespace ASPCoreMVC
 
             CreateMap<Grammar, GrammarDTO>().ReverseMap();
             CreateMap<Grammar, GrammarBaseDTO>();
+            CreateMap<Grammar, GrammarSimpify>();
 
             CreateMap<GrammarCategory, GrammarCategoryDTO>().ReverseMap();
             CreateMap<GrammarCategory, GrammarCategoryBaseDTO>();
@@ -76,7 +78,11 @@ namespace ASPCoreMVC
 
             CreateMap<Vocabulary, VocabularyDTO>().ReverseMap();
             CreateMap<VocabularyDTO, VocabularyBaseDTO>();
+            CreateMap<Vocabulary, VocabularySearchResultDTO>();
             CreateMap<Vocabulary, VocabularyBaseDTO>();
+
+            CreateMap<UserNote, UserNoteDTO>().ReverseMap();
+            CreateMap<UserNote, UserNoteBaseDTO>();
         }
     }
 }
