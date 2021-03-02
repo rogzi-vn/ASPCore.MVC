@@ -213,7 +213,7 @@ namespace ASPCoreMVC.EntityFrameworkCore
                 //Configure the base properties
                 b.ConfigureByConvention();
 
-                b.HasOne<ExamCatInstructor>().WithMany().HasForeignKey(x => x.ExamCategoryId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne<ExamCategory>().WithMany().HasForeignKey(x => x.ExamCategoryId).OnDelete(DeleteBehavior.Cascade);
             });
 
             builder.Entity<MessGroup>(b =>

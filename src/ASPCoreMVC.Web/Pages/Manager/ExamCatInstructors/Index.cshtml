@@ -1,0 +1,33 @@
+﻿@page "/manager/exam-categories/{exCatId:Guid}/instructors"
+@model ASPCoreMVC.Web.Pages.Manager.ExamCatInstructors.IndexModel
+@{
+    Model.SetBreadcrumbBtn(L["Discard &amp; Go back"].Value,
+    $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories",
+    icon: "fas fa-arrow-left",
+    c: "btn-danger");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+        new string[] { L["Exam categories"].Value, $"/manager/exam-categories" },
+        new string[] { Model.CurrentExamCategory.Name });
+}
+
+@section Styles {
+}
+
+@section Scripts {
+    <script src="/dist/js/te.exam-cat-instructor.js"></script>
+    <script src="~/dist/js/te.exam-cat-instructor-search.js"></script>
+    <script>
+        syncVt('@Model.CurrentExamCategory.Id', '1', '');
+        syncData('@Model.CurrentExamCategory.Id', '1', '');
+    </script>
+}
+
+@Html.AntiForgeryToken()
+<div class="row">
+    <div class="col-12 col-lg-7" id="instructors"></div>
+    <div class="col-12 col-lg-5" id="add-instructor-panel">
+
+    </div>
+</div>

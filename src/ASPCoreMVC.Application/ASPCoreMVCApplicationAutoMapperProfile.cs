@@ -4,7 +4,7 @@ using ASPCoreMVC.TCUEnglish.AppFiles;
 using ASPCoreMVC.TCUEnglish.ExamAnswers;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
-using ASPCoreMVC.TCUEnglish.ExamCatInstructs;
+using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
 using ASPCoreMVC.TCUEnglish.ExamDataLibraries;
 using ASPCoreMVC.TCUEnglish.ExamQuestionContainers;
 using ASPCoreMVC.TCUEnglish.ExamQuestionGroups;
@@ -90,7 +90,7 @@ namespace ASPCoreMVC
             CreateMap<UserNote, UserNoteBaseDTO>();
 
             CreateMap<ExamCatInstructor, ExamCatInstructDTO>().ReverseMap();
-            CreateMap<ExamCatInstructor, CreateUpdateExamCatInstructDTO>().ReverseMap();
+            CreateMap<CreateUpdateExamCatInstructDTO, ExamCatInstructor>();
 
             CreateMap<MessGroup, MessGroupDTO>().ReverseMap();
 

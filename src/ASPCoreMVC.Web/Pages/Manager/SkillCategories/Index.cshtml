@@ -1,15 +1,15 @@
 @page "/manager/exam-categories/{exCatId:Guid}/skill-categories"
 @model ASPCoreMVC.Web.Pages.Manager.SkillCategories.SkillCategoriesIndexModel
 @{
-    Model.SetBreadcrumbBtn(L["Create new"].Value,
-        $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories/create",
-        icon: "fas fa-plus",
-        c: "btn-primary");
+    Model.SetBreadcrumbBtn(L["Instructors manager"].Value,
+     $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/instructors",
+     icon: "fas fa-user-tie",
+     c: "btn-success");
 
     Model.SetBreadcrumb(
-        new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
-        new string[] { L["Exam categories"].Value, $"/manager/exam-categories" },
-        new string[] { Model.CurrentExamCategory.Name });
+new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+new string[] { L["Exam categories"].Value, $"/manager/exam-categories" },
+new string[] { Model.CurrentExamCategory.Name });
 }
 
 @section Styles {
@@ -22,7 +22,7 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">@L["Skill categories"]</h6>
-        <a href="/manager/@Model.CurrentExamCategory.Id/skill-categories/create" class="float-md-right mt-2 m-md-0 d-md-none btn btn-sm btn-primary shadow-sm">
+        <a href="/manager/exam-categories/@Model.CurrentExamCategory.Id/skill-categories/create" class="float-md-right mt-2 m-md-0 btn btn-sm btn-primary shadow-sm">
             <i class="fas fa-plus fa-sm text-white mr-1"></i> @L["Create new"]
         </a>
     </div>

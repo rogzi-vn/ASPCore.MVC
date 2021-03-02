@@ -96,22 +96,27 @@ namespace ASPCoreMVC.AppUsers
             {
                 input.Sorting = nameof(AppUser.Name);
             }
-            var users = Repository
-                .WhereIf(
-                    !input.Filter.IsNullOrWhiteSpace(),
-                    x => IsContaint(x, input.Filter))
+            var query = await Repository.GetQueryableAsync();
+            if (!input.Filter.IsNullOrWhiteSpace())
+            {
+                query = query.Where(user =>
+                user.DisplayName.Contains(input.Filter) ||
+                user.Surname.Contains(input.Filter) ||
+                user.Name.Contains(input.Filter) ||
+                user.PhoneNumber.Contains(input.Filter) ||
+                user.IdentityCardNumber.Contains(input.Filter) ||
+                user.UserName.Contains(input.Filter) ||
+                user.Email.Contains(input.Filter));
+            }
+            var users = query
                 .OrderBy(input.Sorting)
                 .Skip(input.SkipCount)
                 .Take(input.MaxResultCount)
                 .ToList();
 
-            var totalCount = input.Filter == null
-                ? await Repository.CountAsync()
-                : await Repository.CountAsync(x => IsContaint(x, input.Filter));
-
             return new ResponseWrapper<PagedResultDto<AppUserDTO>>(
                 new PagedResultDto<AppUserDTO>(
-                totalCount,
+                query.Count(),
                 ObjectMapper.Map<List<AppUser>, List<AppUserDTO>>(users)),
                 "Successful");
         }
@@ -136,16 +141,6 @@ namespace ASPCoreMVC.AppUsers
                     "Successful");
             }
             return null;
-        }
-
-        private bool IsContaint(AppUser user, string filter)
-        {
-            return $"{user.Name} {user.Surname}".Contains(filter) ||
-                $"{user.Surname} {user.Name}".Contains(filter) ||
-                user.PhoneNumber.Equals(filter) ||
-                user.IdentityCardNumber.Equals(filter) ||
-                user.UserName.Contains(filter) ||
-                user.Email.Contains(filter);
         }
 
         public async Task<ResponseWrapper<bool>> PasswordValidate(string password)

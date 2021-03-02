@@ -1,12 +1,11 @@
 ﻿using ASPCoreMVC._Commons;
 using ASPCoreMVC._Commons.Services;
+using ASPCoreMVC.AppUsers;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 
-namespace ASPCoreMVC.TCUEnglish.ExamCatInstructs
+namespace ASPCoreMVC.TCUEnglish.ExamCatInstructors
 {
     public interface IExamCatInstructService : IWrapperCrudAppService<
         ExamCatInstructDTO,
@@ -14,6 +13,6 @@ namespace ASPCoreMVC.TCUEnglish.ExamCatInstructs
         GetExamCatInstructDTO,
         CreateUpdateExamCatInstructDTO>
     {
-        public Task<ResponseWrapper<PagedResultDto<ExamCatInstructDTO>>> GetAllExamCatInstruct(GetExamCatInstructDTO inp);
+        public Task<ResponseWrapper<PagedResultDto<AppUserDTO>>> GetInstructorsAsync(Guid ExamCatInstructorId, GetAppUserDTO input);
     }
 }

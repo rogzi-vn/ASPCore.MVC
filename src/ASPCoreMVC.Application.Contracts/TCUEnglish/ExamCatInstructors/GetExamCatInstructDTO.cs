@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Volo.Abp.Application.Dtos;
 
-namespace ASPCoreMVC.TCUEnglish.ExamCatInstructs
+namespace ASPCoreMVC.TCUEnglish.ExamCatInstructors
 {
     public class GetExamCatInstructDTO : PagedAndSortedResultRequestDto
     {
