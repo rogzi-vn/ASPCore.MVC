@@ -73,7 +73,7 @@ namespace ASPCoreMVC.Web.Pages.Dictionary.ExamCatInstructors.Partials
 
                 ViewBag.Filter = filter;
                 ViewBag.Pagination = PaginateHelper.Generate(
-                    "javascript:syncVt('" + examCategoryId + "','{0}', '" + filter + "');",
+                    "javascript:syncData('" + examCategoryId + "','{0}', '" + filter + "');",
                     p.Value, Containers.TotalCount, AppTheme.Limit);
                 return PartialView(TableView, Containers);
             }

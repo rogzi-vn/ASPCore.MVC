@@ -2410,6 +2410,10 @@
     <None Include="wwwroot\plugins\ckeditor\skins\office2013\skin.js" />
     <None Include="wwwroot\plugins\ckeditor\styles.js" />
     <None Include="wwwroot\plugins\ckeditor\vendor\promise.js" />
+    <None Include="wwwroot\plugins\treejs\tree.js" />
+    <None Include="wwwroot\plugins\treejs\tree.js.map" />
+    <None Include="wwwroot\plugins\treejs\tree.min.js" />
+    <None Include="wwwroot\plugins\treejs\tree.min.js.map" />
     <None Include="wwwroot\plugins\jquery-loading-overlay-2.1.7\loadingoverlay.js" />
     <None Include="wwwroot\plugins\jquery-loading-overlay-2.1.7\loadingoverlay.min.js" />
     <None Include="wwwroot\plugins\jquery-loading-overlay-2.1.7\loadingoverlay.min.js.map" />
@@ -2575,7 +2579,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Manager\Users\Partials\" />
     <Folder Include="wwwroot\host\user_files\" />
     <Folder Include="wwwroot\plugins\ckeditor\plugins\imageresponsive\" />
     <Folder Include="wwwroot\plugins\plyr-3.6.4\" />

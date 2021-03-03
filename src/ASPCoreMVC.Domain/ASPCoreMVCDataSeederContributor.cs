@@ -53,7 +53,7 @@ namespace ASPCoreMVC
         }
         public async Task SeedAsync(DataSeedContext context)
         {
-            //await SeedDefaultDirectory(context);
+            await SeedDefaultDirectory(context);
             await SeedBaseData(context);
             await SeedWordClasses(context);
             await SeedVocabularyTopics(context);

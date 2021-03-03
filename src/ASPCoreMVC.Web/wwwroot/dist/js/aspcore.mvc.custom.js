@@ -165,6 +165,14 @@ window.fetch = function (...args) {
     return x;
 }
 
+$(".zzz").click(event => {
+    $.LoadingOverlay('show');
+});
+
+$(window).bind('beforeunload', function () {
+    $.LoadingOverlay('show');
+});
+
 /* ============== SWEET ALERT 2 ============ */
 function deleteConfirm(
     deleteUrl,

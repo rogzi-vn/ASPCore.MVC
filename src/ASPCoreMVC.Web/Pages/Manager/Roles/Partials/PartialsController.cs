@@ -9,7 +9,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Identity;
+using Volo.Abp.PermissionManagement;
 
 namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
 {
@@ -17,14 +19,22 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
     public class PartialsController : AbpController
     {
         private readonly IIdentityRoleAppService _IdentityRoleAppService;
+        private readonly IPermissionAppService _PermissionAppService;
 
-        private static string CreateUpdateView = "~/Pages/Manager/Roles/Partials/CreateUpdate.cshtml";
+        private readonly IPermissionDefinitionManager _PermissionDefinitionManager;
+
+        private static string CreateView = "~/Pages/Manager/Roles/Partials/Create.cshtml";
+        private static string UpdateView = "~/Pages/Manager/Roles/Partials/Update.cshtml";
         private static string TableView = "~/Pages/Manager/Roles/Partials/Table.cshtml";
 
         public PartialsController(
-            IIdentityRoleAppService _IdentityRoleAppService)
+            IIdentityRoleAppService _IdentityRoleAppService,
+            IPermissionAppService _PermissionAppService,
+            IPermissionDefinitionManager _PermissionDefinitionManager)
         {
             this._IdentityRoleAppService = _IdentityRoleAppService;
+            this._PermissionAppService = _PermissionAppService;
+            this._PermissionDefinitionManager = _PermissionDefinitionManager;
         }
 
         [Route("display")]
@@ -63,7 +73,7 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
         [Route("create")]
         public IActionResult GetCreateAsync()
         {
-            return PartialView(CreateUpdateView);
+            return PartialView(CreateView);
         }
 
         [HttpGet]
@@ -71,7 +81,7 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
         public async Task<IActionResult> GetUpdateAsync(Guid id)
         {
             var res = await _IdentityRoleAppService.GetAsync(id);
-            return PartialView(CreateUpdateView, res);
+            return PartialView(UpdateView, ObjectMapper.Map<IdentityRoleDto, IdentityRoleUpdateDto>(res));
         }
     }
 }

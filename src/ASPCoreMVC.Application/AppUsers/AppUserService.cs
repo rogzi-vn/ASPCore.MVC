@@ -69,12 +69,18 @@ namespace ASPCoreMVC.AppUsers
             var res = await Repository.GetAsync(id);
             if (res == null)
                 return null;
+
             var updateAppUserProfileDTO = ObjectMapper.Map<AppUserProfileDTO, UpdateAppUserProfileDTO>(profile);
-            ObjectMapper.Map(updateAppUserProfileDTO, res);
-            res = await Repository.UpdateAsync(res);
-            return new ResponseWrapper<AppUserProfileDTO>(
-                ObjectMapper.Map<AppUser, AppUserProfileDTO>(res),
-                "Successful");
+            var updated = await UpdateAsync(id, updateAppUserProfileDTO);
+            if (!updated.Success)
+                return new ResponseWrapper<AppUserProfileDTO>()
+                    .ErrorReponseWrapper(null, "Update profile faild", -403);
+            else
+            {
+                return new ResponseWrapper<AppUserProfileDTO>(
+                    ObjectMapper.Map<AppUserDTO, AppUserProfileDTO>(updated.Data),
+                    "Successful");
+            }
         }
 
         public async Task<ResponseWrapper<AppUserProfileDTO>> UpdateSelfProfileAsync(AppUserProfileDTO profile)
@@ -83,11 +89,16 @@ namespace ASPCoreMVC.AppUsers
             if (res == null)
                 return null;
             var updateAppUserProfileDTO = ObjectMapper.Map<AppUserProfileDTO, UpdateAppUserProfileDTO>(profile);
-            ObjectMapper.Map(updateAppUserProfileDTO, res);
-            res = await Repository.UpdateAsync(res);
-            return new ResponseWrapper<AppUserProfileDTO>(
-                ObjectMapper.Map<AppUser, AppUserProfileDTO>(res),
-                "Successful");
+            var updated = await UpdateAsync(CurrentUser.Id.Value, updateAppUserProfileDTO);
+            if (!updated.Success)
+                return new ResponseWrapper<AppUserProfileDTO>()
+                    .ErrorReponseWrapper(null, "Update profile faild", -403);
+            else
+            {
+                return new ResponseWrapper<AppUserProfileDTO>(
+                    ObjectMapper.Map<AppUserDTO, AppUserProfileDTO>(updated.Data),
+                    "Successful");
+            }
         }
 
         public override async Task<ResponseWrapper<PagedResultDto<AppUserDTO>>> GetListAsync(GetAppUserDTO input)
@@ -135,7 +146,7 @@ namespace ASPCoreMVC.AppUsers
                 var userProfile = ObjectMapper.Map<CreateAppUserDTO, AppUserProfileDTO>(input);
                 var updateAppUserProfileDTO = ObjectMapper.Map<AppUserProfileDTO, UpdateAppUserProfileDTO>(userProfile);
                 ObjectMapper.Map(updateAppUserProfileDTO, user);
-                user = await Repository.UpdateAsync(user);
+                user = await Repository.UpdateAsync(user, autoSave: true);
                 return new ResponseWrapper<AppUserDTO>(
                     ObjectMapper.Map<AppUser, AppUserDTO>(user),
                     "Successful");

@@ -1,0 +1,21 @@
+﻿@model Volo.Abp.Identity.IdentityRoleCreateOrUpdateDtoBase
+@Html.AntiForgeryToken()
+<div class="">
+    <div class="form-group">
+        <label asp-for="Name" class="mb-1"></label>
+        <input asp-for="Name" class="form-control">
+        <div class="form-text text-danger small">
+            <span asp-validation-for="Name"></span>
+        </div>
+    </div>
+    <input type="hidden" asp-for="IsDefault" />
+    <input type="hidden" asp-for="IsPublic" />
+    @*<div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" asp-for="IsDefault">
+            <label class="form-check-label" asp-for="IsDefault"></label>
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" asp-for="IsPublic">
+            <label class="form-check-label" asp-for="IsPublic"></label>
+        </div>*@
+</div>

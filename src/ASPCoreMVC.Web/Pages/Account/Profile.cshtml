@@ -2,6 +2,16 @@
 @model ASPCoreMVC.Web.Pages.Account.ProfileModel
 @{
     Layout = AppTheme.DefaultLayout;
+    //======================================================//
+    //Model.SetBreadcrumbBtn(L["Full management"].Value,
+    //$"javascript:showVtModal();",
+    //icon: "fas fa-users-cog",
+    //c: "btn-warning");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Profile"].Value });
+
+    //======================================================//
     var defaultUserPhoto = Model.UserProfile.Picture;
     if (defaultUserPhoto.IsNullOrEmpty())
         defaultUserPhoto = await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE);
@@ -13,6 +23,7 @@
             autoclose: true,
             todayHighlight: true,
         }).datepicker('update', new Date());
+
     </script>
 
     <script>
@@ -28,7 +39,6 @@
                     $('#user-photo-preview').attr('src', e.target.result);
                     $("#remove-preview-user-photo").show();
                 }
-
                 reader.readAsDataURL(input.files[0]); // convert to base64 string
             }
         }
@@ -82,12 +92,7 @@
     </script>
 }
 
-<!-- Page Heading -->
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">@L["Profile"]</h1>
-</div>
-
-<form method="post">
+<form method="post" id="aaa" enctype="multipart/form-data">
     <div class="row mb-4">
         <div class="col-12 col-lg-4">
             <div class="card shadow mb-4">
@@ -109,8 +114,8 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" onclick="$('#user-photo-input').click();" class="btn btn-primary mt-3">@L["Change Photo"]</button>
-                        <input id="user-photo-input" asp-for="UserAvatar.File" class="position-absolute d-none">
+                        <button type="button" onclick="$('#user-photo-input').click();" class="btn btn-primary mt-3 btn-sm shadow-sm">@L["Change Photo"]</button>
+                        <input id="user-photo-input" type="file" asp-for="UserAvatar.File" class="position-absolute d-none">
                         <input id="user-photo-name" type="hidden" asp-for="UserAvatar.Name" />
                         <div class="form-text text-danger small mt-2">
                             <span asp-validation-for="UserAvatar.File"></span>
@@ -304,7 +309,7 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-primary float-right">Save Changes</button>
+                            <button type="submit" class="btn btn-primary float-right">@L["Save Changes"]</button>
                         </div>
                     </div>
                 </div>

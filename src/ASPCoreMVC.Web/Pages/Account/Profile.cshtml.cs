@@ -41,33 +41,44 @@ namespace ASPCoreMVC.Web.Pages.Account
                     !UserAvatar.Name.IsNullOrEmpty())
                 {
                     if (!UserAvatar.File.IsImage())
-                    {
-                        ToastError(L["Trans:PleaseUploadImageOnly"]);
-                    }
+                        ToastError(L["Please upload image only"]);
                     else
                     {
                         // Nếu người dùng đã chọn ảnh đại diện mới
                         using var memoryStream = new MemoryStream();
                         await UserAvatar.File.CopyToAsync(memoryStream);
 
-                        //var AppFile = await _FileAppService.SaveAppFileAsync(
-                        //    new SaveAppFileDTO
-                        //    {
-                        //        Name = UserAvatar.Name,
-                        //        Content = memoryStream.ToArray()
-                        //    }
-                        //);
-                        // Cập nhật đường dẫn ảnh vào cho hồ sơ người dùng
-                        //UserProfile.Picture = $"/download/{AppFile.Id}_{AppFile.Name}";
+                        var fRes = await _FileAppService.PostUserAvatarUploadAsync(
+                            new RawAppFileDTO
+                            {
+                                Name = UserAvatar.Name,
+                                Content = memoryStream.ToArray()
+                            }
+                        );
+                        if (fRes.Success)
+                        {
+                            //Cập nhật đường dẫn ảnh vào cho hồ sơ người dùng
+                            UserProfile.Picture = $"/resources/{fRes.Data.Name}";
+                            ToastSuccess(fRes.Message);
+                        }
+                        else
+                        {
+                            ToastError(fRes.Message);
+                            return Page();
+                        }
                     }
                 }
-                UserProfile = (await _AppUserService.UpdateSelfProfileAsync(UserProfile)).Data;
-                ToastSuccess(L["Trans:UpdateProfileSuccessful"]);
+                var res = await _AppUserService.UpdateSelfProfileAsync(UserProfile);
+                if (res.Success)
+                {
+                    UserProfile = res.Data;
+                    ToastSuccess(res.Message);
+                }
+                else
+                    ToastError(res.Message);
             }
             else
-            {
-                ToastError(L["Trans:YourInputValueInvalid"]);
-            }
+                ToastError(L["Your input is invalid"]);
             return Page();
         }
     }
