@@ -1,0 +1,15 @@
+﻿@{
+    var modalId = "user-profile-view-able";
+}
+@using (Html.BeginScripts())
+{
+    <script src="/dist/js/te.user-profile-viewable.js"></script>
+    <script>
+        userProfileViewableModalId = '@modalId';
+        initLoadUserProfileTrigger();
+    </script>
+}
+<component type="typeof(EmptyModelComponent)"
+           render-mode="ServerPrerendered"
+           param-Id="@modalId"
+           param-Class="@("modal-lg")" />

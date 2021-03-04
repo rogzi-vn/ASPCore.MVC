@@ -139,7 +139,7 @@ function bindCKEditor(className, isUserEditor = false) {
 // https://gasparesganga.com/labs/jquery-loading-overlay/
 /* ================ LOADING OVERLAY ==================== */
 $.LoadingOverlaySetup({
-    background: '#FFFFFF06',
+    background: '#00000030',
     image: '/dist/img/loading.svg',
     imageAnimation: '3s rotate_right',
     imageColor: '#e74c3c',
@@ -373,4 +373,52 @@ function onSreenSizeChange(changeCallback) {
 
 function playAudio(url) {
     new Audio(url).play();
+}
+
+function makeSameSize() {
+    setTimeout(() => {
+        var maxWidth = 0;
+        $('.same-size').each(function () {
+            if ($(this).width() > maxWidth) {
+                maxWidth = $(this).width();
+            }
+        });
+        $(".same-size").width(maxWidth);
+    }, 200);
+}
+
+function fetchTreeJs(url, element, f, selectedNotes = [], disables = []) {
+    fetch(url)
+        .then(r => r.json())
+        .then(r => {
+            initTreeJs(element, r, f, selectedNotes, disables);
+        });
+}
+function initTreeJs(element, data, f, selectedNotes = [], disables = []) {
+    let tree = new Tree(element, {
+        // root data
+        data: data,
+        loaded: function () {
+            if (selectedNotes) {
+                var cloneSN = [...selectedNotes];
+                cloneSN.forEach(item => {
+                    var haveChild = false;
+                    selectedNotes.forEach(i => {
+                        if (i.indexOf(item) === 0 && i.length > item.length) {
+                            haveChild = true;
+                        }
+                    });
+                    if (haveChild)
+                        selectedNotes = selectedNotes.filter(x => x != item);
+                });
+            }
+            // pre-selected nodes
+            this.values = selectedNotes;
+            this.disables = disables;
+        },
+        onChange: function () {
+            f(this.selectedNodes, this.values);
+        }
+
+    });
 }

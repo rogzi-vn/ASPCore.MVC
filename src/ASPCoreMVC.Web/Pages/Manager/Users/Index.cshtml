@@ -1,10 +1,10 @@
 ﻿@page
 @model ASPCoreMVC.Web.Pages.Manager.Users.IndexModel
 @{
-    Model.SetBreadcrumbBtn(L["Full management"].Value,
-        $"javascript:showVtModal();",
-        icon: "fas fa-users-cog",
-        c: "btn-warning");
+    //Model.SetBreadcrumbBtn(L["Full management"].Value,
+    //    $"javascript:showVtModal();",
+    //    icon: "fas fa-users-cog",
+    //    c: "btn-warning");
 
     Model.SetBreadcrumb(
         new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
@@ -13,6 +13,7 @@
 }
 
 @section Scripts {
+    <partial name="@AppTheme.UserProfileViewable" />
     <script src="/dist/js/te.roles.js"></script>
     <script src="/dist/js/te.manage-user.js"></script>
     <script>

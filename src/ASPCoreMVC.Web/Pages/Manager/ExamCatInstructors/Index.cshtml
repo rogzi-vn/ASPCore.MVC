@@ -16,8 +16,9 @@
 }
 
 @section Scripts {
+    <partial name="@AppTheme.UserProfileViewable" />
     <script src="/dist/js/te.exam-cat-instructor.js"></script>
-    <script src="~/dist/js/te.exam-cat-instructor-search.js"></script>
+    <script src="/dist/js/te.exam-cat-instructor-search.js"></script>
     <script>
         syncVt('@Model.CurrentExamCategory.Id', '1', '');
         syncData('@Model.CurrentExamCategory.Id', '1', '');

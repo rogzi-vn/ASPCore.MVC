@@ -1,4 +1,4 @@
-﻿@model Volo.Abp.Identity.IdentityRoleCreateOrUpdateDtoBase
+﻿@model Volo.Abp.Identity.IdentityRoleCreateDto
 @Html.AntiForgeryToken()
 <div class="">
     <div class="form-group">
@@ -8,8 +8,9 @@
             <span asp-validation-for="Name"></span>
         </div>
     </div>
-    <input type="hidden" asp-for="IsDefault" />
-    <input type="hidden" asp-for="IsPublic" />
+    <input type="hidden" asp-for="IsDefault" value="false" />
+    <input type="hidden" asp-for="IsPublic" value="false" />
+    <input type="hidden" asp-for="ExtraProperties" />
     @*<div class="form-group form-check">
             <input type="checkbox" class="form-check-input" asp-for="IsDefault">
             <label class="form-check-label" asp-for="IsDefault"></label>
@@ -18,4 +19,6 @@
             <input type="checkbox" class="form-check-input" asp-for="IsPublic">
             <label class="form-check-label" asp-for="IsPublic"></label>
         </div>*@
+
+    <div id="permisisons-tree"></div>
 </div>

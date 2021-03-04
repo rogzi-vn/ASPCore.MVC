@@ -1,8 +1,11 @@
-﻿using ASPCoreMVC.TCUEnglish.GrammarCategories;
+﻿using ASPCoreMVC._Commons;
+using ASPCoreMVC.Permissions;
+using ASPCoreMVC.TCUEnglish.GrammarCategories;
 using ASPCoreMVC.TCUEnglish.Grammars;
 using ASPCoreMVC.TCUEnglish.UserNotes;
 using ASPCoreMVC.Web.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +22,8 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
     public class PartialsController : AbpController
     {
         private readonly IIdentityRoleAppService _IdentityRoleAppService;
-        private readonly IPermissionAppService _PermissionAppService;
 
-        private readonly IPermissionDefinitionManager _PermissionDefinitionManager;
+        private readonly IPermissionManager _PermissionManager;
 
         private static string CreateView = "~/Pages/Manager/Roles/Partials/Create.cshtml";
         private static string UpdateView = "~/Pages/Manager/Roles/Partials/Update.cshtml";
@@ -29,12 +31,10 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
 
         public PartialsController(
             IIdentityRoleAppService _IdentityRoleAppService,
-            IPermissionAppService _PermissionAppService,
-            IPermissionDefinitionManager _PermissionDefinitionManager)
+            IPermissionManager _PermissionManager)
         {
             this._IdentityRoleAppService = _IdentityRoleAppService;
-            this._PermissionAppService = _PermissionAppService;
-            this._PermissionDefinitionManager = _PermissionDefinitionManager;
+            this._PermissionManager = _PermissionManager;
         }
 
         [Route("display")]
@@ -76,12 +76,76 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
             return PartialView(CreateView);
         }
 
+        [HttpPost]
+        [Route("create")]
+        public async Task<IActionResult> PostCreateAsync(
+            [FromBody] IdentityRoleCreateDto role,
+            [FromQuery] string permissions)
+        {
+            var res = await _IdentityRoleAppService
+                .CreateAsync(role);
+            if (res != null)
+            {
+                foreach (var permission in permissions.Split(","))
+                {
+                    if (permission != ASPCoreMVCPermissions.GroupName)
+                        await _PermissionManager.SetForRoleAsync(res.Name, permission, true);
+                }
+                return Json(new ResponseWrapper<IdentityRoleDto>().SuccessReponseWrapper(res, "Create new role successful"));
+            }
+            else
+                return Json(new ResponseWrapper<IdentityRoleDto>().ErrorReponseWrapper(default, "Create new role successful", 400));
+        }
+
+        [HttpDelete]
+        [Route("delete/{id}")]
+        public async Task<IActionResult> DeleteUpdateAsync(Guid id)
+        {
+            var res = await _IdentityRoleAppService.GetAsync(id);
+            if (res != null)
+            {
+                // Delete all permission
+                await _PermissionManager.DeleteAsync("R", res.Name);
+                // Delete role name
+                await _IdentityRoleAppService.DeleteAsync(id);
+                return Json(new ResponseWrapper<IdentityRoleDto>().SuccessReponseWrapper(res, $"Delete role {res.Name} successful"));
+            }
+            return Json(new ResponseWrapper<IdentityRoleDto>().ErrorReponseWrapper(null, "Faild", 500));
+        }
+
         [HttpGet]
         [Route("update/{id}")]
         public async Task<IActionResult> GetUpdateAsync(Guid id)
         {
             var res = await _IdentityRoleAppService.GetAsync(id);
+            var permissions = await _PermissionManager.GetAllForRoleAsync(res.Name);
+            ViewBag.Permissions = permissions.Where(x => x.IsGranted).Select(x => x.Name).ToList().JoinAsString(","); ;
             return PartialView(UpdateView, ObjectMapper.Map<IdentityRoleDto, IdentityRoleUpdateDto>(res));
+        }
+        [HttpPut]
+        [Route("update/{id}")]
+        public async Task<IActionResult> PutUpdateAsync(
+            [FromRoute] Guid id,
+            [FromBody] IdentityRoleUpdateDto role,
+            [FromQuery] string permissions)
+        {
+            var previousRoleName = await _IdentityRoleAppService.GetAsync(id);
+            var res = await _IdentityRoleAppService
+                .UpdateAsync(id, role);
+            if (res != null)
+            {
+                // Delete old permission
+                await _PermissionManager.DeleteAsync("R", previousRoleName.Name);
+                // Add new permisison
+                foreach (var permission in permissions.Split(","))
+                {
+                    if (permission != ASPCoreMVCPermissions.GroupName)
+                        await _PermissionManager.SetForRoleAsync(res.Name, permission, true);
+                }
+                return Json(new ResponseWrapper<IdentityRoleDto>().SuccessReponseWrapper(res, "Create new role successful"));
+            }
+            else
+                return Json(new ResponseWrapper<IdentityRoleDto>().ErrorReponseWrapper(default, "Create new role successful", 400));
         }
     }
 }

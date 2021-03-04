@@ -59,7 +59,8 @@
                         }
                         @foreach (var item in Model.Items)
                         {
-                            <tr class="q-item-in-list" data-id="@item.Id">
+                            <tr class="q-item-in-list profile-viewable" data-id="@item.UserId"
+                                title="@string.Format(L["Click to view infomation about {0}"].Value, item.UserDisplayName)">
                                 <td class="align-middle text-center">@(((ViewBag.p - 1) * AppTheme.Limit) +  i++)</td>
                                 <td class="align-middle">
                                     @item.UserDisplayName

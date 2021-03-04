@@ -15,6 +15,8 @@ function syncData(p = __defInput.p, filter = __defInput.filter) {
         __initSearch();
         // Init action button
         initActionButton();
+        // Init user profile view able
+        initLoadUserProfileTrigger();
         // Init tooltips
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()

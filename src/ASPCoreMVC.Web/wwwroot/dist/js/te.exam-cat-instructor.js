@@ -18,6 +18,8 @@ function syncVt(catId = defVt.catId, p = defVt.p, filter = defVt.filter) {
         initSearchVt();
         // Remove confirm
         initRemoveAction();
+        // initLoadUserProfileTrigger
+        initLoadUserProfileTrigger();
         // Init tooltips
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()

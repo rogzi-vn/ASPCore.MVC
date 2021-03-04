@@ -68,5 +68,18 @@ namespace ASPCoreMVC.Users
         {
 
         }
+
+
+        public void SetEmail(string email)
+        {
+            Email = email;
+            EmailConfirmed = false;
+        }
+
+        public void SetPhoneNumber(string phoneNumber)
+        {
+            PhoneNumber = phoneNumber;
+            PhoneNumberConfirmed = false;
+        }
     }
 }

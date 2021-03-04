@@ -28,6 +28,8 @@ namespace ASPCoreMVC.Web
         public const string LayoutSelectFileModal = "~/Partials/_Layout.SelectFileModal.cshtml";
         public const string ContentNothing = "~/Partials/_Content.Nothing.cshtml";
 
+        public const string UserProfileViewable = "~/Pages/_Common/Partials/UserProfiles/UserProfileViewable.cshtml";
+
         public virtual string GetLayout(string name, bool fallbackToDefault = true)
         {
             switch (name)

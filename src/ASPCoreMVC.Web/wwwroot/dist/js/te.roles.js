@@ -1,4 +1,4 @@
-﻿const vtBaseAPI = "/api/identity/roles";
+﻿const vtBaseAPI = "/manager/roles";
 const vtCreateModalPartial = "/manager/roles/create";
 const vtUpdateModalPartial = "/manager/roles/update";
 var ceVtModalId = 'ce-vt';
@@ -63,11 +63,18 @@ function showVtModal(event, id) {
             // Xử lý sự kiện sau khi load xong
             $(`#${ceVtModalId}`)
                 .parent()
-                .attr('action', `${vtBaseAPI}`)
+                .attr('action', `${vtBaseAPI}/create`)
                 .attr('method', 'POST');
             // Hiển thị hộp thoại
             $(`#${ceVtModalId}`).modal('show');
             $(`#${ceVtModalId}-del-no-sub`).addClass("d-none");
+            // permisison tree
+            fetchTreeJs("/user-permissions/treejs-data", "#permisisons-tree", (nodes, values) => {
+                var selectedPermissionName = nodes.map((item) => { return item["id"]; });
+                $(`#${ceVtModalId}`)
+                    .parent()
+                    .attr('action', `${vtBaseAPI}/create?permissions=${selectedPermissionName}`);
+            });
             // bind editor
             bindCKEditor("editor-vt");
         });
@@ -79,20 +86,34 @@ function showVtModal(event, id) {
             // Xử lý sự kiện sau khi load xong
             $(`#${ceVtModalId}`)
                 .parent()
-                .attr('action', `${vtBaseAPI}/${id}`)
+                .attr('action', `${vtBaseAPI}/update/${id}`)
                 .attr('method', 'PUT');
-            // Cho phép xóa
-            $(`#${ceVtModalId}-del-no-sub`).removeClass("d-none");
-            $(`#${ceVtModalId}-del-no-sub`).click(function () {
-                // Ẩn hộp thoại
-                $(`#${ceVtModalId}`).modal('hide');
-                deleteConfirm(`${vtBaseAPI}/${id}`, function (res) {
-                    //if (id == selectedQuestionGroup) {
-                    //    $(`#remove-selected-question-group-btn`).click();
-                    //}
-                    syncVt();
+
+            // selected permissions
+            var currentRolePermissions = $("#current-role-permissions").val();
+            // permisison tree
+            fetchTreeJs("/user-permissions/treejs-data", "#permisisons-tree", (nodes, values) => {
+                var selectedPermissionName = nodes.map((item) => { return item["id"]; });
+                $(`#${ceVtModalId}`)
+                    .parent()
+                    .attr('action', `${vtBaseAPI}/update/${id}?permissions=${selectedPermissionName}`);
+            }, currentRolePermissions.split(","));
+            var currentRoleName = $("#role-name").val();
+            if (currentRoleName.toLocaleLowerCase() != "admin") {
+                // Cho phép xóa
+                $(`#${ceVtModalId}-del-no-sub`).removeClass("d-none");
+                // delete options
+                $(`#${ceVtModalId}-del-no-sub`).click(function () {
+                    // Ẩn hộp thoại
+                    $(`#${ceVtModalId}`).modal('hide');
+                    deleteConfirm(`${vtBaseAPI}/delete/${id}`, function (res) {
+                        //if (id == selectedQuestionGroup) {
+                        //    $(`#remove - selected - question - group - btn`).click();
+                        //}
+                        syncVt();
+                    });
                 });
-            });
+            }
             // Hiển thị hộp thoại
             $(`#${ceVtModalId}`).modal('show');
             // bind editor
@@ -101,7 +122,24 @@ function showVtModal(event, id) {
     }
 }
 function vtSynced(res) {
-    syncVt();
-    // Hiển thị hộp thoại
-    $(`#${ceVtModalId}`).modal('hide');
+    if (res.status >= 200 && res.status <= 299) {
+        try {
+            if (res.responseJSON.success) {
+                syncVt();
+                // Hiển thị hộp thoại
+                $(`#${ceVtModalId}`).modal('hide');
+            }
+        } catch (e) {
+
+        }
+    } else {
+        try {
+            res.responseJSON.error.validationErrors.forEach(item => {
+                console.log(item);
+                showToast('error', item.message);
+            });
+        } catch (ez) {
+        }
+    }
+
 }

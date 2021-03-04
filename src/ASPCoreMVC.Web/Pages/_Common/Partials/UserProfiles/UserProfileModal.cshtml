@@ -1,0 +1,129 @@
+﻿@model ASPCoreMVC.AppUsers.AppUserProfileDTO
+
+@{
+    var dName = "";
+    if (Model.DisplayName.IsNullOrEmpty())
+        dName = Model.Name;
+    else
+        dName = Model.DisplayName;
+
+    Model.DisplayName = $"{dName}";
+    if (!Model.Nickname.IsNullOrEmpty())
+        Model.DisplayName += $" ({Model.Nickname})";
+}
+
+<div class="modal-header bg-gradient-primary">
+    <h5 class="modal-title text-white font-weight-bold">@dName</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-12 col-lg-4">
+            <div class="text-center">
+                <div class="avatar-container">
+                    <div class="avatar-img border border-primary rounded-circle">
+                        <img class="w-100 rounded-circle avatar-shadow" src="@Model.Picture">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-2 border p-3 border-warning">
+                @Html.Raw(Model.ShortBio)
+            </div>
+        </div>
+        <div class="col-12 col-lg-8">
+            @* Start display name *@
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text bg-white same-size">
+                        <i class="fas fa-signature mr-1" style="width: 20px;"></i>
+                        <label asp-for="DisplayName" class="m-0"></label>
+                    </div>
+                </div>
+                <input type="text" asp-for="DisplayName" class="form-control text-right bg-white" disabled>
+            </div>
+            @* End display name *@
+            @* Start Email *@
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text bg-white same-size">
+                        <i class="fas fa-at mr-1" style="width: 20px;"></i>
+                        <label asp-for="Email" class="m-0"></label>
+                    </div>
+                </div>
+                <input type="text" asp-for="Email" class="form-control text-right bg-white" disabled>
+            </div>
+            @* End Email *@
+            @* Start Phone number *@
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text bg-white same-size">
+                        <i class="fas fa-phone mr-1" style="width: 20px;"></i>
+                        <label asp-for="PhoneNumber" class="m-0"></label>
+                    </div>
+                </div>
+                <input type="text" asp-for="PhoneNumber" class="form-control text-right bg-white" disabled>
+            </div>
+            @* End Phone number *@
+            @* Start website *@
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text bg-white same-size">
+                        <i class="fas fa-globe mr-1" style="width: 20px;"></i>
+                        <label asp-for="Website" class="m-0"></label>
+                    </div>
+                </div>
+                <input type="text" asp-for="Website" class="form-control text-right bg-white" disabled>
+            </div>
+            @* End website *@
+            @* Start website *@
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text bg-white same-size">
+                        <i class="fas fa-map-pin mr-1" style="width: 20px;"></i>
+                        <label asp-for="Address" class="m-0"></label>
+                    </div>
+                </div>
+                <input type="text" asp-for="Address" class="form-control text-right bg-white" disabled>
+            </div>
+            @* End website *@
+            @* Start website *@
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text bg-white same-size">
+                        <i class="fas fa-id-card mr-1" style="width: 20px;"></i>
+                        <label asp-for="IdentityCardNumber" class="m-0"></label>
+                    </div>
+                </div>
+                <input type="text" asp-for="IdentityCardNumber" class="form-control text-right bg-white" disabled>
+            </div>
+            @* End website *@
+            @* Start website *@
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text bg-white same-size">
+                        <i class="fas fa-birthday-cake mr-1" style="width: 20px;"></i>
+                        <label asp-for="BirthDay" class="m-0"></label>
+                    </div>
+                </div>
+                <input type="text" asp-for="BirthDay" class="form-control text-right bg-white" disabled>
+            </div>
+            @* End website *@
+            @* Start website *@
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text bg-white same-size">
+                        <i class="fas fa-genderless mr-1" style="width: 20px;"></i>
+                        <label asp-for="Gender" class="m-0"></label>
+                    </div>
+                </div>
+                <input type="text" asp-for="Gender" class="form-control text-right bg-white" disabled>
+            </div>
+            @* End website *@
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm shadow-sm" data-dismiss="modal">@L["Close"]</button>
+</div>

@@ -63,42 +63,88 @@ namespace ASPCoreMVC.AppUsers
                 "Successful");
         }
 
-        [Authorize(ASPCoreMVCPermissions.UserProfiles.Edit)]
-        public async Task<ResponseWrapper<AppUserProfileDTO>> UpdateProfileAsync(Guid id, AppUserProfileDTO profile)
+
+        private async Task<ResponseWrapper<AppUserProfileDTO>> _UpdateProfileAsync(Guid id, AppUserProfileDTO profile)
         {
             var res = await Repository.GetAsync(id);
             if (res == null)
                 return null;
 
+            var cloneUser = res;
+            bool isHaveUpdateImportantInfos = false;
+
+            #region Process email/phone update
+            if (cloneUser.Email != profile.Email)
+            {
+                // If current user email different with new profile email, we will check for update available or not
+                if (await Repository.AnyAsync(x => x.Email.Equals(profile.Email, StringComparison.OrdinalIgnoreCase)))
+                {
+                    // If other user have this email of current profile, notify to user
+                    return new ResponseWrapper<AppUserProfileDTO>()
+                    .ErrorReponseWrapper(ObjectMapper.Map<AppUser, AppUserProfileDTO>(res), "Email already exists", 403);
+                }
+                else
+                {
+                    isHaveUpdateImportantInfos = true;
+                    // Set new Email to current user profile
+                    cloneUser.SetEmail(profile.Email);
+
+                }
+            }
+
+            if (cloneUser.PhoneNumber != profile.PhoneNumber)
+            {
+                // If current user phone number different with new profile phone number, we will check for update available or not
+                if (await Repository.AnyAsync(x => x.PhoneNumber.Equals(profile.PhoneNumber)))
+                {
+                    // If other user have this phone number of current profile, notify to user
+                    return new ResponseWrapper<AppUserProfileDTO>()
+                    .ErrorReponseWrapper(ObjectMapper.Map<AppUser, AppUserProfileDTO>(res), "Phone number already exists", 403);
+                }
+                else
+                {
+                    isHaveUpdateImportantInfos = true;
+                    // Set new phone number to current user profile
+                    cloneUser.SetPhoneNumber(profile.PhoneNumber);
+
+                }
+            }
+
+            if (isHaveUpdateImportantInfos)
+            {
+                // Update for current user
+                res = await Repository.UpdateAsync(cloneUser);
+            }
+            #endregion
+
+            #region Process profile update
             var updateAppUserProfileDTO = ObjectMapper.Map<AppUserProfileDTO, UpdateAppUserProfileDTO>(profile);
+            // Saving picture path if user update null
+            if (updateAppUserProfileDTO.Picture.IsNullOrEmpty())
+                updateAppUserProfileDTO.Picture = cloneUser.Picture;
+
             var updated = await UpdateAsync(id, updateAppUserProfileDTO);
             if (!updated.Success)
                 return new ResponseWrapper<AppUserProfileDTO>()
-                    .ErrorReponseWrapper(null, "Update profile faild", -403);
+                    .ErrorReponseWrapper(ObjectMapper.Map<AppUser, AppUserProfileDTO>(res), "Update profile faild", 403);
             else
             {
                 return new ResponseWrapper<AppUserProfileDTO>(
                     ObjectMapper.Map<AppUserDTO, AppUserProfileDTO>(updated.Data),
                     "Successful");
             }
+            #endregion
+        }
+
+        [Authorize(ASPCoreMVCPermissions.UserProfiles.Edit)]
+        public async Task<ResponseWrapper<AppUserProfileDTO>> UpdateProfileAsync(Guid id, AppUserProfileDTO profile)
+        {
+            return await _UpdateProfileAsync(id, profile);
         }
 
         public async Task<ResponseWrapper<AppUserProfileDTO>> UpdateSelfProfileAsync(AppUserProfileDTO profile)
         {
-            var res = await Repository.GetAsync(CurrentUser.Id.Value);
-            if (res == null)
-                return null;
-            var updateAppUserProfileDTO = ObjectMapper.Map<AppUserProfileDTO, UpdateAppUserProfileDTO>(profile);
-            var updated = await UpdateAsync(CurrentUser.Id.Value, updateAppUserProfileDTO);
-            if (!updated.Success)
-                return new ResponseWrapper<AppUserProfileDTO>()
-                    .ErrorReponseWrapper(null, "Update profile faild", -403);
-            else
-            {
-                return new ResponseWrapper<AppUserProfileDTO>(
-                    ObjectMapper.Map<AppUserDTO, AppUserProfileDTO>(updated.Data),
-                    "Successful");
-            }
+            return await _UpdateProfileAsync(CurrentUser.Id.Value, profile);
         }
 
         public override async Task<ResponseWrapper<PagedResultDto<AppUserDTO>>> GetListAsync(GetAppUserDTO input)

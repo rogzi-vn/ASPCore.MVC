@@ -23,7 +23,6 @@
             autoclose: true,
             todayHighlight: true,
         }).datepicker('update', new Date());
-
     </script>
 
     <script>
@@ -61,7 +60,7 @@
                 $("#user-photo-name").val(fileName);
             } else {
                 clearPickedAvatar();
-                showToast('error', '@L["Trans:PleaseUploadImageOnly"]');
+                showToast('error', '@L["Please up load image only"]');
             }
         });
 
@@ -93,6 +92,10 @@
 }
 
 <form method="post" id="aaa" enctype="multipart/form-data">
+    <input type="hidden" asp-for="UserProfile.Id" />
+    <input type="hidden" asp-for="UserProfile.Picture" />
+    <input type="hidden" asp-for="UserProfile.EmailConfirmed" />
+    <input type="hidden" asp-for="UserProfile.PhoneNumberConfirmed" />
     <div class="row mb-4">
         <div class="col-12 col-lg-4">
             <div class="card shadow mb-4">
@@ -114,7 +117,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" onclick="$('#user-photo-input').click();" class="btn btn-primary mt-3 btn-sm shadow-sm">@L["Change Photo"]</button>
+                        <button type="button" onclick="$('#user-photo-input').click();" class="btn btn-warning mt-3 btn-sm shadow-sm">@L["Change Photo"]</button>
                         <input id="user-photo-input" type="file" asp-for="UserAvatar.File" class="position-absolute d-none">
                         <input id="user-photo-name" type="hidden" asp-for="UserAvatar.Name" />
                         <div class="form-text text-danger small mt-2">
@@ -155,27 +158,27 @@
                 <div class="card-body">
 
                     <div class="form-group">
-                        <label class="mb-1">Current Password</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-                        @*<div class="form-text text-danger small">
-                                <span asp-validation-for="UserProfile.Email"></span>
-                            </div>*@
+                        <label class="mb-1" asp-for="AppUserPassword.CurrentPassword"></label>
+                        <input class="form-control" asp-for="AppUserPassword.CurrentPassword">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="AppUserPassword.CurrentPassword"></span>
+                        </div>
                     </div>
 
                     <div class="form-group mt-3">
-                        <label class="mb-1">New password</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-                        @*<div class="form-text text-danger small">
-                                <span asp-validation-for="UserProfile.Email"></span>
-                            </div>*@
+                        <label class="mb-1" asp-for="AppUserPassword.NewPassword"></label>
+                        <input class="form-control" asp-for="AppUserPassword.NewPassword">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="AppUserPassword.NewPassword"></span>
+                        </div>
                     </div>
 
                     <div class="form-group mt-2">
-                        <label class="mb-1">Confirm new password</label>
-                        <input type="tel" class="form-control" placeholder="Enter phone number">
-                        @*<div class="form-text text-danger small">
-                                <span asp-validation-for="UserProfile.Email"></span>
-                            </div>*@
+                        <label class="mb-1" asp-for="AppUserPassword.ConfirmNewPassword"></label>
+                        <input class="form-control" asp-for="AppUserPassword.ConfirmNewPassword">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="AppUserPassword.ConfirmNewPassword"></span>
+                        </div>
                     </div>
                     <div class="alert alert-warning alert-dismissible fade show mt-2" role="alert">
                         <strong>Pay attention!</strong> If you do not want to change your password, please leave all fields blank in this field.
@@ -309,7 +312,7 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-primary float-right">@L["Save Changes"]</button>
+                            <button type="submit" class="btn btn-primary btn-sm shadow-sm float-right">@L["Save Changes"]</button>
                         </div>
                     </div>
                 </div>

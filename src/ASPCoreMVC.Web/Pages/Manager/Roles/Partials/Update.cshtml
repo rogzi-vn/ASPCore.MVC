@@ -3,7 +3,14 @@
 <div class="">
     <div class="form-group">
         <label asp-for="Name" class="mb-1"></label>
-        <input asp-for="Name" class="form-control">
+        @if (Model.Name.Equals("admin", StringComparison.OrdinalIgnoreCase))
+        {
+            <input asp-for="Name" class="form-control" id="role-name" disabled>
+        }
+        else
+        {
+            <input asp-for="Name" class="form-control" id="role-name">
+        }
         <div class="form-text text-danger small">
             <span asp-validation-for="Name"></span>
         </div>
@@ -20,4 +27,14 @@
             <input type="checkbox" class="form-check-input" asp-for="IsPublic">
             <label class="form-check-label" asp-for="IsPublic"></label>
         </div>*@
+    @if (Model.Name.Equals("admin", StringComparison.OrdinalIgnoreCase))
+    {
+        <input type="hidden" value="@ViewBag.Permissions" id="current-role-permissions" />
+        <div id="permisisons-tree"></div>
+    }
+    else
+    {
+        <input type="hidden" value="@ViewBag.Permissions" id="current-role-permissions" />
+        <div id="permisisons-tree"></div>
+    }
 </div>

@@ -5,9 +5,11 @@ using ASPCoreMVC.Helpers;
 using ASPCoreMVC.Permissions;
 using ASPCoreMVC.TCUEnglish._Common.BlobStorages;
 using ASPCoreMVC.TCUEnglish.AppFiles;
+using ASPCoreMVC.Users;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.BlobStoring;
@@ -23,11 +25,14 @@ namespace ASPCoreMVC.AppFileService
         GetAppFileListDTO>, IAppFileService
     {
         private readonly IBlobContainer<UserFileContainer> _fileContainer;
+        private readonly IRepository<AppUser, Guid> _UserRepository;
         public AppFileService(
             IRepository<AppFile, Guid> repository,
-            IBlobContainer<UserFileContainer> fileContainer) : base(repository)
+            IBlobContainer<UserFileContainer> fileContainer,
+            IRepository<AppUser, Guid> _UserRepository) : base(repository)
         {
             _fileContainer = fileContainer;
+            this._UserRepository = _UserRepository;
             GetPolicyName = ASPCoreMVCPermissions.AppFiles.Default;
             GetListPolicyName = ASPCoreMVCPermissions.AppFiles.Default;
             CreatePolicyName = ASPCoreMVCPermissions.AppFiles.Create;
@@ -53,6 +58,24 @@ namespace ASPCoreMVC.AppFileService
                     Name = fileName,
                     Content = blob
                 }, "Successful");
+        }
+
+        private async Task<ResponseWrapper<bool>> DeleteRawFile(string name)
+        {
+            name = Path.GetFileName(name);
+            var fileId = Guid.Empty;
+            try
+            {
+                fileId = Guid.Parse(name.Split("_").FirstOrDefault());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            var deleteResult = await _fileContainer.DeleteAsync(name);
+            if (deleteResult && fileId != Guid.Empty)
+                await Repository.DeleteAsync(fileId);
+            return new ResponseWrapper<bool>().SuccessReponseWrapper(deleteResult, "Successful");
         }
 
         private async Task<ResponseWrapper<AppFileDTO>> SaveRawFile(RawAppFileDTO input, AppFile parent
@@ -144,6 +167,9 @@ namespace ASPCoreMVC.AppFileService
 
         public async Task<ResponseWrapper<AppFileDTO>> PostUserAvatarUploadAsync(RawAppFileDTO input)
         {
+            var currentUserAvatar = await _UserRepository.GetAsync(CurrentUser.Id.Value);
+            if (currentUserAvatar.Picture != null)
+                await DeleteRawFile(currentUserAvatar.Picture);
             return await SaveRawFile(
                 input,
                 AppFileDefaults.UserAvatarsDirectory,
