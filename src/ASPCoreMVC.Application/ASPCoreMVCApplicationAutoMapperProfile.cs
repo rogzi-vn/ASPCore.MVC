@@ -4,7 +4,6 @@ using ASPCoreMVC.TCUEnglish.AppFiles;
 using ASPCoreMVC.TCUEnglish.ExamAnswers;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
-using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
 using ASPCoreMVC.TCUEnglish.ExamDataLibraries;
 using ASPCoreMVC.TCUEnglish.ExamQuestionContainers;
 using ASPCoreMVC.TCUEnglish.ExamQuestionGroups;
@@ -24,7 +23,7 @@ using ASPCoreMVC.TCUEnglish.VocabularyTopics;
 using ASPCoreMVC.TCUEnglish.WordClasses;
 using ASPCoreMVC.Users;
 using AutoMapper;
-using Microsoft.AspNetCore.Identity;
+using Volo.Abp.Identity;
 
 namespace ASPCoreMVC
 {

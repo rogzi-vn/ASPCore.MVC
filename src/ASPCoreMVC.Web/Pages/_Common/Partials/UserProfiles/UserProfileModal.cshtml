@@ -28,6 +28,9 @@
                     </div>
                 </div>
             </div>
+            <div class="text-danger font-weight-bolder text-center my-3">
+                (@ViewBag.Roles)
+            </div>
             <div class="mt-2 border p-3 border-warning">
                 @Html.Raw(Model.ShortBio)
             </div>
@@ -125,5 +128,13 @@
     </div>
 </div>
 <div class="modal-footer">
+    @{
+        var route = "";
+        if (CurrentUser.Id == Model.Id)
+            route = "/account/profile";
+        else
+            route = $"/manager/users/{Model.Id}/update";
+    }
+    <a href="@route" class="btn btn-warning btn-sm shadow-sm mr-auto">@L["Update profile"]</a>
     <button type="button" class="btn btn-primary btn-sm shadow-sm" data-dismiss="modal">@L["Close"]</button>
 </div>

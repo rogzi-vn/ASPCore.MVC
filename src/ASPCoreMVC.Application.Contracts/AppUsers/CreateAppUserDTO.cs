@@ -15,7 +15,7 @@ namespace ASPCoreMVC.AppUsers
         public string UserName { get; set; }
         [Required]
         [MaxLength(64)]
-        [DataType(DataType.Password)]
+        [DataType(DataType.Text)]
         public string Password { get; set; }
         [Required]
         [MaxLength(30)]
@@ -29,8 +29,10 @@ namespace ASPCoreMVC.AppUsers
         public string DisplayName { get; set; }
         [Required]
         [MaxLength(128)]
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
         [MaxLength(14)]
+        [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
         [MaxLength(AppUsersConsts.PictureMaxLength)]
         public string Picture { get; set; }

@@ -24,6 +24,8 @@ namespace ASPCoreMVC.Web.Settings
         public const string LOGIN_SIBAR_INTRO = nameof(LOGIN_SIBAR_INTRO);
         public const string LOGIN_SIBAR_DESCRIPTION = nameof(LOGIN_SIBAR_DESCRIPTION);
 
+        public const string USER_CREATOR_DEFAULT_PASSWORD_FOR_NEW_USER = nameof(USER_CREATOR_DEFAULT_PASSWORD_FOR_NEW_USER);
+
         public override void Define(ISettingDefinitionContext context)
         {
             context.Add(
@@ -38,7 +40,9 @@ namespace ASPCoreMVC.Web.Settings
 
                         new SettingDefinition(LOGIN_ENABLE, "true"),
                         new SettingDefinition(REGISTRATION_ENABLE, "true"),
-                        new SettingDefinition(LOGIN_SIBAR_IMAGE, "/dist/img/login-banner.png")
+                        new SettingDefinition(LOGIN_SIBAR_IMAGE, "/dist/img/login-banner.png"),
+
+                        new SettingDefinition(USER_CREATOR_DEFAULT_PASSWORD_FOR_NEW_USER, "12345678")
                     );
         }
     }

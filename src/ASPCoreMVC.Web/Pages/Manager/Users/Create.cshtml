@@ -1,0 +1,244 @@
+﻿@page "/manager/users/create"
+
+@model ASPCoreMVC.Web.Pages.Manager.Users.CreateUserModel
+@{
+    Model.SetBreadcrumb(
+    new string[] { L["Manager"].Value, "javascript:$('#adminMenuDropdown').click();" },
+    new string[] { L["Users"].Value, "/manager/users" },
+    new string[] { L["Create"].Value });
+}
+
+@section Scripts {
+    <script>
+        var selectedDisplayNameUnicode = '@Html.Raw(Model.UserAccount?.DisplayName??"")';
+        var selectedDisplayName = '@(Model.UserAccount?.DisplayName??"")';
+        $("#birthday-picker").datepicker({
+            autoclose: true,
+            todayHighlight: true,
+        }).datepicker('update', new Date());
+        $("#surnameInput").change(function () {
+            refreshDisplayNameSelect($("#nameInput").val(), $("#surnameInput").val());
+        });
+        $("#nameInput").change(function () {
+            refreshDisplayNameSelect($("#nameInput").val(), $("#surnameInput").val());
+        });
+
+        function refreshDisplayNameSelect(name, surname) {
+            $("#select-displayname").html('');
+            generateDisplayName(name, surname)
+                .forEach(function (value) {
+                    if (selectedDisplayName != undefined &&
+                        selectedDisplayName != null &&
+                        selectedDisplayName.length > 0 &&
+                        (value == selectedDisplayName || value == selectedDisplayNameUnicode)) {
+                        $("#select-displayname").append(`<option value="${value}" selected="selected">${value}</option>`);
+                    } else {
+                        $("#select-displayname")
+                            .append(`<option value="${value}">${value}</option>`);
+                    }
+                });
+            $('#select-displayname').selectpicker('refresh');
+        }
+        refreshDisplayNameSelect('@(Model.UserAccount?.Name??"")', '@(Model.UserAccount?.Surname??"")');
+    </script>
+}
+<form method="post" id="aaa" enctype="multipart/form-data">
+    <input type="hidden" asp-for="UserAccount.Id" />
+    <input type="hidden" asp-for="UserAccount.Picture" />
+    <div class="row mb-4">
+        <div class="col-12 col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">@L["Account info"]</h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="mb-1" asp-for="UserAccount.UserName"></label>
+                        <span class="text-danger small">*</span>
+                        <input asp-for="UserAccount.UserName" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="UserAccount.UserName"></span>
+                        </div>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label class="mb-1" asp-for="UserAccount.Email">
+                            @L["Email address"]
+                            @*<img src="@Html.Raw(Model.UserAccount.EmailConfirmed?"/dist/img/check-green-64.png":"/dist/img/check-gray-64.png")" class="ml-1" style="display: inline-block;" width="16" />*@
+                        </label>
+                        <span class="text-danger small">*</span>
+                        <input type="email" asp-for="UserAccount.Email" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="UserAccount.Email"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <label class="mb-1" asp-for="UserAccount.PhoneNumber">
+                            Phone number
+                            @*<img src="@Html.Raw(Model.UserAccount.PhoneNumberConfirmed?"/dist/img/check-green-64.png":"/dist/img/check-gray-64.png")" class="ml-1" style="display: inline-block;" width="16" />*@
+                        </label>
+                        <input type="tel" asp-for="UserAccount.PhoneNumber" class="form-control">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="UserAccount.PhoneNumber"></span>
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                            <label class="mb-1" asp-for="AppUserPassword.CurrentPassword"></label>
+                            <input class="form-control" asp-for="AppUserPassword.CurrentPassword">
+                            <div class="form-text text-danger small">
+                                <span asp-validation-for="AppUserPassword.CurrentPassword"></span>
+                            </div>
+                        </div>*@
+
+                    <div class="form-group mt-2">
+                        <label class="mb-1" asp-for="UserAccount.Password"></label>
+                        <span class="text-danger small">*</span>
+                        <input class="form-control" asp-for="UserAccount.Password">
+                        <div class="form-text text-danger small">
+                            <span asp-validation-for="UserAccount.Password"></span>
+                        </div>
+                    </div>
+
+                    @*<div class="alert alert-warning alert-dismissible fade show mt-2" role="alert">
+                            <strong>Pay attention!</strong> If you do not want to change your password, please leave all fields blank in this field.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>*@
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">@L["Personal info"]</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UserAccount.Name" class="mb-1">First name</label>
+                                <span class="text-danger small">*</span>
+                                <input asp-for="UserAccount.Name" id="nameInput" type="text" class="form-control">
+                                <div class="form-text text-danger small">
+                                    <span asp-validation-for="UserAccount.Name"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UserAccount.Surname" class="mb-1">Last name</label>
+                                <span class="text-danger small">*</span>
+                                <input asp-for="UserAccount.Surname" id="surnameInput" class="form-control">
+                                <div class="form-text text-danger small">
+                                    <span asp-validation-for="UserAccount.Surname"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UserAccount.DisplayName" class="mb-1">Display Name</label>
+                                <span class="text-danger small">*</span>
+                                <select asp-for="UserAccount.DisplayName" id="select-displayname" class="form-control selectpicker" data-live-search="true">
+                                </select>
+                                <div class="form-text text-danger small">
+                                    <span asp-validation-for="UserAccount.DisplayName"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UserAccount.Nickname" class="mb-1">Nickname</label>
+                                <input asp-for="UserAccount.Nickname" class="form-control">
+                                <div class="form-text text-danger small">
+                                    <span asp-validation-for="UserAccount.Nickname"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UserAccount.BirthDay" class="mb-1">Birthday</label>
+                                <div class="input-group">
+                                    <input asp-for="UserAccount.BirthDay" type="text" class="form-control" id="birthday-picker">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-text text-danger small">
+                                    <span asp-validation-for="UserAccount.BirthDay"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UserAccount.Gender" class="mb-1">Gender</label>
+                                <select asp-for="UserAccount.Gender" class="form-control selectpicker" data-live-search="true">
+                                    @foreach (var item in Enum.GetValues(typeof(ASPCoreMVC.Common.GenderTypes)))
+                                    {
+                                    <option value="@((int)item)">@L[item.ToString()]</option>
+                                    }
+                                </select>
+                                <div class="form-text text-danger small">
+                                    <span asp-validation-for="UserAccount.Gender"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UserAccount.IdentityCardNumber" class="mb-1">Identity Card Number</label>
+                                <input asp-for="UserAccount.IdentityCardNumber" class="form-control">
+                                <div class="form-text text-danger small">
+                                    <span asp-validation-for="UserAccount.IdentityCardNumber"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UserAccount.Website" class="mb-1">Website</label>
+                                <input asp-for="UserAccount.Website" type="url" class="form-control">
+                                <div class="form-text text-danger small">
+                                    <span asp-validation-for="UserAccount.Website"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label asp-for="UserAccount.Address" class="mb-1">Address</label>
+                                <input asp-for="UserAccount.Address" class="form-control">
+                                <div class="form-text text-danger small">
+                                    <span asp-validation-for="UserAccount.Address"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label asp-for="UserAccount.ShortBio" class="mb-1">Short Bio</label>
+                                <textarea asp-for="UserAccount.ShortBio" rows="10" class="form-control"></textarea>
+                                <div class="form-text text-danger small">
+                                    <span asp-validation-for="UserAccount.ShortBio"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-sm shadow-sm float-right">@L["Save Changes"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
