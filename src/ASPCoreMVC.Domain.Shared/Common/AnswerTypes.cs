@@ -17,7 +17,7 @@ namespace ASPCoreMVC.Common
         /// <summary>
         /// Danh sách các câu trả lời dưới dạng âm thanh
         /// </summary>
-        AudioAnswer,
+        //AudioAnswer,
         /// <summary>
         /// Câu trả lời dưới hình thức ghi âm và gửi tệp âm thanh
         /// </summary>

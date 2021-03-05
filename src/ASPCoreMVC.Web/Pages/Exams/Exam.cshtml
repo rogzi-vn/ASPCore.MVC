@@ -1,29 +1,214 @@
 ﻿@page "/exams/{renderType:int}/exam/{destId:Guid}"
+@using ASPCoreMVC.TCUEnglish.UserExams
 @model ASPCoreMVC.Web.Pages.Exams.ExamModel
 @{
     Layout = AppTheme.EmptyLayout;
+
+    #region Declare current exam owner info
     var currentAvatar = "https://english.vistark.me/resources/33b55182-40ac-4f7b-9c3b-864b855fffb0_aspcore-maintainer.jpg";
+    var currentUserDisplayName = "Nguyễn Trọng Nghĩa";
+    #endregion
+
+    #region Declare exam name
+    var examName = "";
+    if (Model.ExamContent.RenderExamType == ASPCoreMVC.Common.RenderExamTypes.SkillPart)
+        examName = Model.ExamContent.SkillCategories.FirstOrDefault()?.SkillParts?.FirstOrDefault()?.Name ?? "";
+    else if (Model.ExamContent.RenderExamType == ASPCoreMVC.Common.RenderExamTypes.SkillCategory)
+        examName = Model.ExamContent.SkillCategories.FirstOrDefault()?.Name ?? "";
+    else
+        examName = Model.ExamContent.Name;
+    examName += " testing";
+    #endregion
+
+    #region Declare exam limit time
+    var limitTime = 0.0;
+    if (Model.ExamContent.RenderExamType == ASPCoreMVC.Common.RenderExamTypes.SkillPart)
+        limitTime = Model.ExamContent.SkillCategories.FirstOrDefault()?.SkillParts?.FirstOrDefault().LimitTimeInMinutes ?? 10F;
+    else if (Model.ExamContent.RenderExamType == ASPCoreMVC.Common.RenderExamTypes.SkillCategory)
+        limitTime = Model.ExamContent.SkillCategories.FirstOrDefault()?.LimitTimeInMinutes ?? 20F;
+    else
+        limitTime = Model.ExamContent.SkillCategories.Sum(x => x.LimitTimeInMinutes);
+    #endregion
+
+    #region Declare question & answer render
+    void RenderQuestionAndAnswers(int counter, List<MicroQuestionDTO> qs, MicroSkillPartDTO skp, bool isVertical = true)
+    {
+        foreach (var q in qs)
+        {
+            // Render for question
+            if (skp.IsHaveQuestionText)
+            {
+                <div class="pt-3">
+                    <label>@(counter++). @Html.Raw(q.Text)</label>
+                </div>
+            }
+            else
+            {
+                <span>@(counter). </span>
+            }
+            if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.TextAnswer)
+            {
+                var count = 0;
+                var columnCount = (int)Math.Ceiling(12 / (decimal)q.Answers.Count);
+                if (isVertical)
+                    columnCount = 12;
+                <div class="row">
+                    @* Render for answers *@
+                    @foreach (var ans in q.Answers)
+                    {
+                        <div class="col-12 col-lg-@columnCount">@(EzNumber.ToAlphabetNumeral(count++)). @Html.Raw(ans.AnswerContent)</div>
+                    }
+                </div>
+            }
+            else if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.FillAnswer)
+            {
+                <textarea class="editor"></textarea>
+            }
+            else if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.ImageAnswer)
+            {
+                var count = 0;
+                var columnCount = (int)Math.Ceiling(12 / (decimal)q.Answers.Count);
+                if (isVertical)
+                    columnCount = 12;
+                <div class="row">
+                    @* Render for answers *@
+                    @foreach (var ans in q.Answers)
+                    {
+                        var alpha = EzNumber.ToAlphabetNumeral(count++);
+                        <div class="col-12 col-lg-@columnCount">
+                            <div>@alpha. @L["Picture "] @alpha</div>
+                            <div>
+                                <img src="@Html.Raw(ans.AnswerContent)" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)
+            {
+
+            }
+            else if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.WriteAnswer)
+            {
+                <textarea class="editor"></textarea>
+            }
+        }
+    }
+    #endregion
 }
 
-@section Scripts {
+@section Styles {
     <style>
         body {
             background: #F8F9FB !important;
+            color: #000;
+        }
+
+        @@media (min-width: 1200px) {
+            .container, .container-lg, .container-md, .container-sm, .container-xl {
+                max-width: 960px;
+            }
         }
     </style>
 }
 
 <div class="">
-    <div class="bg-primary shadow-sm my-2 rounded d-flex flex-row align-items-center justify-content-between">
+    <div class="bg-primary card shadow mt-4 rounded d-flex flex-row align-items-center justify-content-between text-white">
         <div>
-            <img class="rounded-circle m-2" src="@currentAvatar" style="width:2.5rem;height:2.5rem;" />
+            <img class="rounded-circle m-2 border border-white shadow-sm" src="@currentAvatar" style="width:2.5rem;height:2.5rem;" />
+            <span class="font-weight-bold">
+                @Html.Raw(currentUserDisplayName)
+            </span>
+        </div>
+        <div class="text-right m-2 pr-2">
+            <div class="font-weight-bolder text-uppercase m-0">
+                @examName
+            </div>
+            <div class="font-weight-bolder small">
+                @L["Limit time"]: @limitTime (@L["minutes"])
+            </div>
         </div>
     </div>
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-gradient-primary">
-            adfdafd
-        </div>
-        <div class="card-body">
+    <div class="card shadow mb-4 rounded-0" style="top: -0.35rem;">
+        <div class="card-body mb-3 p-2 p-lg-5">
+            @* Start Test result *@
+            <div class="row border rounded border-primary mx-0">
+                <div class="col-3 p-0 border-right border-primary">
+                    <div class="border-bottom text-center p-2 font-weight-bold border-primary">
+                        @L["Scores"]
+                    </div>
+                    <div class="text-center p-md-5">
+                        <h2 class="m-0 font-weight-bold font-italic text-danger">
+                            --
+                        </h2>
+                    </div>
+                </div>
+                <div class="col-9 p-0">
+                    <div class="border-bottom text-center p-2 font-weight-bold border-primary">
+                        @L["Criticism of instructors"]
+                    </div>
+                    <div class="p-3">
+
+                    </div>
+                </div>
+            </div>
+            @* End Test result *@
+
+            <hr class="" />
+            @{
+                var qCount = 1;
+            }
+            @for (int i = 0; i < Model.ExamContent.SkillCategories.Count; i++)
+            {
+                var skpCount = 1;
+                <h5 class="text-uppercase font-weight-bolder">@EzNumber.ToRomanNumeral(i + 1). @Model.ExamContent.SkillCategories[i].Name</h5>
+                <div>
+                    @foreach (var skp in Model.ExamContent.SkillCategories[i].SkillParts)
+                    {
+                        <h5 class="font-weight-bold">@(skpCount++). @skp.Name</h5>
+                        <div>
+                            @Html.Raw(skp.Instructions)
+                        </div>
+                        // Question container render
+                        @foreach (var qc in skp.QuestionContainers)
+                        {
+                            <div class="text-lg" style="font-size: 21px;">
+                                @if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Article)
+                                {
+
+                                }
+                                else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Audio)
+                                {
+
+                                }
+                                else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Image)
+                                {
+                                    <div class="row mb-4">
+                                        <div class="col-lg-4 order-md-2">
+                                            <span>
+                                                <img class="w-100 border border-dark rounded" src="@Html.Raw(qc.MediaPath)">
+                                            </span>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            @{ RenderQuestionAndAnswers(qCount++, qc.Questions, skp, true); }
+                                        </div>
+                                    </div>
+                                }
+                                else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video)
+                                {
+
+                                }
+                                else
+                                {
+                                    <div class="">
+                                        @{ RenderQuestionAndAnswers(qCount++, qc.Questions, skp, false); }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            }
         </div>
     </div>
 </div>

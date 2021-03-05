@@ -188,6 +188,7 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                 MasterContentType = skillPart.MasterContentType,
                 IsHaveQuestionText = skillPart.IsHaveQuestionText,
                 TrueAnswerType = skillPart.TrueAnswerType,
+                AnswerType = skillPart.AnswerType,
                 LimitTimeInMinutes = skillPart.LimitTimeInMinutes,
                 MaxScores = skillPart.MaxScores,
                 QuestionContainers = qContainers

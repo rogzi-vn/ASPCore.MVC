@@ -14,6 +14,7 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
         public MasterContentTypes MasterContentType { get; set; }
         public bool IsHaveQuestionText { get; set; }
         public TrueAnswerTypes TrueAnswerType { get; set; }
+        public AnswerTypes AnswerType { get; set; }
         public float LimitTimeInMinutes { get; set; }
         public float MaxScores { get; set; }
         public List<MicroQuestionContainers> QuestionContainers { get; set; }
