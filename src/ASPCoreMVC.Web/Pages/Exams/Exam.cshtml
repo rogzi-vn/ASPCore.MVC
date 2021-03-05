@@ -1,0 +1,29 @@
+﻿@page "/exams/{renderType:int}/exam/{destId:Guid}"
+@model ASPCoreMVC.Web.Pages.Exams.ExamModel
+@{
+    Layout = AppTheme.EmptyLayout;
+    var currentAvatar = "https://english.vistark.me/resources/33b55182-40ac-4f7b-9c3b-864b855fffb0_aspcore-maintainer.jpg";
+}
+
+@section Scripts {
+    <style>
+        body {
+            background: #F8F9FB !important;
+        }
+    </style>
+}
+
+<div class="">
+    <div class="bg-primary shadow-sm my-2 rounded d-flex flex-row align-items-center justify-content-between">
+        <div>
+            <img class="rounded-circle m-2" src="@currentAvatar" style="width:2.5rem;height:2.5rem;" />
+        </div>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-gradient-primary">
+            adfdafd
+        </div>
+        <div class="card-body">
+        </div>
+    </div>
+</div>

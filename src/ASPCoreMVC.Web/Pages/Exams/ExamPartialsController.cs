@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ASPCoreMVC.Web.Pages.Exams
 {
-    [Route("exam/partials/exam-partials")]
+    [Route("exams/partials/exam-partials")]
     public class ExamPartialsController : Controller
     {
         private readonly IExamCategoryService _ExamCategoryServices;
@@ -33,32 +33,32 @@ namespace ASPCoreMVC.Web.Pages.Exams
             [FromQuery(Name = "ex")] string ex,
             [FromQuery(Name = "sc")] string sc)
         {
-            //// Mã của dối tượng hiện tại
-            //ViewBag.Id = id;
-            //// Cho biết có hiển thị nút cập nhật dữ liệu hay không
-            //ViewBag.ShowManagerButton = type == DisplayDetailTypes.SkillPart;
+            // Mã của dối tượng hiện tại
+            ViewBag.Id = id;
+            // Cho biết có hiển thị nút cập nhật dữ liệu hay không
+            ViewBag.ShowManagerButton = type == HelperTipsTypes.SkillPart;
 
-            //if (type == DisplayDetailTypes.Exam)
-            //{
-            //    var exam = (await _ExamCategoryServices.GetAsync(id)).Data;
-            //    ViewBag.ModalName = $"{exam.Name} Exam's tips";
-            //    ViewBag.ModalContent = exam.About;
-            //    ViewBag.StartExamUrl = "/";
-            //}
-            //else if (type == DisplayDetailTypes.SkillCategory)
-            //{
-            //    var sCat = (await _SkillCategoryServices.GetAsync(id)).Data;
-            //    ViewBag.ModalName = $"{sCat.Name} of {ex} Exam's tips";
-            //    ViewBag.ModalContent = sCat.SummaryDescription;
-            //    ViewBag.StartExamUrl = "/";
-            //}
-            //else if (type == DisplayDetailTypes.SkillPart)
-            //{
-            //    var sPart = (await _SkillPartServices.GetAsync(id)).Data;
-            //    ViewBag.ModalName = $"{sc} {sPart.Name} of {ex} Exam's tips";
-            //    ViewBag.ModalContent = sPart.Tips;
-            //    ViewBag.StartExamUrl = "/";
-            //}
+            if (type == HelperTipsTypes.Exam)
+            {
+                var exam = (await _ExamCategoryServices.GetAsync(id)).Data;
+                ViewBag.ModalName = $"{exam.Name} Exam's tips";
+                ViewBag.ModalContent = exam.Tips;
+                ViewBag.StartExamUrl = $"/exams/{(int)RenderExamTypes.Synthetic}/exam/{id}";
+            }
+            else if (type == HelperTipsTypes.SkillCategory)
+            {
+                var sCat = (await _SkillCategoryServices.GetAsync(id)).Data;
+                ViewBag.ModalName = $"{sCat.Name} of {ex} Exam's tips";
+                ViewBag.ModalContent = sCat.Tips;
+                ViewBag.StartExamUrl = $"/exams/{(int)RenderExamTypes.SkillCategory}/exam/{id}";
+            }
+            else if (type == HelperTipsTypes.SkillPart)
+            {
+                var sPart = (await _SkillPartServices.GetAsync(id)).Data;
+                ViewBag.ModalName = $"{sc} {sPart.Name} of {ex} Exam's tips";
+                ViewBag.ModalContent = sPart.Tips;
+                ViewBag.StartExamUrl = $"/exams/{(int)RenderExamTypes.SkillPart}/exam/{id}";
+            }
             return PartialView("~/Pages/Exams/Partials/Detail.cshtml");
         }
     }

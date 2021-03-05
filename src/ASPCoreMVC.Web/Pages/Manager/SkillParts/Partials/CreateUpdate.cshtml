@@ -117,6 +117,10 @@
                             </div>
                         </div>
                     }
+                    else
+                    {
+                        <input type="hidden" asp-for="SkillPartDTO.MasterContentType" />
+                    }
                     <div class="form-group">
                         <label asp-for="SkillPartDTO.ArticleEditor" class="mb-1"></label>
                         <span onclick="showUserManual(event,
@@ -136,25 +140,26 @@
                             <span asp-validation-for="SkillPartDTO.ArticleEditor"></span>
                         </div>
                     </div>
-                    @if (Model.IsEditable)
-                    {
-                        @* Không cho phép sửa trường này để tránh làm rối dữ liệu, chỉ nhập 1 lần khi thêm *@
-                        <div class="form-group">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input"
-                                       asp-for="SkillPartDTO.IsHaveQuestionText">
-                                <label class="custom-control-label" asp-for="SkillPartDTO.IsHaveQuestionText">
-                                </label>
-                                <span onclick="showUserManual(event,
+
+                    @* Start check box for display question or not *@
+                    @* Không cho phép sửa trường này để tránh làm rối dữ liệu, chỉ nhập 1 lần khi thêm *@
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input"
+                                   asp-for="SkillPartDTO.IsHaveQuestionText">
+                            <label class="custom-control-label" asp-for="SkillPartDTO.IsHaveQuestionText">
+                            </label>
+                            <span onclick="showUserManual(event,
                                         '@String.Format(L["About {0}"].Value, Vistark.GetDisplayName<CreateUpdateSkillPartDTO>(x=>x.IsHaveQuestionText))',
                                         '/ui/helpers/user-manuals/skill-part-display-question-text-prop');"
-                                      data-toggle="tooltip" data-placement="top"
-                                      title="@L["More details"]">
-                                    <i class="fas fa-question-circle align-middle shake-infinite-sm"></i>
-                                </span>
-                            </div>
+                                  data-toggle="tooltip" data-placement="top"
+                                  title="@L["More details"]">
+                                <i class="fas fa-question-circle align-middle shake-infinite-sm"></i>
+                            </span>
                         </div>
-                    }
+                    </div>
+                    @* End check box for display question or not *@
+
                     @if (Model.IsEditable)
                     {
                         @* Không cho phép sửa trường này để tránh làm rối dữ liệu, chỉ nhập 1 lần khi thêm *@
@@ -171,6 +176,11 @@
                             </div>
                         </div>
                     }
+                    else
+                    {
+                        <input type="hidden" asp-for="SkillPartDTO.AnswerType" />
+                    }
+
                     @if (Model.IsEditable)
                     {
                         @* Không cho phép sửa trường này để tránh làm rối dữ liệu, chỉ nhập 1 lần khi thêm *@
@@ -186,6 +196,10 @@
                                 <span asp-validation-for="SkillPartDTO.TrueAnswerType"></span>
                             </div>
                         </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" asp-for="SkillPartDTO.TrueAnswerType" />
                     }
                     <div class="form-group">
                         <label asp-for="SkillPartDTO.NumDisplay" class="mb-1"></label>

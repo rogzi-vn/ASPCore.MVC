@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/exams/exam-categories"
 @model ASPCoreMVC.Web.Pages.Exams.ExamsIndexModel
 @{
 }
@@ -84,7 +84,7 @@
 @section Scripts {
     <script>
         function loadDetail(type, id, ex, sc) {
-            $("#exam-detail-modal").load(`/exam/partials/exam-partials/${type}/${id}/detail?ex=${ex}&sc=${sc}`, function () {
+            $("#exam-detail-modal").load(`/exams/partials/exam-partials/${type}/${id}/detail?ex=${ex}&sc=${sc}`, function () {
                 $("#exam-detail-modal").modal('show');
             });
         }
