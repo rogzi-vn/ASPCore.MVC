@@ -118,7 +118,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamDataLibraries
             if (skP == null)
             {
                 // Return error immediately
-                res.Message = "Skil part not found";
+                res.Message = "Skill part not found";
                 return res;
             }
             container.MasterContentType = skP.MasterContentType;
@@ -150,6 +150,12 @@ namespace ASPCoreMVC.TCUEnglish.ExamDataLibraries
                     _ExamAnswerRepository
                     .Where(x => x.ExamQuestionId == questions[i].Id)
                     .ToList());
+                // Add some extras attributes
+                for (int k = 0; k < answers.Count; k++)
+                {
+                    answers[k].AnswerType = skP.AnswerType;
+                    answers[k].TrueAnswerType = skP.TrueAnswerType;
+                }
                 // If answers not enough by config, add new
                 for (int j = 0; j < skP.NumAns - answers.Count; j++)
                 {

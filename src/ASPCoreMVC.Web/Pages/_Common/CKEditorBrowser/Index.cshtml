@@ -9,7 +9,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chọn tệp tin/hình ảnh</title>
+    <title>@L["Select File (Max: 1GB)"]</title>
 
     <link rel="stylesheet" type="text/css" href="/plugins/jquery-ui/themes/base/theme.min.css" />
     <link rel="stylesheet" type="text/css" href="/plugins/elfinder/css/elfinder.min.css" />
@@ -50,7 +50,6 @@
 
             var options = {
                 url: '/el-finder-file-system/connector', // Default (Local File System)
-                //url: '/el-finder/azure-storage/connector', // Microsoft Azure Connector
                 rememberLastDir: true, // Prevent elFinder saving in the Browser LocalStorage the last visited directory
                 commands: myCommands,
                 //lang: 'pt_BR', // elFinder supports UI and messages localization. Check the folder Content\elfinder\js\i18n for all available languages. Be sure to include the corresponding .js file(s) in the JavaScript bundle.
@@ -79,7 +78,7 @@
                     window.close();
                 },
                 resizable: false,
-                lang: 'vi'
+                lang: 'en'
             };
             var elfinder = $('#elfinder').elfinder(options).elfinder('instance');
             elfinder.one('load', function (event) {
