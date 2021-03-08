@@ -15,6 +15,10 @@ namespace ASPCoreMVC.TCUEnglish.ExamQuestions
         /// </summary>
         public string Text { get; set; }
         /// <summary>
+        /// Nội dung viết lại hoặc trường hợp khác
+        /// </summary>
+        public string TextClone { get; set; }
+        /// <summary>
         /// Giải thích cho đáp án của câu hỏi
         /// </summary>
         public string Explain { get; set; }

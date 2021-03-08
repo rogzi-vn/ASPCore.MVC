@@ -115,7 +115,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillParts
         public static ExamSkillPart B1_Writing_Part1 = new ExamSkillPart
         {
             ExamSkillCategoryId = DefaultExamSkillCategories.B1_Writing.Id,
-            MasterContentType = Common.MasterContentTypes.Article,
+            MasterContentType = Common.MasterContentTypes.Rewrite,
             AnswerType = Common.AnswerTypes.FillAnswer,
             Name = "Part 1",
             NumDisplay = 1,

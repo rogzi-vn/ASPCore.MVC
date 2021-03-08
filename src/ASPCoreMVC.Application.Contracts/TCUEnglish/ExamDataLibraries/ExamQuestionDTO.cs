@@ -17,6 +17,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamDataLibraries
         /// </summary>
         [Required]
         public string Text { get; set; }
+        public string TextClone { get; set; }
         /// <summary>
         /// Giải thích cho đáp án của câu hỏi
         /// </summary>

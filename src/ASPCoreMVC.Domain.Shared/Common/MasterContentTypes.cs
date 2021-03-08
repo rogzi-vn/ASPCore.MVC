@@ -29,6 +29,10 @@ namespace ASPCoreMVC.Common
         /// <summary>
         /// Nội dung là tham chiếu đến thư viện ngữ pháp
         /// </summary>
-        Grammar
+        Grammar,
+        /// <summary>
+        /// Nội dung là câu viết lại
+        /// </summary>
+        Rewrite
     }
 }

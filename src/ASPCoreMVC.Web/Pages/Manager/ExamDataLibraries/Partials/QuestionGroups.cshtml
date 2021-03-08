@@ -12,7 +12,7 @@
                 <input type="text" class="form-control bg-light border-0 small"
                        id="search-question-groups-inp"
                        value="@ViewBag.Filter"
-                       placeholder="Search for question..." aria-label="Search">
+                       placeholder="Search for question group..." aria-label="Search">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="button" id="search-question-groups-btn">
                         <i class="fas fa-search fa-sm"></i>
@@ -23,7 +23,7 @@
             @if (Model.Items.Count <= 0)
             {
                 <p class="p-4 text-center" style="font-style: italic;">
-                    @L["No questions have been created yet."]
+                    @L["No question groups have been created yet."]
                     @if (!((string)ViewBag.Filter).IsNullOrEmpty())
                     {
                         <br />

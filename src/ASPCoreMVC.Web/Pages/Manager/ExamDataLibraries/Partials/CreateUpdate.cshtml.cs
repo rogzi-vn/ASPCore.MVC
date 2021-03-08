@@ -162,6 +162,12 @@ namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
 
             for (int i = 0; i < Container.Questions.Count; i++)
             {
+                if (Container.MasterContentType == Common.MasterContentTypes.Rewrite &&
+                    Container.Questions[i].TextClone.IsNullOrEmpty())
+                {
+                    ModelState.AddModelError($"Container.Questions[{i}].TextClone",
+                        string.Format(L["You must input second sentence for rewrite questions"]));
+                }
                 if (!Container.Questions[i].Answers.Any(x => x.IsCorrect))
                 {
                     ModelState.AddModelError($"Container.Questions[{i}].Answers",
