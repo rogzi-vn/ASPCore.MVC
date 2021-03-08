@@ -203,20 +203,49 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
             return await ConvertRenderSkillPart(skillPart);
         }
 
+        /// <summary>
+        /// Phương thức lấy ngẫu nhiên các câu hỏi
+        /// </summary>
+        /// <param name="skillPartId">Mã phần thi</param>
+        /// <param name="numDisplay">Số lượng bộ chứa câu hỏi muốn hiển thị</param>
+        /// <returns></returns>
         private async Task<List<MicroQuestionContainers>> GetRandomQuestionContainers(Guid skillPartId, int numDisplay)
         {
             var query = await _ExamQuestionContainerRepository
                 .GetQueryableAsync();
-            return query.Where(x => x.SkillPartId == skillPartId)
-                .OrderBy(x => Guid.NewGuid())
-                .Take(numDisplay)
-                .Select(x => new MicroQuestionContainers
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    MediaPath = x.MediaPath,
-                    Article = x.Article
-                }).ToList();
+            // Chuẩn xác chuyển sang query dành cho skill part đúng với thực tế
+            query = query.Where(x => x.SkillPartId == skillPartId);
+
+            // Khai báo biến chứa danh sách kết quả
+            var records = new List<MicroQuestionContainers>();
+
+            // Lấy cho đủ số câu hỏi
+            Random rand = new Random();
+            for (int i = 0; i < numDisplay; i++)
+            {
+                var tempQuery = query;
+
+                // Không lấy những record đã tồn tại trong danh sách kết quả
+                foreach (var record in records)
+                    tempQuery = tempQuery.Where(x => x.Id != record.Id);
+
+                int skip = rand.Next(0, tempQuery.Count());
+
+                var tempRes = tempQuery
+                    .Skip(skip)
+                    .Take(1)
+                    .Select(x => new MicroQuestionContainers
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        MediaPath = x.MediaPath,
+                        Article = x.Article
+                    })
+                    .First();
+                records.Add(tempRes);
+            }
+
+            return records;
         }
 
         private async Task<List<MicroQuestionDTO>> GetQuestions(Guid questionContainerId)
@@ -241,7 +270,9 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                     Id = x.Id,
                     AnswerContent = x.AnswerContent,
                     IsCorrect = x.IsCorrect
-                }).ToList();
+                }).ToList()
+                .OrderBy(x => Guid.NewGuid())
+                .ToList();
         }
     }
 }

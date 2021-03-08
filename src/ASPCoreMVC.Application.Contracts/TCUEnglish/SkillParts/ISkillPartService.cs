@@ -17,6 +17,7 @@ namespace ASPCoreMVC.TCUEnglish.SkillParts
         public ResponseWrapper<List<SkillPartBaseDTO>> GetBase(Guid skillCatId);
         public ResponseWrapper<SkillPartBaseDTO> GetSimpify(Guid id);
         public Task<ResponseWrapper<bool>> GetHasAsync(Guid skillPartId);
+        public Task PutUpdateOrder(List<Guid> skillPartIds);
         public Task<ResponseWrapper<CreateUpdateSkillPartDTO>> GetDataForUpdate(Guid skillPartId);
     }
 }

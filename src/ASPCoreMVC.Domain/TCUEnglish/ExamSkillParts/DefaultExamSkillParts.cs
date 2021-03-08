@@ -11,6 +11,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillParts
     {
         public static ExamSkillPart B1_Listening_Part1 = new ExamSkillPart
         {
+            Order = 0,
             ExamSkillCategoryId = DefaultExamSkillCategories.B1_Listening.Id,
             MasterContentType = Common.MasterContentTypes.Audio,
             AnswerType = Common.AnswerTypes.ImageAnswer,
@@ -28,6 +29,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillParts
         }.SetId("d2fbb4de-d263-4501-87d2-7229285bac0f");
         public static ExamSkillPart B1_Listening_Part2 = new ExamSkillPart
         {
+            Order = 1,
             ExamSkillCategoryId = DefaultExamSkillCategories.B1_Listening.Id,
             MasterContentType = Common.MasterContentTypes.Audio,
             AnswerType = Common.AnswerTypes.TextAnswer,
@@ -45,6 +47,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillParts
         }.SetId("fad54862-373a-41c0-99ea-494ec90424e1");
         public static ExamSkillPart B1_Reading_Part1 = new ExamSkillPart
         {
+            Order = 0,
             ExamSkillCategoryId = DefaultExamSkillCategories.B1_Reading.Id,
             MasterContentType = Common.MasterContentTypes.Grammar,
             AnswerType = Common.AnswerTypes.TextAnswer,
@@ -62,6 +65,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillParts
         }.SetId("216af4b5-45cc-4315-ad79-be7f3430f293");
         public static ExamSkillPart B1_Reading_Part2 = new ExamSkillPart
         {
+            Order = 1,
             ExamSkillCategoryId = DefaultExamSkillCategories.B1_Reading.Id,
             MasterContentType = Common.MasterContentTypes.Image,
             AnswerType = Common.AnswerTypes.TextAnswer,
@@ -79,6 +83,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillParts
         }.SetId("8a80db21-e2c5-4ec2-9b29-0f8651db952e");
         public static ExamSkillPart B1_Reading_Part3 = new ExamSkillPart
         {
+            Order = 2,
             ExamSkillCategoryId = DefaultExamSkillCategories.B1_Reading.Id,
             MasterContentType = Common.MasterContentTypes.Article,
             AnswerType = Common.AnswerTypes.TextAnswer,
@@ -96,6 +101,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillParts
         }.SetId("eec3dbe1-3128-4630-977c-ca838f35ee1e");
         public static ExamSkillPart B1_Reading_Part4 = new ExamSkillPart
         {
+            Order = 3,
             ExamSkillCategoryId = DefaultExamSkillCategories.B1_Reading.Id,
             MasterContentType = Common.MasterContentTypes.Article,
             AnswerType = Common.AnswerTypes.TextAnswer,
@@ -114,6 +120,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillParts
 
         public static ExamSkillPart B1_Writing_Part1 = new ExamSkillPart
         {
+            Order = 0,
             ExamSkillCategoryId = DefaultExamSkillCategories.B1_Writing.Id,
             MasterContentType = Common.MasterContentTypes.Rewrite,
             AnswerType = Common.AnswerTypes.FillAnswer,
@@ -132,6 +139,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillParts
 
         public static ExamSkillPart B1_Writing_Part2 = new ExamSkillPart
         {
+            Order = 1,
             ExamSkillCategoryId = DefaultExamSkillCategories.B1_Writing.Id,
             MasterContentType = Common.MasterContentTypes.Article,
             AnswerType = Common.AnswerTypes.WriteAnswer,
@@ -150,6 +158,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillParts
 
         public static ExamSkillPart B1_Speaking_Part1 = new ExamSkillPart
         {
+            Order = 0,
             ExamSkillCategoryId = DefaultExamSkillCategories.B1_Speaking.Id,
             MasterContentType = Common.MasterContentTypes.Video,
             AnswerType = Common.AnswerTypes.RecorderAnswer,

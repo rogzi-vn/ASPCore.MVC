@@ -34,7 +34,7 @@ function syncDefaultGc() {
 function initSearchGc() {
     $("#search-gc-btn").click(function () {
         var inp = $("#search-gc-inp").val();
-        syncGrammarCategories('1', inp);
+        syncGrammarCategories('1', encodeURI(inp));
     });
 }
 
@@ -143,7 +143,7 @@ function initEditBtn() {
 function initSearchBtn() {
     $("#search-gg-btn").click(event => {
         var inp = $("#search-gg-inp").val();
-        syncGrammar(defGg.gcId, '1', inp);
+        syncGrammar(defGg.gcId, '1', encodeURI(inp));
     });
 }
 

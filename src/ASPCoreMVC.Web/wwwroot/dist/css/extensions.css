@@ -491,3 +491,7 @@ table.tb {
         -o-transition: color 0.3s ease-out;
         transition: color 0.3s ease-out;
     }
+
+.ui-sortable-helper {
+    cursor: move;
+}

@@ -24,8 +24,14 @@ namespace ASPCoreMVC.TCUEnglish.SkillParts
         {
             return new ResponseWrapper<List<SkillPartBaseDTO>>(
                             ObjectMapper.Map<List<ExamSkillPart>, List<SkillPartBaseDTO>>(
-                            Repository.Where(x => x.ExamSkillCategoryId == skillCatId).ToList()),
+                            Repository.Where(x => x.ExamSkillCategoryId == skillCatId)
+                            .OrderBy(x => x.Order).ToList()),
                             "Successful");
+        }
+
+        protected override IQueryable<ExamSkillPart> ApplyDefaultSorting(IQueryable<ExamSkillPart> query)
+        {
+            return query.OrderBy(x => x.Order);
         }
 
         public async Task<ResponseWrapper<CreateUpdateSkillPartDTO>> GetDataForUpdate(Guid skillPartId)
@@ -46,6 +52,17 @@ namespace ASPCoreMVC.TCUEnglish.SkillParts
                            ObjectMapper.Map<ExamSkillPart, SkillPartBaseDTO>(
                            Repository.Where(x => x.Id == id).FirstOrDefault()),
                            "Successful");
+        }
+
+        public async Task PutUpdateOrder(List<Guid> skillPartIds)
+        {
+            for (int i = 0; i < skillPartIds.Count; i++)
+            {
+                var record = await Repository.GetAsync(skillPartIds[i]);
+                record.Order = i;
+                await Repository.UpdateAsync(record);
+            }
+
         }
     }
 }

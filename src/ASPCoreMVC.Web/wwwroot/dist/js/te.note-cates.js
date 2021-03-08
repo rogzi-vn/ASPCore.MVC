@@ -58,7 +58,7 @@ function detailtNotes() {
 function initSearchVt() {
     $("#search-vt-btn").click(function () {
         var inp = $("#search-vt-inp").val();
-        syncVt('1', inp);
+        syncVt('1', encodeURI(inp));
     });
 }
 

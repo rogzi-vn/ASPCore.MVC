@@ -11,6 +11,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillCategories
     {
         public static ExamSkillCategory B1_Listening = new ExamSkillCategory
         {
+            Order = 0,
             ExamCategoryId = DefaultExamCategories.B1.Id,
             Name = "Listening",
             Tips = "",
@@ -20,6 +21,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillCategories
 
         public static ExamSkillCategory B1_Reading = new ExamSkillCategory
         {
+            Order = 1,
             ExamCategoryId = DefaultExamCategories.B1.Id,
             Name = "Reading",
             Tips = "",
@@ -29,6 +31,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillCategories
 
         public static ExamSkillCategory B1_Writing = new ExamSkillCategory
         {
+            Order = 2,
             ExamCategoryId = DefaultExamCategories.B1.Id,
             Name = "Writing",
             Tips = "",
@@ -38,6 +41,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillCategories
 
         public static ExamSkillCategory B1_Speaking = new ExamSkillCategory
         {
+            Order = 3,
             ExamCategoryId = DefaultExamCategories.B1.Id,
             Name = "Speaking",
             Tips = "",

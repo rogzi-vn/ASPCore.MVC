@@ -32,7 +32,7 @@ function syncDefWc() {
 function initSearchWc() {
     $("#search-wc-btn").click(function () {
         var inp = $("#search-wc-inp").val();
-        syncWc('1', inp);
+        syncWc('1', encodeURI(inp));
     });
 }
 

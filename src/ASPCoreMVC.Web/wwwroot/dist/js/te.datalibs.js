@@ -41,7 +41,7 @@ function syncQuestions(skillPartId = questionQueries.skillPartId, p = questionQu
                 if (!inp) {
                     inp = "";
                 }
-                syncQuestions(questionQueries.skillPartId, '1', inp, questionQueries.groupId);
+                syncQuestions(questionQueries.skillPartId, '1', encodeURI(inp), questionQueries.groupId);
             });
 
             if (!selectedQuestionGroup) {
@@ -88,7 +88,7 @@ function syncQuestionGroups(skillPartId = questionGroupQueries.skillPartId, p = 
                 if (!inp) {
                     inp = "";
                 }
-                syncQuestionGroups(questionGroupQueries.skillPartId, '1', inp);
+                syncQuestionGroups(questionGroupQueries.skillPartId, '1', encodeURI(inp));
             });
 
             $(".question-group-item").click(event => {

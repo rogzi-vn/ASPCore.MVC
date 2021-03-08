@@ -43,7 +43,7 @@ function syncDefVt() {
 function initSearchVt() {
     $("#search-vt-btn").click(function () {
         var inp = $("#search-vt-inp").val();
-        syncVt(null, '1', inp);
+        syncVt(null, '1', encodeURI(inp));
     });
 }
 

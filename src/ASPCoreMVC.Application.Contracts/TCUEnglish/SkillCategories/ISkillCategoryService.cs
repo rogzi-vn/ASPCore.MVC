@@ -16,6 +16,7 @@ namespace ASPCoreMVC.TCUEnglish.SkillCategories
         public ResponseWrapper<List<SkillCategoryBaseDTO>> GetBase(Guid exCatId);
         public ResponseWrapper<SkillCategoryBaseDTO> GetSimpify(Guid id);
         public Task<ResponseWrapper<bool>> GetHasAsync(Guid skillCatId);
+        public Task PutUpdateOrder(List<Guid> skillCatIds);
         public Task<ResponseWrapper<CreateUpdateSkillCategoryDTO>> GetDataForUpdate(Guid skillCatId);
     }
 }

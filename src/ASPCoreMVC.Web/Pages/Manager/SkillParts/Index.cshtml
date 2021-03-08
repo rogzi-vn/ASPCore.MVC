@@ -18,7 +18,8 @@
 }
 
 @section Scripts {
-
+    <script src="/dist/js/vistark.table.dragdrop.row.js"></script>
+    <script src="/dist/js/te.skill-part.js"></script>
 }
 <!-- Page Heading -->
 <!-- DataTales Example -->
@@ -31,14 +32,16 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-
+            @Html.AntiForgeryToken()
             @if (Model.SkillParts.Count <= 0)
             {
                 <div class="text-gray-600 text-center">@L["No parts of skill have been created yet."]</div>
             }
             else
             {
-                <table class="table tb table-bordered mb-4" width="100%" cellspacing="0">
+                <table id="skill-part-table"
+                       data-moved="onPositionChanged"
+                       class="table tb table-bordered mb-4 drag-drop" width="100%" cellspacing="0">
                     <thead class="bg-primary text-white">
                         <tr>
                             <th>@L["Part Name"]</th>
@@ -48,10 +51,11 @@
                         </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody class="connectedSortable">
                         @foreach (var item in Model.SkillParts)
                         {
-                            <tr class="clickable-row" data-href="/manager/exam-categories/@Model.CurrentExamCategory.Id/skill-categories/@Model.CurrentSkillCategory.Id/skill-parts/@item.Id/exam-data-libraries">
+                            <tr class="clickable-row" id="@item.Id" data-href="/manager/exam-categories/@Model.CurrentExamCategory.Id/skill-categories/@Model.CurrentSkillCategory.Id/skill-parts/@item.Id/exam-data-libraries"
+                                data-toggle="tooltip" data-placement="bottom" title="@L["Hold and drag to reposition"]">
                                 <td class="align-middle">@item.Name</td>
                                 <td class="align-middle text-center">
                                     @item.LimitTimeInMinutes

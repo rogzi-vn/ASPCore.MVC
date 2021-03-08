@@ -32,7 +32,7 @@ function syncDefaultData() {
 function __initSearch() {
     $("#__search_button").click(function () {
         var inp = $("#__search_input").val();
-        syncData(__defInput.catId, '1', inp);
+        syncData(__defInput.catId, '1', encodeURI(inp));
     });
 }
 

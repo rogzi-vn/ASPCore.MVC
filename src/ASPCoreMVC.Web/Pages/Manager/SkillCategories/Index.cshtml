@@ -16,6 +16,8 @@ new string[] { Model.CurrentExamCategory.Name });
 }
 
 @section Scripts {
+    <script src="/dist/js/vistark.table.dragdrop.row.js"></script>
+    <script src="/dist/js/te.skill-cate.js"></script>
 }
 <!-- Page Heading -->
 <!-- DataTales Example -->
@@ -28,14 +30,16 @@ new string[] { Model.CurrentExamCategory.Name });
     </div>
     <div class="card-body">
         <div class="table-responsive">
-
+            @Html.AntiForgeryToken()
             @if (Model.SkillCategories.Count <= 0)
             {
                 <div class="text-gray-600 text-center">@L["No skills have been created yet."]</div>
             }
             else
             {
-                <table class="table tb table-bordered mb-4" width="100%" cellspacing="0">
+                <table id="skill-cate-table"
+                       class="table tb table-bordered mb-4 drag-drop"
+                       data-moved="onPositionChanged" width="100%" cellspacing="0">
                     <thead class="bg-primary text-white">
                         <tr>
                             <th>@L["Skill Name"]</th>
@@ -45,10 +49,11 @@ new string[] { Model.CurrentExamCategory.Name });
                         </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody class="connectedSortable">
                         @foreach (var item in Model.SkillCategories)
                         {
-                            <tr class="clickable-row" data-href="/manager/exam-categories/@Model.CurrentExamCategory.Id/skill-categories/@item.Id/skill-parts">
+                            <tr class="clickable-row w-100" id="@item.Id" data-href="/manager/exam-categories/@Model.CurrentExamCategory.Id/skill-categories/@item.Id/skill-parts"
+                                data-toggle="tooltip" data-placement="bottom" title="@L["Hold and drag to reposition"]">
                                 <td class="align-middle">@item.Name</td>
                                 <td class="align-middle text-center">
                                     @item.LimitTimeInMinutes
