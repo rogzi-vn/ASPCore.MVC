@@ -3,15 +3,17 @@ using System;
 using ASPCoreMVC.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
 namespace ASPCoreMVC.Migrations
 {
     [DbContext(typeof(ASPCoreMVCMigrationsDbContext))]
-    partial class ASPCoreMVCMigrationsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210308041815_Remove limit length for question text")]
+    partial class Removelimitlengthforquestiontext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

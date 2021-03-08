@@ -105,7 +105,7 @@ namespace ASPCoreMVC.EntityFrameworkCore
                 b.ConfigureByConvention();
 
                 //Configure other properties (if you are using the fluent API)
-                b.Property(x => x.Text).IsRequired().HasMaxLength(255);
+                b.Property(x => x.Text).IsRequired();
 
                 b.HasOne<ExamQuestionContainer>().WithMany().HasForeignKey(x => x.ExamQuestionContainerId).OnDelete(DeleteBehavior.Cascade);
             });

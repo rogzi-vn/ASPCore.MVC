@@ -13,7 +13,6 @@ namespace ASPCoreMVC.TCUEnglish.ExamDataLibraries
         /// <summary>
         /// Nội dung câu trả lời văn bản, media,...
         /// </summary>
-        [Required]
         public string AnswerContent { get; set; }
         /// <summary>
         /// Kiểu trả lời

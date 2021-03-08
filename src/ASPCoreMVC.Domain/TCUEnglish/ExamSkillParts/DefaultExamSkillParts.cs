@@ -144,7 +144,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamSkillParts
             LimitTimeInMinutes = 30,
             MaxScores = 20,
             ArticleEditor = Common.EditorDisplayOptions.FullOption,
-            IsHaveQuestionText = false,
+            IsHaveQuestionText = true,
             TrueAnswerType = Common.TrueAnswerTypes.OnlyOneCorrect
         }.SetId("9286e252-750e-4bff-8fd1-9e29f9f0e5bc");
 

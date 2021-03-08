@@ -13,11 +13,11 @@ namespace ASPCoreMVC.Common
         /// <summary>
         /// Nhiều sự lựa chọn đúng, đúng khi chọn 1 trong số đó
         /// </summary>
-        MultiplePickOneCorrect,
+        //MultiplePickOneCorrect,
         /// <summary>
         /// Nhiều sự lựa chọn đúng, đúng khi chọn hết trong số đó
         /// </summary>
-        MultiplePickFullCorrect,
+        //MultiplePickFullCorrect,
         /// <summary>
         /// Tất cả các câu trả lời là đúng, đúng khi là 1 trong số đó
         /// </summary>

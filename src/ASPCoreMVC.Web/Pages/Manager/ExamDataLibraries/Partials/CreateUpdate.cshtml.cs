@@ -162,16 +162,52 @@ namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
 
             for (int i = 0; i < Container.Questions.Count; i++)
             {
+                // Nếu thuộc kiểu nội dung lớn là kiểu dành cho câu hỏi kiểu viết lại thì tiến hành kiểm tra tính hợp lệ
                 if (Container.MasterContentType == Common.MasterContentTypes.Rewrite &&
                     Container.Questions[i].TextClone.IsNullOrEmpty())
                 {
                     ModelState.AddModelError($"Container.Questions[{i}].TextClone",
                         string.Format(L["You must input second sentence for rewrite questions"]));
                 }
-                if (!Container.Questions[i].Answers.Any(x => x.IsCorrect))
+
+                // Nếu không phải kiểu trả lời là viết lại và ghi âm thì tiến hành yêu cầu chọn ít nhất 1 đáp án đúng
+                if (!Container.Questions[i].Answers.Any(x => x.IsCorrect) &&
+                    !Container.Questions[i].Answers.Any(x => x.AnswerType == Common.AnswerTypes.WriteAnswer) &&
+                    !Container.Questions[i].Answers.Any(x => x.AnswerType == Common.AnswerTypes.RecorderAnswer))
                 {
                     ModelState.AddModelError($"Container.Questions[{i}].Answers",
                         string.Format(L["You must select correct answer"]));
+                }
+
+                // Kiểm tra tính hợp lệ của từng câu trả lời
+                for (int j = 0; j < Container.Questions[i].Answers.Count; j++)
+                {
+                    // Nếu nội dung câu trả lời là null hoặc bỏ trống
+                    if (Container.Questions[i].Answers[j].AnswerContent.IsNullOrEmpty())
+                    {
+                        // Nếu câu trả lời thuộc: Full đáp án đúng, viết lại hoặc ghi âm thì tiến hành chỉnh sửa nội dung cứng
+                        if (Container.Questions[i].Answers[j].TrueAnswerType == Common.TrueAnswerTypes.FullPickOneCorrect ||
+                            Container.Questions[i].Answers[j].AnswerType == Common.AnswerTypes.WriteAnswer ||
+                            Container.Questions[i].Answers[j].AnswerType == Common.AnswerTypes.RecorderAnswer)
+                        {
+                            Container.Questions[i].Answers[j].AnswerContent = "";
+                            Container.Questions[i].Answers[j].IsCorrect = true;
+                        }
+                        else
+                        {
+                            // Ngược lại thì báo lỗi để người dùng tiến hành nhập nội dung
+                            ModelState.AddModelError($"Container.Questions[{i}].Answers[{j}].AnswerContent", L["This field is required"]);
+                        }
+                    }
+                }
+
+                // Nếu không có bất cứ câu trả lời nào được nhập, và câu trả lời không thuộc kiểu viết hay ghi âm, tiến hành thông báo lỗi
+                if (Container.Questions[i].Answers.All(x => x.AnswerContent.IsNullOrEmpty())
+                    && !Container.Questions[i].Answers.Any(x => x.AnswerType == Common.AnswerTypes.WriteAnswer)
+                    && !Container.Questions[i].Answers.Any(x => x.AnswerType == Common.AnswerTypes.RecorderAnswer))
+                {
+                    ModelState.AddModelError($"Container.Questions[{i}].Answers",
+                        string.Format(L["You must input atleast one answers"]));
                 }
             }
 

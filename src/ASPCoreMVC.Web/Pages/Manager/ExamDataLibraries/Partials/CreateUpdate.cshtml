@@ -12,10 +12,10 @@
     $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories" },
     new string[] { Model.CurrentSkillCategory.Name,
     $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories/{Model.CurrentSkillCategory.Id}/skill-parts"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
     new string[] { Model.CurrentSkillPart.Name,
     $"/manager/exam-categories/{Model.CurrentExamCategory.Id}/skill-categories/{Model.CurrentSkillCategory.Id}/skill-parts/{Model.CurrentSkillPart.Id}/exam-data-libraries"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            },
     new string[] { !Model.IsCreate ? L["Edit question"].Value : L["Create question"].Value });
 
     var isNoColum = Model.Container.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Article ||
@@ -86,26 +86,26 @@
             });
         </script>
     }
-    @if (Model.CurrentSkillPart.TrueAnswerType == ASPCoreMVC.Common.TrueAnswerTypes.MultiplePickFullCorrect ||
-Model.CurrentSkillPart.TrueAnswerType == ASPCoreMVC.Common.TrueAnswerTypes.MultiplePickOneCorrect)
-    {
-        <script>
-            $(".hover-correct-ans").click(e => {
-                var isCorrect = $(e.target).children("input").first().val();
-                if (!isCorrect) {
-                    $(e.target).addClass("correct-ans");
-                    $(e.target).children("input").first().val("true");
-                } else {
-                    $(e.target).removeClass("correct-ans");
-                    $(e.target).children("input").first().val("false");
-                }
-            });
-        </script>
-    }
+    @*@if (Model.CurrentSkillPart.TrueAnswerType == ASPCoreMVC.Common.TrueAnswerTypes.MultiplePickFullCorrect ||
+        Model.CurrentSkillPart.TrueAnswerType == ASPCoreMVC.Common.TrueAnswerTypes.MultiplePickOneCorrect)
+            {
+                <script>
+                    $(".hover-correct-ans").click(e => {
+                        var isCorrect = $(e.target).children("input").first().val();
+                        if (!isCorrect) {
+                            $(e.target).addClass("correct-ans");
+                            $(e.target).children("input").first().val("true");
+                        } else {
+                            $(e.target).removeClass("correct-ans");
+                            $(e.target).children("input").first().val("false");
+                        }
+                    });
+                </script>
+            }*@
 
 
     @if (Model.Container.MasterContentType != ASPCoreMVC.Common.MasterContentTypes.Article &&
-Model.Container.MasterContentType != ASPCoreMVC.Common.MasterContentTypes.Ignore)
+  Model.Container.MasterContentType != ASPCoreMVC.Common.MasterContentTypes.Ignore)
     {
         <partial name="@AppTheme.LayoutSelectFileModal" />
     }
@@ -357,6 +357,7 @@ Model.Container.MasterContentType != ASPCoreMVC.Common.MasterContentTypes.Ignore
 </div>
 
 <form method="post">
+    @Html.ValidationSummary()
     <input type="hidden" asp-for="Container.Id" />
     @*<input type="hidden" asp-for="Container.ExamQuestionGroupId" />*@
     <input type="hidden" id="default-media-path" value="@Model.Container.MediaPath" />
@@ -520,6 +521,8 @@ Model.Container.MasterContentType != ASPCoreMVC.Common.MasterContentTypes.Ignore
                                 @for (int i = 0; i < Model.Container.Questions.Count; i++)
                                 {
                                     var id = Model.Container.Questions[i].Id;
+                                    var isSpecialQuestion = Model.Container.Questions[i].IsHaveQuestionText &&
+                                        Model.CurrentSkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.WriteAnswer;
                                     <input type="hidden" asp-for="Container.Questions[i].Id" />
                                     <input type="hidden" asp-for="Container.Questions[i].ExamQuestionContainerId" />
                                     <input type="hidden" asp-for="Container.Questions[i].IsHaveQuestionText" />
@@ -528,15 +531,24 @@ Model.Container.MasterContentType != ASPCoreMVC.Common.MasterContentTypes.Ignore
                                             <div class="">
                                                 @if (Model.Container.Questions[i].IsHaveQuestionText)
                                                 {
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text font-weight-bold">#@(i+1)</span>
+                                                    @if (isSpecialQuestion)
+                                                    {
+                                                        <div class="form-group mb-0">
+                                                            <div class="font-weight-bold">@L["Question "] #@(i+1)</div>
                                                         </div>
-                                                        <input asp-for="Container.Questions[i].Text" class="form-control prevent-default">
-                                                    </div>
-                                                    <div class="form-text text-danger small">
-                                                        <span asp-validation-for="Container.Questions[i].Text"></span>
-                                                    </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text font-weight-bold">#@(i+1)</span>
+                                                            </div>
+                                                            <input asp-for="Container.Questions[i].Text" class="form-control prevent-default">
+                                                        </div>
+                                                        <div class="form-text text-danger small">
+                                                            <span asp-validation-for="Container.Questions[i].Text"></span>
+                                                        </div>
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -553,6 +565,17 @@ Model.Container.MasterContentType != ASPCoreMVC.Common.MasterContentTypes.Ignore
                                                 @{
                                                     var colNum = 12 / Model.Container.Questions[i].Answers.Count;
                                                     var col = $"col-12 col-lg-{colNum}";
+                                                }
+
+                                                @if (isSpecialQuestion)
+                                                {
+                                                    <div class="form-group">
+                                                        <label asp-for="Container.Questions[i].Text" class="mb-1"></label>
+                                                        <textarea asp-for="Container.Questions[i].Text" class="editor" editor-mint="true" editor-height="200"></textarea>
+                                                        <div class="form-text text-danger small">
+                                                            <span asp-validation-for="Container.Questions[i].Text"></span>
+                                                        </div>
+                                                    </div>
                                                 }
 
                                                 @if (Model.Container.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Rewrite)
@@ -580,49 +603,54 @@ Model.Container.MasterContentType != ASPCoreMVC.Common.MasterContentTypes.Ignore
                                                         <input type="hidden" asp-for="Container.Questions[i].Answers[j].AnswerType" />
                                                         <input type="hidden" asp-for="Container.Questions[i].Answers[j].TrueAnswerType" />
 
-                                                        <div class="text-dark @col">
-                                                            <div class="d-inline-block hover-correct-ans bg-transparent @Html.Raw(Model.Container.Questions[i].Answers[j].IsCorrect?"correct-ans":"")" data-q="@id"
-                                                                 data-toggle="tooltip" data-placement="bottom" title="@L["Make this to correct answer"]">
-                                                                <input type="hidden" asp-for="Container.Questions[i].Answers[j].IsCorrect" />
-                                                                <i class="fas fa-check-circle mr-2"></i>
-                                                                <span class="font-weight-bold">@L["Answer "] @(j+1)</span>
-                                                            </div>
-                                                            <div class="form-group mb-0 mt-2">
-                                                                @if (Model.Container.Questions[i].Answers[j].AnswerType == ASPCoreMVC.Common.AnswerTypes.ImageAnswer)
-                                                                {
-                                                                    var areaId = Guid.NewGuid();
-                                                                    var defaultImage = Model.Container.Questions[i].Answers[j].AnswerContent;
-                                                                    if (defaultImage.IsNullOrEmpty())
+                                                        @if (Model.Container.Questions[i].Answers[j].AnswerType != ASPCoreMVC.Common.AnswerTypes.WriteAnswer &&
+                                                          Model.Container.Questions[i].Answers[j].AnswerType != ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)
+                                                        {
+                                                            <div class="text-dark @col">
+                                                                <div class="d-inline-block hover-correct-ans bg-transparent @Html.Raw(Model.Container.Questions[i].Answers[j].IsCorrect?"correct-ans":"")" data-q="@id"
+                                                                     data-toggle="tooltip" data-placement="bottom" title="@L["Make this to correct answer"]">
+                                                                    <input type="hidden" asp-for="Container.Questions[i].Answers[j].IsCorrect" />
+                                                                    <i class="fas fa-check-circle mr-2"></i>
+                                                                    <span class="font-weight-bold">@L["Answer "] @(j+1)</span>
+                                                                </div>
+                                                                <div class="form-group mb-0 mt-2">
+                                                                    @if (Model.Container.Questions[i].Answers[j].AnswerType == ASPCoreMVC.Common.AnswerTypes.ImageAnswer)
                                                                     {
-                                                                        defaultImage = await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE);
+                                                                        var areaId = Guid.NewGuid();
+                                                                        var defaultImage = Model.Container.Questions[i].Answers[j].AnswerContent;
+                                                                        if (defaultImage.IsNullOrEmpty())
+                                                                        {
+                                                                            defaultImage = await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE);
+                                                                        }
+                                                                        <input asp-for="Container.Questions[i].Answers[j].AnswerContent"
+                                                                               id="img-ans-@areaId"
+                                                                               type="hidden" class="form-control prevent-default">
+                                                                        <img class="w-100 border border-dark rounded answer-image btn-choose-file" src="@defaultImage"
+                                                                             data-for="img-ans-@areaId"
+                                                                             id="preview-img-ans-@areaId"
+                                                                             data-callback="ansImgSelected"
+                                                                             data-extensions="png,jpg,jpeg,gif"
+                                                                             data-toggle="tooltip" data-placement="bottom" title="@L["Click to change photo"]">
+                                                                        <div class="text-center">
+                                                                            <button id="def-img-ans-@areaId" type="button"
+                                                                                    data-default="@defaultImage"
+                                                                                    class="btn btn-danger btn-sm shadow-sm btn-block mt-2">
+                                                                                @L["Remove"]
+                                                                            </button>
+                                                                        </div>
                                                                     }
-                                                                    <input asp-for="Container.Questions[i].Answers[j].AnswerContent"
-                                                                           id="img-ans-@areaId"
-                                                                           type="hidden" class="form-control prevent-default">
-                                                                    <img class="w-100 border border-dark rounded answer-image btn-choose-file" src="@defaultImage"
-                                                                         data-for="img-ans-@areaId"
-                                                                         id="preview-img-ans-@areaId"
-                                                                         data-callback="ansImgSelected"
-                                                                         data-extensions="png,jpg,jpeg,gif"
-                                                                         data-toggle="tooltip" data-placement="bottom" title="@L["Click to change photo"]">
-                                                                    <div class="text-center">
-                                                                        <button id="def-img-ans-@areaId" type="button"
-                                                                                data-default="@defaultImage"
-                                                                                class="btn btn-danger btn-sm shadow-sm btn-block mt-2">
-                                                                            @L["Remove"]
-                                                                        </button>
+                                                                    else
+                                                                    {
+                                                                        <input asp-for="Container.Questions[i].Answers[j].AnswerContent" class="form-control prevent-default">
+                                                                    }
+                                                                    <div class="form-text text-danger small">
+                                                                        <span asp-validation-for="Container.Questions[i].Answers[j].AnswerContent"></span>
+                                                                        <span asp-validation-for="Container.Questions[i].Answers[j].IsCorrect"></span>
                                                                     </div>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <input asp-for="Container.Questions[i].Answers[j].AnswerContent" class="form-control prevent-default">
-                                                                }
-                                                                <div class="form-text text-danger small">
-                                                                    <span asp-validation-for="Container.Questions[i].Answers[j].AnswerContent"></span>
-                                                                    <span asp-validation-for="Container.Questions[i].Answers[j].IsCorrect"></span>
                                                                 </div>
                                                             </div>
-                                                        </div>
+
+                                                        }
                                                     }
 
                                                     <div class="col-12 form-group mb-0">
