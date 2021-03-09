@@ -1,5 +1,6 @@
 ﻿@page "/exams/{renderType:int}/exam/{destId:Guid}"
 @using ASPCoreMVC.TCUEnglish.UserExams
+@using ASPCoreMVC.Web.Models
 @model ASPCoreMVC.Web.Pages.Exams.ExamModel
 @{
     Layout = AppTheme.EmptyLayout;
@@ -29,87 +30,53 @@
     else
         limitTime = Model.ExamContent.SkillCategories.Sum(x => x.LimitTimeInMinutes);
     #endregion
-
-    #region Declare question & answer render
-    void RenderQuestionAndAnswers(int counter, List<MicroQuestionDTO> qs, MicroSkillPartDTO skp, bool isVertical = true)
-    {
-        foreach (var q in qs)
-        {
-            // Render for question
-            if (skp.IsHaveQuestionText)
-            {
-                <div class="pt-3">
-                    <label>@(counter++). @Html.Raw(q.Text)</label>
-                </div>
-            }
-            else
-            {
-                <span>@(counter). </span>
-            }
-            if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.TextAnswer)
-            {
-                var count = 0;
-                var columnCount = (int)Math.Ceiling(12 / (decimal)q.Answers.Count);
-                if (isVertical)
-                    columnCount = 12;
-                <div class="row">
-                    @* Render for answers *@
-                    @foreach (var ans in q.Answers)
-                    {
-                        <div class="col-12 col-lg-@columnCount">@(EzNumber.ToAlphabetNumeral(count++)). @Html.Raw(ans.AnswerContent)</div>
-                    }
-                </div>
-            }
-            else if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.FillAnswer)
-            {
-                <textarea class="editor"></textarea>
-            }
-            else if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.ImageAnswer)
-            {
-                var count = 0;
-                var columnCount = (int)Math.Ceiling(12 / (decimal)q.Answers.Count);
-                if (isVertical)
-                    columnCount = 12;
-                <div class="row">
-                    @* Render for answers *@
-                    @foreach (var ans in q.Answers)
-                    {
-                        var alpha = EzNumber.ToAlphabetNumeral(count++);
-                        <div class="col-12 col-lg-@columnCount">
-                            <div>@alpha. @L["Picture "] @alpha</div>
-                            <div>
-                                <img src="@Html.Raw(ans.AnswerContent)" />
-                            </div>
-                        </div>
-                    }
-                </div>
-            }
-            else if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)
-            {
-
-            }
-            else if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.WriteAnswer)
-            {
-                <textarea class="editor"></textarea>
-            }
-        }
-    }
-    #endregion
 }
 
 @section Styles {
-    <style>
-        body {
-            background: #F8F9FB !important;
-            color: #000;
-        }
+    <link rel="stylesheet"
+          href="/dist/css/te.exam.css" />
+    @if (Model.ExamContent.SkillCategories.FirstOrDefault()?.SkillParts.FirstOrDefault()?.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)
+    {
+        <link rel="stylesheet"
+              href="~/plugins/recorderjs/recorderjs.css" />
+    }
+}
 
-        @@media (min-width: 1200px) {
-            .container, .container-lg, .container-md, .container-sm, .container-xl {
-                max-width: 960px;
-            }
-        }
-    </style>
+@section Scripts {
+    <script src="/dist/js/te.exam.js"></script>
+    @if (Model.ExamContent.SkillCategories.FirstOrDefault()?.SkillParts.FirstOrDefault()?.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)
+    {
+        <script src="/plugins/recorderjs/audiodisplay.js"></script>
+        <script src="/plugins/recorderjs/recorder.js"></script>
+        <script src="/plugins/recorderjs/main.js"></script>
+        <script>
+            $("#a123").click(function () {
+                var uri = $("#save").attr('href');
+                fetch(uri)
+                    .then(res => res.blob()) // Gets the response and returns it as a blob
+                    .then(blob => {
+                        const audio = document.createElement("audio");
+
+                        // Clean up the URL Object after we are done with it
+                        audio.addEventListener("load", () => {
+                            URL.revokeObjectURL(uri);
+                        });
+
+                        // Thay thế cho thông báo
+                        $('#selected-audio').html(audio);
+
+                        // Allow us to control the audio
+                        audio.controls = "true";
+
+                        // Set the src and start loading the audio from the file
+                        audio.src = uri;
+
+                        document.getElementById('ahihi').innerHTML(audio)
+                    });
+                initAudioPlayer();
+            });
+        </script>
+    }
 }
 
 <div class="">
@@ -172,39 +139,51 @@
                         // Question container render
                         @foreach (var qc in skp.QuestionContainers)
                         {
+                            var qaCol = 12; // Số cột của mục câu hỏi và câu trả lời
                             <div class="text-lg" style="font-size: 21px;">
-                                @if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Article)
-                                {
-
-                                }
-                                else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Audio)
-                                {
-
-                                }
-                                else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Image)
-                                {
-                                    <div class="row mb-4">
+                                <div class="row mb-4">
+                                    @if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Article)
+                                    {
+                                        <div class="col-12 p-2 my-2 border rounded border-dark replace-count artical">
+                                            @Html.Raw(qc.Article)
+                                        </div>
+                                    }
+                                    else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Audio)
+                                    {
+                                        <div class="col-12 my-2 v-audio">
+                                            <audio crossorigin="use-credentials">
+                                                <source src="@qc.MediaPath">
+                                            </audio>
+                                        </div>
+                                    }
+                                    else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Image)
+                                    {
+                                        qaCol = 8;
                                         <div class="col-lg-4 order-md-2">
                                             <span>
                                                 <img class="w-100 border border-dark rounded" src="@Html.Raw(qc.MediaPath)">
                                             </span>
                                         </div>
-                                        <div class="col-lg-8">
-                                            @{ RenderQuestionAndAnswers(qCount++, qc.Questions, skp, true); }
+                                    }
+                                    else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video)
+                                    {
+                                        <div class="col-12 text-center my-2">
+                                            <video class="w-100 player" preload="metadata" playsinline controls>
+                                                <source src="@qc.MediaPath">
+                                                @L["Your browser does not support the video tag."]
+                                            </video>
                                         </div>
-                                    </div>
-                                }
-                                else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video)
-                                {
+                                    }
+                                    else
+                                    {
 
-                                }
-                                else
-                                {
-                                    <div class="">
-                                        @{ RenderQuestionAndAnswers(qCount++, qc.Questions, skp, false); }
+                                    }
+                                    <div class="col-12 col-lg-@qaCol">
+                                        @await Html.PartialAsync(AppTheme.PartialQARender, new QARenderModal(qCount++, qc.Questions, skp))
                                     </div>
-                                }
+                                </div>
                             </div>
+                            qCount += qc.Questions.Count;
                         }
                     }
                 </div>

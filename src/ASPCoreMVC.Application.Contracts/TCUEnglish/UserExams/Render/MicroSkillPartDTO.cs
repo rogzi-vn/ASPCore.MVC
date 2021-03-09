@@ -15,6 +15,7 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
         public bool IsHaveQuestionText { get; set; }
         public TrueAnswerTypes TrueAnswerType { get; set; }
         public AnswerTypes AnswerType { get; set; }
+        public bool IsVerticalAnswerDisplay { get; set; } = false;
         public float LimitTimeInMinutes { get; set; }
         public float MaxScores { get; set; }
         public List<MicroQuestionContainers> QuestionContainers { get; set; }

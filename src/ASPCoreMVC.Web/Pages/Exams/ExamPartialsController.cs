@@ -28,8 +28,23 @@ namespace ASPCoreMVC.Web.Pages.Exams
         }
 
         [HttpGet]
+        [Route("/redirect-to-data-manager/{skillPartId}")]
+        public async Task<IActionResult> RedirectToDataManager(Guid skillPartId)
+        {
+            var skillPart = await _SkillPartServices.GetAsync(skillPartId);
+            if (!skillPart.Success && skillPart.Data == null)
+                return Redirect("/exams/exam-categories");
+            var skillCat = await _SkillCategoryServices.GetAsync(skillPart.Data.ExamSkillCategoryId);
+            if (!skillCat.Success && skillCat.Data == null)
+                return Redirect("/exams/exam-categories");
+
+            return Redirect($"/manager/exam-categories/{skillCat.Data.ExamCategoryId}/skill-categories/{skillCat.Data.Id}/skill-parts/{skillPart.Data.Id}/exam-data-libraries");
+        }
+
+        [HttpGet]
         [Route("{type}/{id:Guid}/detail")]
-        public async Task<IActionResult> Detail(HelperTipsTypes type, Guid id,
+        public async Task<IActionResult> Detail(HelperTipsTypes type,
+            Guid id,
             [FromQuery(Name = "ex")] string ex,
             [FromQuery(Name = "sc")] string sc)
         {
@@ -48,6 +63,12 @@ namespace ASPCoreMVC.Web.Pages.Exams
             else if (type == HelperTipsTypes.SkillCategory)
             {
                 var sCat = (await _SkillCategoryServices.GetAsync(id)).Data;
+                var skPs = _SkillPartServices.GetBase(sCat.Id).Data;
+                if (skPs.Count <= 1)
+                {
+                    ViewBag.ShowManagerButton = true;
+                    ViewBag.Id = skPs.FirstOrDefault()?.Id ?? Guid.Empty;
+                }
                 ViewBag.ModalName = $"{sCat.Name} of {ex} Exam's tips";
                 ViewBag.ModalContent = sCat.Tips;
                 ViewBag.StartExamUrl = $"/exams/{(int)RenderExamTypes.SkillCategory}/exam/{id}";

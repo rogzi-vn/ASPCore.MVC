@@ -54,6 +54,11 @@ namespace ASPCoreMVC.TCUEnglish.SkillParts
         [Display(Name = "Instructions")]
         public string Instructions { get; set; }
         /// <summary>
+        /// Kiểu hiển thị của câu hỏi có phải theo chiều dọc hay không
+        /// </summary>
+        [Display(Name = "Is Vertical Answer")]
+        public bool IsVerticalAnswerDisplay { get; set; } = false;
+        /// <summary>
         /// Mẹo làm bài, hiện trước khi người dùng thực sự làm bài
         /// </summary>
         [Display(Name = "Tips")]

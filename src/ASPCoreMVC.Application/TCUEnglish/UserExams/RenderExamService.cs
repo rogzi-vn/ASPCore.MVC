@@ -119,6 +119,8 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                 var converted = await ConvertRenderSkillCategory(item);
                 microSkillCats.Add(converted);
             }
+            // Sắp xếp chuẩn
+            microSkillCats = microSkillCats.OrderBy(x => x.Order).ToList();
             return new ExamForRenderDTO
             {
                 Name = skillCategory.Name,
@@ -148,6 +150,8 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                 var converted = await ConvertRenderSkillPart(item);
                 microSkillParts.Add(converted);
             }
+            // Sắp xếp lại các phần cho đúng thứ tự
+            microSkillParts = microSkillParts.OrderBy(x => x.Order).ToList();
             return new MicroSkillCategoryDTO
             {
                 Id = skillCat.Id,
@@ -191,6 +195,7 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                 AnswerType = skillPart.AnswerType,
                 LimitTimeInMinutes = skillPart.LimitTimeInMinutes,
                 MaxScores = skillPart.MaxScores,
+                IsVerticalAnswerDisplay = skillPart.IsVerticalAnswerDisplay,
                 QuestionContainers = qContainers
             };
         }
@@ -256,7 +261,8 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                 .Select(x => new MicroQuestionDTO
                 {
                     Id = x.Id,
-                    Text = x.Text
+                    Text = x.Text,
+                    TextClone = x.TextClone
                 }).ToList();
         }
 

@@ -37,20 +37,23 @@
 
                                 <div id="c-@sc.Cat.Id" class="collapse" aria-labelledby="h-@sc.Cat.Id" data-parent="#accordion">
                                     <div class="card-body">
-                                        @foreach (var p in sc.Parts)
+                                        @if (sc.Parts.Count > 1)
                                         {
-                                            <div class="d-flex flex-row align-items-center justify-content-between p-2 rounded">
-                                                <div class="text-dark">
-                                                    <i class="fas fa-circle mx-2"></i>
-                                                    <span class="font-weight-bold">@p.Name</span>
+                                            @foreach (var p in sc.Parts)
+                                            {
+                                                <div class="d-flex flex-row align-items-center justify-content-between p-2 rounded">
+                                                    <div class="text-dark">
+                                                        <i class="fas fa-circle mx-2"></i>
+                                                        <span class="font-weight-bold">@p.Name</span>
+                                                    </div>
+                                                    <div class="">
+                                                        <a href="javascript:loadDetail('@ASPCoreMVC.Common.HelperTipsTypes.SkillPart','@p.Id', '@item.Exam.Name', '@sc.Cat.Name');"
+                                                           class="d-inline-block btn btn-sm btn-success shadow-sm">
+                                                            <i class="fas fa-star fa-sm text-white mr-1"></i> Open
+                                                        </a>
+                                                    </div>
                                                 </div>
-                                                <div class="">
-                                                    <a href="javascript:loadDetail('@ASPCoreMVC.Common.HelperTipsTypes.SkillPart','@p.Id', '@item.Exam.Name', '@sc.Cat.Name');"
-                                                       class="d-inline-block btn btn-sm btn-success shadow-sm">
-                                                        <i class="fas fa-star fa-sm text-white mr-1"></i> Open
-                                                    </a>
-                                                </div>
-                                            </div>
+                                            }
                                         }
                                         <div class="d-flex flex-row align-items-center justify-content-between p-2 rounded">
                                             <div class="text-dark">
@@ -58,7 +61,7 @@
                                                 <span class="font-weight-bold">@sc.Cat.Name's synthetic</span>
                                             </div>
                                             <div class="">
-                                                <a href="javascript:loadDetail('@ASPCoreMVC.Common.HelperTipsTypes.SkillCategory','@sc.Cat.Name', '@item.Exam.Name');"
+                                                <a href="javascript:loadDetail('@ASPCoreMVC.Common.HelperTipsTypes.SkillCategory','@sc.Cat.Id','@item.Exam.Name');"
                                                    class="d-inline-block btn btn-sm btn-success shadow-sm">
                                                     <i class="fas fa-star fa-sm text-white mr-1"></i> Open
                                                 </a>
@@ -84,6 +87,7 @@
 @section Scripts {
     <script>
         function loadDetail(type, id, ex, sc) {
+            console.log(`/exams/partials/exam-partials/${type}/${id}/detail?ex=${ex}&sc=${sc}`);
             $("#exam-detail-modal").load(`/exams/partials/exam-partials/${type}/${id}/detail?ex=${ex}&sc=${sc}`, function () {
                 $("#exam-detail-modal").modal('show');
             });

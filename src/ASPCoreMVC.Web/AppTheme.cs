@@ -30,6 +30,8 @@ namespace ASPCoreMVC.Web
 
         public const string UserProfileViewable = "~/Pages/_Common/Partials/UserProfiles/UserProfileViewable.cshtml";
 
+        public const string PartialQARender = "~/Pages/Exams/Partials/PartialQARender.cshtml";
+
         public virtual string GetLayout(string name, bool fallbackToDefault = true)
         {
             switch (name)

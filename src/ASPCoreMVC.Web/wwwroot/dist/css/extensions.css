@@ -495,3 +495,14 @@ table.tb {
 .ui-sortable-helper {
     cursor: move;
 }
+
+.artical img {
+    max-width: 100%;
+}
+
+.input-border {
+    text-align: center;
+    outline: 0px;
+    border: unset;
+    border-bottom: 2px dotted #000;
+}

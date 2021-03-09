@@ -1,0 +1,106 @@
+﻿@model ASPCoreMVC.Web.Models.QARenderModal
+@{
+
+}
+
+@foreach (var q in Model.Questions)
+{
+    // Render for question
+    if (Model.SkillPart.IsHaveQuestionText)
+    {
+        <div class="pt-3">
+            <label>
+                @if (Model.Questions.Count > 1)
+                {
+                    @Html.Raw($"{Model.Counter++}. ")
+                }
+                @Html.Raw(q.Text)
+            </label>
+        </div>
+    }
+    else
+    {
+        if (Model.Questions.Count > 1)
+        {
+            <span class="float-left" style="width: 35px;">@(Model.Counter++). </span>
+        }
+    }
+    if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.TextAnswer)
+    {
+        var count = 0;
+        var columnCount = (int)Math.Ceiling(12 / (decimal)q.Answers.Count);
+        if (Model.SkillPart.IsVerticalAnswerDisplay)
+            columnCount = 12;
+        <div class="row">
+            @* Render for answers *@
+            @foreach (var ans in q.Answers)
+            {
+                <div class="col-12 col-lg-@columnCount">@(EzNumber.ToAlphabetNumeral(count++)). @Html.Raw(ans.AnswerContent)</div>
+            }
+        </div>
+    }
+    else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.FillAnswer)
+    {
+        bool isSplitInput = false;
+        if (Model.SkillPart.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Rewrite)
+        {
+            isSplitInput = q.TextClone.Contains("{{input}}");
+        }
+        if (isSplitInput)
+        {
+            var strings = q.TextClone.Split("{{input}}");
+            <div class="pt-0">
+                <label>
+                    @Html.Raw(strings.JoinAsString("<input class=\"auto-sizing input-border\" type=\"text\">"))
+                </label>
+            </div>
+        }
+        else
+        {
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">@L["Your answer"]</span>
+                </div>
+                <input type="text" class="form-control">
+            </div>
+        }
+    }
+    else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.ImageAnswer)
+    {
+        var count = 0;
+        var columnCount = (int)Math.Ceiling(12 / (decimal)q.Answers.Count);
+        if (Model.SkillPart.IsVerticalAnswerDisplay)
+            columnCount = 12;
+        <div class="row">
+            @* Render for answers *@
+            @foreach (var ans in q.Answers)
+            {
+                var alpha = EzNumber.ToAlphabetNumeral(count++);
+                <div class="col-12 col-lg-@columnCount">
+                    <div>@alpha. @L["Picture "] @alpha</div>
+                    <div>
+                        <img src="@Html.Raw(ans.AnswerContent)" class="w-100 border rounded" />
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)
+    {
+        <div id="viz">
+            <canvas id="analyser" class="w-100" style="height: 250px;"></canvas>
+            <canvas id="wavedisplay" class="w-100" style="height: 250px;"></canvas>
+            <div id="controls">
+                <button class="btn btn-primary" id="record" onclick="toggleRecording(this);">Record</button>
+                <a class="btn btn-warning" id="save" href="#">Download</a>
+                <button class="btn btn-danger" id="a123">
+                </button>
+            </div>
+            <div class="v-audio" id="ahihi"></div>
+        </div>
+    }
+    else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.WriteAnswer)
+    {
+        <textarea class="editor" editor-mint="true"></textarea>
+    }
+}

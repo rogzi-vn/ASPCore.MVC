@@ -25,6 +25,10 @@ namespace ASPCoreMVC.TCUEnglish.SkillParts
         /// </summary>
         public int Order { get; set; } = 0;
         /// <summary>
+        /// Kiểu hiển thị của câu hỏi có phải theo chiều dọc hay không
+        /// </summary>
+        public bool IsVerticalAnswerDisplay { get; set; } = false;
+        /// <summary>
         /// Tên nho nhóm câu hỏi nếu số câu hỏi con > 1
         /// </summary>
         public string Name { get; set; }

@@ -422,3 +422,29 @@ function initTreeJs(element, data, f, selectedNotes = [], disables = []) {
 
     });
 }
+// Init audio player
+function initAudioPlayer() {
+    try {
+        new GreenAudioPlayer('.v-audio', {
+            selector: '.player',
+            stopOthersOnPlay: true
+        });
+    } catch (_) { }
+}
+$(document).ready(function () {
+    initAudioPlayer();
+});
+
+// Auto resize input
+function resizeInput() {
+    var len = $(this).val().length;
+    if (len < 5)
+        len = 5;
+    $(this).attr('size', len - 1);
+}
+
+$('.auto-sizing')
+    // event handler
+    .keyup(resizeInput)
+    // resize on page load
+    .each(resizeInput);
