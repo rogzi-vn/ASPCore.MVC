@@ -4,103 +4,65 @@
 @model ASPCoreMVC.Web.Pages.Exams.ExamModel
 @{
     Layout = AppTheme.ExamLayout;
-
-    #region Declare current exam owner info
-    var currentAvatar = "https://english.vistark.me/resources/33b55182-40ac-4f7b-9c3b-864b855fffb0_aspcore-maintainer.jpg";
-    var currentUserDisplayName = "Nguyễn Trọng Nghĩa";
-    #endregion
-
-    #region Declare exam name
-    var examName = "";
-    if (Model.ExamContent.RenderExamType == ASPCoreMVC.Common.RenderExamTypes.SkillPart)
-        examName = Model.ExamContent.SkillCategories.FirstOrDefault()?.SkillParts?.FirstOrDefault()?.Name ?? "";
-    else if (Model.ExamContent.RenderExamType == ASPCoreMVC.Common.RenderExamTypes.SkillCategory)
-        examName = Model.ExamContent.SkillCategories.FirstOrDefault()?.Name ?? "";
-    else
-        examName = Model.ExamContent.Name;
-    examName += " testing";
-    #endregion
-
-    #region Declare exam limit time
-    var limitTime = 0.0;
-    if (Model.ExamContent.RenderExamType == ASPCoreMVC.Common.RenderExamTypes.SkillPart)
-        limitTime = Model.ExamContent.SkillCategories.FirstOrDefault()?.SkillParts?.FirstOrDefault().LimitTimeInMinutes ?? 10F;
-    else if (Model.ExamContent.RenderExamType == ASPCoreMVC.Common.RenderExamTypes.SkillCategory)
-        limitTime = Model.ExamContent.SkillCategories.FirstOrDefault()?.LimitTimeInMinutes ?? 20F;
-    else
-        limitTime = Model.ExamContent.SkillCategories.Sum(x => x.LimitTimeInMinutes);
-    #endregion
 }
-
 @section Styles {
     <link rel="stylesheet"
           href="/dist/css/te.exam.css" />
-    @if (Model.ExamContent.SkillCategories.FirstOrDefault()?.SkillParts.FirstOrDefault()?.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)
+    @if (Model.ExamContent.SkillCategories.Any(x => x.SkillParts.Any(y => y.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)))
     {
         <link rel="stylesheet"
-              href="~/plugins/recorderjs/recorderjs.css" />
+              href="/plugins/recorderjs/recorderjs.css" />
+    }
+    @if (Model.ExamContent.SkillCategories.Any(x => x.SkillParts.Any(y => y.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video)))
+    {
+        <link rel="stylesheet" href="/plugins/plyr-3.6.4/plyr.css" />
     }
 }
 
 @section Scripts {
     <script src="/dist/js/te.exam.js"></script>
-    @if (Model.ExamContent.SkillCategories.FirstOrDefault()?.SkillParts.FirstOrDefault()?.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)
+    @if (Model.ExamContent.SkillCategories.Any(x => x.SkillParts.Any(y => y.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video)))
+    {
+        <script src="/plugins/plyr-3.6.4/plyr.polyfilled.js"></script>
+        <script>
+            const player = new Plyr('.player');
+        </script>
+    }
+    @if (Model.ExamContent.SkillCategories.Any(x => x.SkillParts.Any(y => y.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)))
     {
         <script src="/plugins/recorderjs/audiodisplay.js"></script>
         <script src="/plugins/recorderjs/recorder.js"></script>
         <script src="/plugins/recorderjs/main.js"></script>
         <script>
-            $("#a123").click(function () {
-                var uri = $("#save").attr('href');
-                fetch(uri)
-                    .then(res => res.blob()) // Gets the response and returns it as a blob
-                    .then(blob => {
-                        const audio = document.createElement("audio");
-
-                        // Clean up the URL Object after we are done with it
-                        audio.addEventListener("load", () => {
-                            URL.revokeObjectURL(uri);
-                        });
-
-                        // Thay thế cho thông báo
-                        $('#selected-audio').html(audio);
-
-                        // Allow us to control the audio
-                        audio.controls = "true";
-
-                        // Set the src and start loading the audio from the file
-                        audio.src = uri;
-
-                        document.getElementById('ahihi').innerHTML(audio)
-                    });
-                initAudioPlayer();
-            });
+            initRecorderButton();
         </script>
     }
 
     <script>
-        $(document).ready(function () {
-            startExamCountDown('@limitTime', function () {
+        window.onload = function () {
+            $("#loading-waiting").addClass("d-none");
+            startExamCountDown('@Model.LimitTime', function () {
                 alert("Done");
             });
-        });
+        };
     </script>
 }
 
-<div class="">
+@Html.AntiForgeryToken()
+<div class="" id="exam-content">
     <div class="bg-primary card shadow rounded d-flex flex-row align-items-center justify-content-between text-white">
         <div>
-            <img class="rounded-circle m-2 border border-white shadow-sm" src="@currentAvatar" style="width:2.5rem;height:2.5rem;" />
+            <img class="rounded-circle m-2 border border-white shadow-sm" src="@Model.ExamUser.Picture" style="width:2.5rem;height:2.5rem;" />
             <span class="font-weight-bold">
-                @Html.Raw(currentUserDisplayName)
+                @Html.Raw(Model.ExamUser.UserName)
             </span>
         </div>
         <div class="text-right m-2 pr-2">
             <div class="font-weight-bolder text-uppercase m-0">
-                @examName
+                @Model.ExamName
             </div>
             <div class="font-weight-bolder small">
-                @L["Limit time"]: @limitTime (@L["minutes"])
+                @L["Limit time"]: @Model.LimitTime (@L["minutes"])
             </div>
         </div>
     </div>
@@ -152,8 +114,9 @@
                                 <div class="row mb-4">
                                     @if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Article)
                                     {
-                                        <div class="col-12 p-2 my-2 border rounded border-dark replace-count artical" data-start-count="@qCount">
-                                            @Html.Raw(qc.Article)
+                                        <div class="col-12 p-2 my-2 border rounded border-dark replace-count artical load-artical-async"
+                                             data-qc-id="@qc.Id"
+                                             data-start-count="@qCount">
                                         </div>
                                     }
                                     else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Audio)
@@ -196,6 +159,9 @@
                     }
                 </div>
             }
+        </div>
+        <div class="card-footer text-center">
+            <button class="btn btn-primary btn-sm shadow-sm" id="complete-exam-button">@L["Complete the exam"]</button>
         </div>
     </div>
 </div>

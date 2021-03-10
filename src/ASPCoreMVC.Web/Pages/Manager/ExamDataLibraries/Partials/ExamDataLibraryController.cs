@@ -15,7 +15,7 @@ using Volo.Abp.AspNetCore.Mvc;
 namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
 {
     [Route("/manager/exam-data-libraries")]
-    public class ExamDataLibrariyController : AbpController
+    public class ExamDataLibraryController : AbpController
     {
         private readonly IExamCategoryService _ExamCategoryService;
         private readonly ISkillCategoryService _SkillCategoryService;
@@ -25,7 +25,7 @@ namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
 
         private readonly IExamQuestionGroupService _ExamQuestionGroupService;
 
-        public ExamDataLibrariyController(
+        public ExamDataLibraryController(
             IExamCategoryService examCategoryService,
             ISkillCategoryService skillCategoryService,
             ISkillPartService skillPartService,

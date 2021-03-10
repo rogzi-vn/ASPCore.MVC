@@ -183,5 +183,15 @@ namespace ASPCoreMVC.AppFileService
                 AppFileDefaults.AppVideosDirectory,
                 "Upload video successful");
         }
+
+        public async Task DeleteOwnerFileRemove(string fileName)
+        {
+            var file = await Repository.FindAsync(x => x.Name == Path.GetFileName(fileName));
+            if (file != null && file.CreatorId == CurrentUser.Id)
+            {
+                await DeleteRawFile(fileName);
+            }
+
+        }
     }
 }

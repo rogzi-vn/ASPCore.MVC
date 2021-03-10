@@ -33,5 +33,20 @@ namespace ASPCoreMVC.Controllers
             else
                 return NotFound();
         }
+
+        [HttpPost]
+        [Route("/exams/{examLogId}/audio")]
+        public async Task<IActionResult> UploadUserExamAudio([FromForm] IFormFile audio, [FromForm] string fname)
+        {
+            if (audio == null || audio.Length <= 0 || fname.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            return Json(await _AppFileService.PostAudioUploadAsync(new RawAppFileDTO
+            {
+                Content = await audio.GetAllBytesAsync(),
+                Name = fname
+            }));
+        }
     }
 }

@@ -243,8 +243,7 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                     {
                         Id = x.Id,
                         Name = x.Name,
-                        MediaPath = x.MediaPath,
-                        Article = x.Article
+                        MediaPath = x.MediaPath
                     })
                     .First();
                 records.Add(tempRes);
@@ -279,6 +278,12 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                 }).ToList()
                 .OrderBy(x => Guid.NewGuid())
                 .ToList();
+        }
+
+        public async Task<string> GetRenderArtical(Guid containerId)
+        {
+            var qc = await _ExamQuestionContainerRepository.GetAsync(containerId);
+            return qc?.Article ?? "";
         }
     }
 }

@@ -10,7 +10,6 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
     {
         public string Name { get; set; }
         public string MediaPath { get; set; }
-        public string Article { get; set; }
         public List<MicroQuestionDTO> Questions { get; set; }
     }
 }

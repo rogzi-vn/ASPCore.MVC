@@ -11,5 +11,6 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
     public interface IRenderExamService : IApplicationService
     {
         public Task<ResponseWrapper<ExamForRenderDTO>> GetRenderExam(RenderExamTypes type, Guid? destID);
+        public Task<string> GetRenderArtical(Guid containerId);
     }
 }

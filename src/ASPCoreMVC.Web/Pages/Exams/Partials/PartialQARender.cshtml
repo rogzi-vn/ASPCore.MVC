@@ -6,18 +6,31 @@
 @foreach (var q in Model.Questions)
 {
     var affectedId = Guid.NewGuid();
-    <input type="hidden" class="question-answered" data-q-id="@q.Id" id="@affectedId" />
+    <input type="hidden" class="question-answered" data-q-id="@q.Id" id="@affectedId" data-ans-type="@Model.SkillPart.AnswerType.ToString()" />
     // Render for question
-    if (Model.SkillPart.IsHaveQuestionText)
+    if (Model.SkillPart.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video && Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer && Model.SkillPart.QuestionContainers.Count >= 1)
     {
         <div class="pt-3">
             <label>
-                @*@if (Model.SkillPart.QuestionContainers.Count > 1)
-                    {
-                        @Html.Raw($"{Model.Counter++}. ")
-                    }
-                    @Html.Raw(q.Text)*@
+                @Html.Raw(q.Text)
+            </label>
+            <button class="btn btn-sm btn-success shadow-sm float-right" id="start-recorder-@affectedId">
+                <i class="fa fa-play mr-1"></i>
+                @L["Start Recorder"]
+            </button>
+            <button class="btn btn-sm btn-danger shadow-sm d-none float-right" id="finish-recorder-@affectedId">
+                <i class="fa fa-stop mr-1"></i>
+                @L["Stop Recorder"]
+            </button>
+            <div class="d-none" id="audio-player-@affectedId">
 
+            </div>
+        </div>
+    }
+    else if (Model.SkillPart.IsHaveQuestionText)
+    {
+        <div class="pt-3">
+            <label>
                 @Html.Raw($"{Model.Counter++}. {q.Text}")
             </label>
         </div>
@@ -25,10 +38,6 @@
     else
     {
         <span class="float-left" style="width: 35px;">
-            @*@if (Model.SkillPart.QuestionContainers.Count > 1)
-            {
-                @Html.Raw($"{Model.Counter++}.")
-            }*@
             @Html.Raw($"{Model.Counter++}.")
         </span>
     }
@@ -102,29 +111,14 @@
     }
     else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)
     {
-        <div id="viz">
-            <canvas id="analyser" class="w-100" style="height: 250px;"></canvas>
-            <canvas id="wavedisplay" class="w-100" style="height: 250px;"></canvas>
-            <div id="controls">
-                <button class="btn btn-primary" id="record" onclick="toggleRecording(this);">Record</button>
-                <a class="btn btn-warning" id="save" href="#">Download</a>
-                <button class="btn btn-danger" id="a123">
-                </button>
-            </div>
-            <div class="v-audio" id="ahihi"></div>
+        <div id="viz-@affectedId" class="mt-2">
+            <canvas id="analyser" class="w-100 d-none" style="height: 250px;"></canvas>
+            <canvas id="wavedisplay-@affectedId" class="w-100 d-none" style="height: 250px;"></canvas>
         </div>
     }
     else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.WriteAnswer)
     {
         var id = Guid.NewGuid().ToString();
         <textarea id="@id" class="write-ans" editor-mint="true" data-affect-id="@affectedId"></textarea>
-        <script>
-            window.onload = function () {
-                var editor = bindEditor("@id", true);
-                editor.on('change', function () {
-                    $(`#@affectedId`).val(editor.getData());
-                });
-            };
-        </script>
     }
 }

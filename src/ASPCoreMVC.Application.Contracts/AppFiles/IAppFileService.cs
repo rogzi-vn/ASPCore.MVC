@@ -17,6 +17,8 @@ namespace ASPCoreMVC.AppFiles
         Task<ResponseWrapper<AppFileDTO>> PostAudioUploadAsync(RawAppFileDTO input);
         Task<ResponseWrapper<AppFileDTO>> PostCommonUploadAsync(RawAppFileDTO input);
         Task<ResponseWrapper<AppFileResponseDTO>> GetAppFileAsync(GetAppFileRequestDTO input);
-        
+
+        Task DeleteOwnerFileRemove(string fileName);
+
     }
 }

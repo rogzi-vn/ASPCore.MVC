@@ -423,10 +423,10 @@ function initTreeJs(element, data, f, selectedNotes = [], disables = []) {
     });
 }
 // Init audio player
-function initAudioPlayer() {
+function initAudioPlayer(s = '.audio-player') {
     try {
         GreenAudioPlayer.init({
-            selector: '.audio-player', // inits Green Audio Player on each audio container that has class "player"
+            selector: s, // inits Green Audio Player on each audio container that has class "player"
             stopOthersOnPlay: true
         });
     } catch (_) { }
