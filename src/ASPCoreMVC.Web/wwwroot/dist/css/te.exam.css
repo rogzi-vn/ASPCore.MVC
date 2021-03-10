@@ -8,3 +8,15 @@
         max-width: 960px;
     }
 }
+
+.text-ans, .img-ans {
+}
+
+    .text-ans:hover, .img-ans:hover {
+        cursor: pointer;
+        color: #0F0;
+    }
+
+        .text-ans:hover .border-dark, .img-ans:hover .border-dark {
+            border-color: #0F0 !important;
+        }

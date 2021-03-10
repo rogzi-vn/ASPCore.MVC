@@ -5,25 +5,32 @@
 
 @foreach (var q in Model.Questions)
 {
+    var affectedId = Guid.NewGuid();
+    <input type="hidden" class="question-answered" data-q-id="@q.Id" id="@affectedId" />
     // Render for question
     if (Model.SkillPart.IsHaveQuestionText)
     {
         <div class="pt-3">
             <label>
-                @if (Model.Questions.Count > 1)
-                {
-                    @Html.Raw($"{Model.Counter++}. ")
-                }
-                @Html.Raw(q.Text)
+                @*@if (Model.SkillPart.QuestionContainers.Count > 1)
+                    {
+                        @Html.Raw($"{Model.Counter++}. ")
+                    }
+                    @Html.Raw(q.Text)*@
+
+                @Html.Raw($"{Model.Counter++}. {q.Text}")
             </label>
         </div>
     }
     else
     {
-        if (Model.Questions.Count > 1)
-        {
-            <span class="float-left" style="width: 35px;">@(Model.Counter++). </span>
-        }
+        <span class="float-left" style="width: 35px;">
+            @*@if (Model.SkillPart.QuestionContainers.Count > 1)
+            {
+                @Html.Raw($"{Model.Counter++}.")
+            }*@
+            @Html.Raw($"{Model.Counter++}.")
+        </span>
     }
     if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.TextAnswer)
     {
@@ -35,7 +42,11 @@
             @* Render for answers *@
             @foreach (var ans in q.Answers)
             {
-                <div class="col-12 col-lg-@columnCount">@(EzNumber.ToAlphabetNumeral(count++)). @Html.Raw(ans.AnswerContent)</div>
+                <div class="col-12 col-lg-@columnCount text-ans" data-affect-id="@affectedId"
+                     id="@ans.Id">
+                    <span class="c-able">@(EzNumber.ToAlphabetNumeral(count++))</span>.
+                    @Html.Raw(ans.AnswerContent)
+                </div>
             }
         </div>
     }
@@ -48,10 +59,10 @@
         }
         if (isSplitInput)
         {
-            var strings = q.TextClone.Split("{{input}}");
+            var strings = q.TextClone.Split("{{input}}", 2);
             <div class="pt-0">
                 <label>
-                    @Html.Raw(strings.JoinAsString("<input class=\"auto-sizing input-border\" type=\"text\">"))
+                    @Html.Raw(strings.JoinAsString($"<input class=\"auto-sizing input-border fill-ans\" type=\"text\" data-affect-id=\"{affectedId}\">"))
                 </label>
             </div>
         }
@@ -61,7 +72,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon1">@L["Your answer"]</span>
                 </div>
-                <input type="text" class="form-control">
+                <input type="text" class="form-control fill-ans" data-affect-id="@affectedId">
             </div>
         }
     }
@@ -77,7 +88,11 @@
             {
                 var alpha = EzNumber.ToAlphabetNumeral(count++);
                 <div class="col-12 col-lg-@columnCount">
-                    <div>@alpha. @L["Picture "] @alpha</div>
+                    <div class="img-ans" data-affect-id="@affectedId"
+                         id="@ans.Id">
+                        <span class="c-able">@alpha</span>.
+                        @L["Picture"] @alpha
+                    </div>
                     <div>
                         <img src="@Html.Raw(ans.AnswerContent)" class="w-100 border rounded" />
                     </div>
@@ -101,6 +116,15 @@
     }
     else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.WriteAnswer)
     {
-        <textarea class="editor" editor-mint="true"></textarea>
+        var id = Guid.NewGuid().ToString();
+        <textarea id="@id" class="write-ans" editor-mint="true" data-affect-id="@affectedId"></textarea>
+        <script>
+            window.onload = function () {
+                var editor = bindEditor("@id", true);
+                editor.on('change', function () {
+                    $(`#@affectedId`).val(editor.getData());
+                });
+            };
+        </script>
     }
 }

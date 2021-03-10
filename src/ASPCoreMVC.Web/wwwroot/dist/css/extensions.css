@@ -506,3 +506,52 @@ table.tb {
     border: unset;
     border-bottom: 2px dotted #000;
 }
+
+.green-audio-player {
+    width: 100% !important;
+}
+
+    .green-audio-player audio {
+        display: none !important;
+    }
+
+.border-top-exam-success {
+    border-top: .25rem solid #3e855d !important;
+}
+
+    .border-top-exam-success .bf-exam-counter {
+        background-image: url('/dist/img/success-counter.png');
+    }
+
+
+.border-top-exam-warning {
+    border-top: .25rem solid #dda116 !important;
+}
+
+    .border-top-exam-warning .bf-exam-counter {
+        background-image: url('/dist/img/warning-counter.png');
+    }
+
+.border-top-exam-danger {
+    border-top: .25rem solid #be2623 !important;
+}
+
+    .border-top-exam-danger .bf-exam-counter {
+        background-image: url('/dist/img/danger-counter.png');
+    }
+
+.border-top-exam-primary {
+    border-top: .25rem solid #274abd !important;
+}
+
+    .border-top-exam-primary .bf-exam-counter {
+        background-image: url('/dist/img/primary-counter.png');
+    }
+
+
+.bf-exam-counter, .bf-exam-counter, .bf-exam-counter, .bf-exam-counter {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    line-height: normal;
+}

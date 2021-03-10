@@ -3,7 +3,7 @@
 @using ASPCoreMVC.Web.Models
 @model ASPCoreMVC.Web.Pages.Exams.ExamModel
 @{
-    Layout = AppTheme.EmptyLayout;
+    Layout = AppTheme.ExamLayout;
 
     #region Declare current exam owner info
     var currentAvatar = "https://english.vistark.me/resources/33b55182-40ac-4f7b-9c3b-864b855fffb0_aspcore-maintainer.jpg";
@@ -77,10 +77,18 @@
             });
         </script>
     }
+
+    <script>
+        $(document).ready(function () {
+            startExamCountDown('@limitTime', function () {
+                alert("Done");
+            });
+        });
+    </script>
 }
 
 <div class="">
-    <div class="bg-primary card shadow mt-4 rounded d-flex flex-row align-items-center justify-content-between text-white">
+    <div class="bg-primary card shadow rounded d-flex flex-row align-items-center justify-content-between text-white">
         <div>
             <img class="rounded-circle m-2 border border-white shadow-sm" src="@currentAvatar" style="width:2.5rem;height:2.5rem;" />
             <span class="font-weight-bold">
@@ -144,13 +152,13 @@
                                 <div class="row mb-4">
                                     @if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Article)
                                     {
-                                        <div class="col-12 p-2 my-2 border rounded border-dark replace-count artical">
+                                        <div class="col-12 p-2 my-2 border rounded border-dark replace-count artical" data-start-count="@qCount">
                                             @Html.Raw(qc.Article)
                                         </div>
                                     }
                                     else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Audio)
                                     {
-                                        <div class="col-12 my-2 v-audio">
+                                        <div class="col-12 my-2 v-audio audio-player">
                                             <audio crossorigin="use-credentials">
                                                 <source src="@qc.MediaPath">
                                             </audio>
@@ -179,7 +187,7 @@
 
                                     }
                                     <div class="col-12 col-lg-@qaCol">
-                                        @await Html.PartialAsync(AppTheme.PartialQARender, new QARenderModal(qCount++, qc.Questions, skp))
+                                        @await Html.PartialAsync(AppTheme.PartialQARender, new QARenderModal(qCount, qc.Questions, skp))
                                     </div>
                                 </div>
                             </div>

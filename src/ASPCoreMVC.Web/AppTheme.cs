@@ -14,6 +14,7 @@ namespace ASPCoreMVC.Web
         public const string DefaultLayout = "~/Layouts/_Layout.cshtml";
         public const string AccountLayout = "~/Layouts/_AuthLayout.cshtml";
         public const string EmptyLayout = "~/Layouts/_Empty.cshtml";
+        public const string ExamLayout = "~/Layouts/_ExamLayout.cshtml";
 
         public const string HeaderImports = "~/Partials/Header.Imports.cshtml";
         public const string FooterImports = "~/Partials/Footer.Imports.cshtml";
@@ -31,6 +32,7 @@ namespace ASPCoreMVC.Web
         public const string UserProfileViewable = "~/Pages/_Common/Partials/UserProfiles/UserProfileViewable.cshtml";
 
         public const string PartialQARender = "~/Pages/Exams/Partials/PartialQARender.cshtml";
+        public const string ExamHeaderBar = "~/Pages/Exams/Partials/ExamHeaderBar.cshtml";
 
         public virtual string GetLayout(string name, bool fallbackToDefault = true)
         {

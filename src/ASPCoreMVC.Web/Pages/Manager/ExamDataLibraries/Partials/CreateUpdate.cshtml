@@ -178,9 +178,6 @@ Model.Container.MasterContentType != ASPCoreMVC.Common.MasterContentTypes.Ignore
                     // Đưa về giá trị mặc định
                     $("#media-path-hidden").val(defaultAudioPath);
 
-                    // Thay thế cho thông báo
-                    $('#selected-audio').html('<small class="form-text text-danger">No audio availabe.</small>' +
-                        '<small class="form-text text-info">Select and play audio test here.</small>');
                 }
             }
             // Load lần đầu nếu có
@@ -444,7 +441,7 @@ Model.Container.MasterContentType != ASPCoreMVC.Common.MasterContentTypes.Ignore
                             {
                                 <div class="form-group">
                                     <label asp-for="Container.MediaPath">@L["Audio"]</label>
-                                    <div id="selected-audio" class="text-center v-audio">
+                                    <div id="selected-audio" class="text-center audio-player">
                                     </div>
                                     <div class="form-text text-danger small mt-2 text-center">
                                         <span asp-validation-for="Container.MediaPath"></span>

@@ -28,7 +28,7 @@ namespace ASPCoreMVC.Web.Pages.Exams
         }
 
         [HttpGet]
-        [Route("/redirect-to-data-manager/{skillPartId}")]
+        [Route("redirect-to-data-manager/{skillPartId}")]
         public async Task<IActionResult> RedirectToDataManager(Guid skillPartId)
         {
             var skillPart = await _SkillPartServices.GetAsync(skillPartId);

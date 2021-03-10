@@ -87,7 +87,6 @@
 @section Scripts {
     <script>
         function loadDetail(type, id, ex, sc) {
-            console.log(`/exams/partials/exam-partials/${type}/${id}/detail?ex=${ex}&sc=${sc}`);
             $("#exam-detail-modal").load(`/exams/partials/exam-partials/${type}/${id}/detail?ex=${ex}&sc=${sc}`, function () {
                 $("#exam-detail-modal").modal('show');
             });
