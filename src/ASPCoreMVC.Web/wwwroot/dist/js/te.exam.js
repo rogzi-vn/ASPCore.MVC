@@ -303,4 +303,5 @@ function collectAnswers() {
         answers.push(ans);
     });
     console.log(answers);
+    return answers;
 }

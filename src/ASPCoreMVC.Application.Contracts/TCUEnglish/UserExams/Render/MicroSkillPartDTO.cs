@@ -18,6 +18,14 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
         public bool IsVerticalAnswerDisplay { get; set; } = false;
         public float LimitTimeInMinutes { get; set; }
         public float MaxScores { get; set; }
+        /// <summary>
+        /// Điểm thực tế người dùng nhận được từ phần thi này
+        /// </summary>
+        public float Scores { get; set; }
+        /// <summary>
+        /// Thời điểm mà điểm được cập nhật bởi GVHD, bỏ qua nếu là tự động
+        /// </summary>
+        public DateTime? UpdateScoreTime { get; set; }
         public List<MicroQuestionContainers> QuestionContainers { get; set; }
     }
 }

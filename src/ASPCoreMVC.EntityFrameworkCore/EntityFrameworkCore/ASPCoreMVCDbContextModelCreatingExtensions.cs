@@ -19,6 +19,7 @@ using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
 using ASPCoreMVC.TCUEnglish.MesGroups;
 using ASPCoreMVC.TCUEnglish.UserMessages;
 using ASPCoreMVC.TCUEnglish.MemberInstructors;
+using ASPCoreMVC.TCUEnglish.ExamLogs;
 
 namespace ASPCoreMVC.EntityFrameworkCore
 {
@@ -36,6 +37,17 @@ namespace ASPCoreMVC.EntityFrameworkCore
             //    b.ConfigureByConvention(); //auto configure for the base class props
             //    //...
             //});
+
+            builder.Entity<ExamLog>(b =>
+            {
+                b.ToTable(ASPCoreMVCConsts.DbTablePrefix + nameof(ExamLog), ASPCoreMVCConsts.DbSchema);
+                //Configure the base properties
+                b.ConfigureByConvention();
+
+                b.HasOne<ExamCatInstructor>()
+                .WithMany()
+                .HasForeignKey(x => x.ExamCatInstructorId);
+            });
 
 
             builder.Entity<AppFile>(b =>

@@ -5,6 +5,7 @@ using ASPCoreMVC.TCUEnglish.ExamAnswers;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
 using ASPCoreMVC.TCUEnglish.ExamDataLibraries;
+using ASPCoreMVC.TCUEnglish.ExamLogs;
 using ASPCoreMVC.TCUEnglish.ExamQuestionContainers;
 using ASPCoreMVC.TCUEnglish.ExamQuestionGroups;
 using ASPCoreMVC.TCUEnglish.ExamQuestions;
@@ -95,6 +96,9 @@ namespace ASPCoreMVC
             CreateMap<MessGroup, MessGroupDTO>().ReverseMap();
 
             CreateMap<UserMessage, UserMessageDTO>().ReverseMap();
+
+            CreateMap<ExamLog, ExamLogDTO>().ReverseMap();
+            CreateMap<ExamLogDTO, ExamLogBaseDTO>();
         }
     }
 }
