@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
+using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
 using ASPCoreMVC.TCUEnglish.ExamSkillCategories;
 using ASPCoreMVC.TCUEnglish.ExamSkillParts;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
@@ -19,16 +20,21 @@ namespace ASPCoreMVC.Web.Pages.Exams
         private readonly ISkillCategoryService _SkillCategoryServices;
         private readonly ISkillPartService _SkillPartServices;
 
+        private readonly IExamCatInstructService _ExamCatInstructService;
+
         public List<Ex> Exams { get; set; } = new List<Ex>();
+        public List<ExamCatInstructDTO> Instructors { get; set; } = new List<ExamCatInstructDTO>();
 
         public ExamsIndexModel(
             IExamCategoryService _ExamCategoryServices,
             ISkillCategoryService _SkillCategoryServices,
-            ISkillPartService _SkillPartServices)
+            ISkillPartService _SkillPartServices,
+            IExamCatInstructService _ExamCatInstructService)
         {
             this._ExamCategoryServices = _ExamCategoryServices;
             this._SkillCategoryServices = _SkillCategoryServices;
             this._SkillPartServices = _SkillPartServices;
+            this._ExamCatInstructService = _ExamCatInstructService;
         }
         public async Task OnGetAsync()
         {

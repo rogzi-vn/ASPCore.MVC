@@ -1,7 +1,6 @@
-﻿@page "/exams/{renderType:int}/exam/{destId:Guid}"
-@using ASPCoreMVC.TCUEnglish.UserExams
+﻿@using ASPCoreMVC.TCUEnglish.UserExams
 @using ASPCoreMVC.Web.Models
-@model ASPCoreMVC.Web.Pages.Exams.ExamModel
+@model ASPCoreMVC.Web.Models.ExamRenderViewModel
 @{
     Layout = AppTheme.ExamLayout;
 }
@@ -49,6 +48,7 @@
 }
 
 @Html.AntiForgeryToken()
+<input type="hidden" value="@Model.ExamLogId" id="exam-log-id" />
 <div class="" id="exam-content">
     <div class="bg-primary card shadow rounded d-flex flex-row align-items-center justify-content-between text-white">
         <div>

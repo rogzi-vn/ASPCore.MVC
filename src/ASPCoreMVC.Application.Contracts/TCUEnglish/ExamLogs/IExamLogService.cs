@@ -11,5 +11,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
     public interface IExamLogService : IWrapperCrudAppService<ExamLogDTO, Guid, GetExamLogDTO>
     {
         public Task<ResponseWrapper<PagedResultDto<ExamLogBaseDTO>>> GetBaseListAsync(GetExamLogDTO input);
+        public Task<ExamLogBaseDTO> GetBaseAsync(Guid id);
+        public Guid? GetLastExamNotFinished();
     }
 }

@@ -34,6 +34,8 @@ namespace ASPCoreMVC.Web
         public const string PartialQARender = "~/Pages/Exams/Partials/PartialQARender.cshtml";
         public const string ExamHeaderBar = "~/Pages/Exams/Partials/ExamHeaderBar.cshtml";
 
+        public const string ExamContainer = "~/Pages/Exams/Exam.cshtml";
+
         public virtual string GetLayout(string name, bool fallbackToDefault = true)
         {
             switch (name)

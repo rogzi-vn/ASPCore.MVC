@@ -46,19 +46,22 @@ namespace ASPCoreMVC.Web.Pages.Exams
         public async Task<IActionResult> Detail(HelperTipsTypes type,
             Guid id,
             [FromQuery(Name = "ex")] string ex,
-            [FromQuery(Name = "sc")] string sc)
+            [FromQuery(Name = "sc")] string sc,
+            [FromQuery(Name = "instructor")] Guid? instructor)
         {
             // Mã của dối tượng hiện tại
             ViewBag.Id = id;
             // Cho biết có hiển thị nút cập nhật dữ liệu hay không
             ViewBag.ShowManagerButton = type == HelperTipsTypes.SkillPart;
 
+            var renderType = -1;
+
             if (type == HelperTipsTypes.Exam)
             {
                 var exam = (await _ExamCategoryServices.GetAsync(id)).Data;
                 ViewBag.ModalName = $"{exam.Name} Exam's tips";
                 ViewBag.ModalContent = exam.Tips;
-                ViewBag.StartExamUrl = $"/exams/{(int)RenderExamTypes.Synthetic}/exam/{id}";
+                renderType = (int)RenderExamTypes.Synthetic;
             }
             else if (type == HelperTipsTypes.SkillCategory)
             {
@@ -71,15 +74,16 @@ namespace ASPCoreMVC.Web.Pages.Exams
                 }
                 ViewBag.ModalName = $"{sCat.Name} of {ex} Exam's tips";
                 ViewBag.ModalContent = sCat.Tips;
-                ViewBag.StartExamUrl = $"/exams/{(int)RenderExamTypes.SkillCategory}/exam/{id}";
+                renderType = (int)RenderExamTypes.SkillCategory;
             }
             else if (type == HelperTipsTypes.SkillPart)
             {
                 var sPart = (await _SkillPartServices.GetAsync(id)).Data;
                 ViewBag.ModalName = $"{sc} {sPart.Name} of {ex} Exam's tips";
                 ViewBag.ModalContent = sPart.Tips;
-                ViewBag.StartExamUrl = $"/exams/{(int)RenderExamTypes.SkillPart}/exam/{id}";
+                renderType = (int)RenderExamTypes.SkillPart;
             }
+            ViewBag.StartExamUrl = $"/exams/{renderType}/exam/{id}?instructor={instructor}";
             return PartialView("~/Pages/Exams/Partials/Detail.cshtml");
         }
     }

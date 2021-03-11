@@ -46,5 +46,16 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             };
         }
 
+        public Guid? GetLastExamNotFinished()
+        {
+            return Repository.Where(x => x.CreatorId == CurrentUser.Id &&
+           (x.UserAnswers == null || x.UserAnswers.Length == 0)).FirstOrDefault()?.Id ?? null;
+        }
+
+        public async Task<ExamLogBaseDTO> GetBaseAsync(Guid id)
+        {
+            var examLog = await Repository.GetAsync(id);
+            return ObjectMapper.Map<ExamLog, ExamLogBaseDTO>(examLog);
+        }
     }
 }

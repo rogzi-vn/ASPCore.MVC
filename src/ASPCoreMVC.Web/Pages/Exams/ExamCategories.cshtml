@@ -1,15 +1,9 @@
 ﻿@page "/exams/exam-categories"
 @model ASPCoreMVC.Web.Pages.Exams.ExamsIndexModel
 @{
+    Model.SetBreadcrumb(
+    new string[] { L["Exam categories"].Value, "#" });
 }
-
-<!-- Page Heading -->
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Exams</h1>
-    <a href="#" class="d-inline-block btn btn-sm btn-primary shadow-sm">
-        <i class="fas fa-download fa-sm text-white"></i> Generate Report
-    </a>
-</div>
 
 <div class="row">
     @foreach (var item in Model.Exams)
@@ -18,12 +12,22 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-gradient-primary">
                     <h6 class="m-0 font-weight-bold text-white">@item.Exam.Name</h6>
-                    <a href="javascript:loadDetail('@ASPCoreMVC.Common.HelperTipsTypes.Exam','@item.Exam.Id');"
+                    <a href="javascript:loadDetail('@item.Exam.Id','@ASPCoreMVC.Common.HelperTipsTypes.Exam','@item.Exam.Id');"
                        class="d-inline-block btn btn-sm btn-success shadow-sm">
-                        <i class="fas fa-star fa-sm text-white mr-1"></i> Open
+                        <i class="fas fa-star fa-sm text-white mr-1"></i> Open general exam
                     </a>
                 </div>
                 <div class="card-body">
+                    <div class="form-group">
+                        <label class="mb-1">@L["Select your Instructor"]</label>
+                        <select class="form-control instructors-selector"
+                                id="@item.Exam.Id"
+                                data-ec="@item.Exam.Id"
+                                data-live-search="true">
+                            <option value="" class="font-italic">@L["Select your instructor"]</option>
+                        </select>
+                    </div>
+                    <div class="separator my-2" id="gi-list-state">@L["Select the practice test"]</div>
                     <div id="accordion">
                         @foreach (var sc in item.Scs)
                         {
@@ -47,7 +51,7 @@
                                                         <span class="font-weight-bold">@p.Name</span>
                                                     </div>
                                                     <div class="">
-                                                        <a href="javascript:loadDetail('@ASPCoreMVC.Common.HelperTipsTypes.SkillPart','@p.Id', '@item.Exam.Name', '@sc.Cat.Name');"
+                                                        <a href="javascript:loadDetail('@item.Exam.Id','@ASPCoreMVC.Common.HelperTipsTypes.SkillPart','@p.Id', '@item.Exam.Name', '@sc.Cat.Name');"
                                                            class="d-inline-block btn btn-sm btn-success shadow-sm">
                                                             <i class="fas fa-star fa-sm text-white mr-1"></i> Open
                                                         </a>
@@ -61,7 +65,7 @@
                                                 <span class="font-weight-bold">@sc.Cat.Name's synthetic</span>
                                             </div>
                                             <div class="">
-                                                <a href="javascript:loadDetail('@ASPCoreMVC.Common.HelperTipsTypes.SkillCategory','@sc.Cat.Id','@item.Exam.Name');"
+                                                <a href="javascript:loadDetail('@item.Exam.Id','@ASPCoreMVC.Common.HelperTipsTypes.SkillCategory','@sc.Cat.Id','@item.Exam.Name');"
                                                    class="d-inline-block btn btn-sm btn-success shadow-sm">
                                                     <i class="fas fa-star fa-sm text-white mr-1"></i> Open
                                                 </a>
@@ -86,10 +90,34 @@
 
 @section Scripts {
     <script>
-        function loadDetail(type, id, ex, sc) {
-            $("#exam-detail-modal").load(`/exams/partials/exam-partials/${type}/${id}/detail?ex=${ex}&sc=${sc}`, function () {
-                $("#exam-detail-modal").modal('show');
-            });
+        function loadDetail(instructorRef, type, id, ex, sc) {
+            var instructorId = $(`#${instructorRef}`).val();
+            if (instructorId) {
+                $("#exam-detail-modal").load(`/exams/partials/exam-partials/${type}/${id}/detail?ex=${ex}&sc=${sc}&instructor=${instructorId}`, function () {
+                    $("#exam-detail-modal").modal('show');
+                });
+            } else {
+                showToast('error', "Please select your instructor");
+            }
         }
+    </script>
+
+    <script>
+        $(".instructors-selector").each(function () {
+            var e = $(this);
+            var ecId = e.data("ec");
+            fetch(`/api/app/exam-cat-instruct?ExamCategoryId=${ecId}&SkipCount=0&MaxResultCount=1000`)
+                .then(r => r.json())
+                .then(rd => {
+                    if (rd.success && rd.data && rd.data.items) {
+                        rd.data.items.forEach(item => {
+                            e.append(`<option value="${item.id}">${item.userDisplayName}</option>`);
+                        });
+                        e.selectpicker();
+                    }
+                }).catch(err => {
+
+                });
+        });
     </script>
 }

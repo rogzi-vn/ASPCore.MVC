@@ -34,6 +34,7 @@ using Volo.Abp.BlobStoring.FileSystem;
 using Microsoft.AspNetCore.Http.Features;
 using ASPCoreMVC.Helpers;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using ASPCoreMVC.Web.Middleware;
 
 namespace ASPCoreMVC.Web
 {
@@ -268,6 +269,8 @@ namespace ASPCoreMVC.Web
             app.UseRouting();
             app.UseAuthentication();
             app.UseJwtTokenMiddleware();
+
+            app.UseExamContinousMiddleware();
 
             if (MultiTenancyConsts.IsEnabled)
             {

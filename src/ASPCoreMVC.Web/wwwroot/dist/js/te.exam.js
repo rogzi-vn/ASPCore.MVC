@@ -264,7 +264,11 @@ $("#complete-exam-button").click(function () {
         confirmButtonText: 'Yes, complete exam!',
         preConfirm: () => {
             var token = $('input[name="__RequestVerificationToken"]').val();
-            collectAnswers();
+            var jsonData = {
+                logId: $("#exam-log-id").val(),
+                answers: collectAnswers()
+            };
+            console.log(jsonData);
             return null;
             //return fetch(decodeURI(deleteUrl), {
             //    method: 'DELETE',
@@ -302,6 +306,5 @@ function collectAnswers() {
         };
         answers.push(ans);
     });
-    console.log(answers);
     return answers;
 }

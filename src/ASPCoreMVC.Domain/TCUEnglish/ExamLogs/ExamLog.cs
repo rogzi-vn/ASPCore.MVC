@@ -15,6 +15,10 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         /// </summary>
         public RenderExamTypes RenderExamType { get; set; }
         /// <summary>
+        /// Mã của mục thi sẽ được render
+        /// </summary>
+        public Guid DestinationId { get; set; }
+        /// <summary>
         /// Tên bài thi
         /// </summary>
         public string Name { get; set; }

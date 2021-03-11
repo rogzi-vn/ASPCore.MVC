@@ -3,15 +3,17 @@ using System;
 using ASPCoreMVC.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
 namespace ASPCoreMVC.Migrations
 {
     [DbContext(typeof(ASPCoreMVCMigrationsDbContext))]
-    partial class ASPCoreMVCMigrationsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210311004459_Add properties IsActive for ExamCatInstructor")]
+    partial class AddpropertiesIsActiveforExamCatInstructor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,9 +251,6 @@ namespace ASPCoreMVC.Migrations
                     b.Property<Guid?>("CreatorId")
                         .HasColumnType("char(36)")
                         .HasColumnName("CreatorId");
-
-                    b.Property<Guid>("DestinationId")
-                        .HasColumnType("char(36)");
 
                     b.Property<Guid?>("ExamCatInstructorId")
                         .HasColumnType("char(36)");

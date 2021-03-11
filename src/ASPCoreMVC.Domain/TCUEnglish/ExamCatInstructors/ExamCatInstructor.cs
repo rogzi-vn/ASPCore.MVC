@@ -11,5 +11,6 @@ namespace ASPCoreMVC.TCUEnglish.ExamCatInstructors
     {
         public Guid UserId { get; set; }
         public Guid ExamCategoryId { get; set; }
+        public bool IsActive { get; set; }
     }
 }

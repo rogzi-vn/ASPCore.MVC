@@ -37,7 +37,7 @@ namespace ASPCoreMVC.Web.Pages.Manager.Users.Partials
             {
                 Filter = filter ?? "",
                 MaxResultCount = AppTheme.Limit,
-                SkipCount = (p.Value - 1) * AppTheme.Limit,
+                SkipCount = (p.Value - 1) * AppTheme.Limit
             };
             var res = await _AppUserService.GetListAsync(serchInp);
 

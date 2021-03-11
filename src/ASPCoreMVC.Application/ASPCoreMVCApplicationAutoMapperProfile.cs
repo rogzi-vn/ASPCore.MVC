@@ -99,6 +99,7 @@ namespace ASPCoreMVC
 
             CreateMap<ExamLog, ExamLogDTO>().ReverseMap();
             CreateMap<ExamLogDTO, ExamLogBaseDTO>();
+            CreateMap<ExamLog, ExamLogBaseDTO>();
         }
     }
 }
