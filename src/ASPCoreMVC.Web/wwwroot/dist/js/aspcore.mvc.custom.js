@@ -469,3 +469,10 @@ function secondsExtract(duration) {
     ret += "" + secs;
     return ret;
 }
+// Func
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+function numberWithoutCommas(x) {
+    return x.toString().replace(/,/g, '');
+}

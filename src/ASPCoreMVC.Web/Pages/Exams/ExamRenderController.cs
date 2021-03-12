@@ -33,6 +33,38 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
         }
 
         [HttpGet]
+        [Route("/exams/preview/{logId:Guid}")]
+        public async Task<IActionResult> RenderPreviewExam(Guid? logId)
+        {
+            if (logId == null || logId == Guid.Empty)
+            {
+                this.ToastError(L["Can not process your preview exam"]);
+                return Redirect("/");
+            }
+
+            var res = await _ExamLogService.GetAsync(logId.Value);
+            var model = new ExamRenderViewModel();
+            if (res.Success)
+            {
+                model.ExamContent = JsonConvert.DeserializeObject<ExamForRenderDTO>(res.Data.RawExamRendered);
+                model.ExamLogId = res.Data.Id;
+
+                model = await ProcessParams(model);
+                ViewBag.Answers = JsonConvert.DeserializeObject<List<QAPairDTO>>(res.Data.UserAnswers);
+                ViewBag.Scores = res.Data.ExamScores.ToString("0.0");
+
+                ViewBag.TimeInMinutes = res.Data.ExamTimeInMinutes;
+
+                return View(AppTheme.ExamPreview, model);
+            }
+            else
+            {
+                this.ToastError(L["Can not process your previous exam"]);
+                return Redirect("/");
+            }
+        }
+
+        [HttpGet]
         [Route("/exams/re-work/{logId:Guid}")]
         public async Task<IActionResult> RenderReWorkExam(Guid? logId)
         {
@@ -48,6 +80,12 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
             {
                 model.ExamContent = JsonConvert.DeserializeObject<ExamForRenderDTO>(res.Data.RawExamRendered);
                 model.ExamLogId = res.Data.Id;
+
+                if (!res.Data.UserAnswers.IsNullOrEmpty())
+                {
+                    // Prevent user re work done exam
+                    return Redirect($"/exams/preview/{logId}");
+                }
 
                 model = await ProcessParams(model);
                 return View(AppTheme.ExamContainer, model);
@@ -66,6 +104,14 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
             Guid destId,
             [FromQuery(Name = "instructor")] Guid? instructor)
         {
+            // Check if user have other test
+            var previousLogId = _ExamLogService.GetLastExamNotFinished();
+            if (previousLogId != null && previousLogId != Guid.Empty)
+            {
+                // Ngắn chặn việc lặp lại tạo bài test
+                return Redirect($"/exams/re-work/{previousLogId}");
+            }
+
             var res = await _RenderExamService.GetRenderExam(renderType, destId);
             if (!res.Success || res.Data == null)
             {

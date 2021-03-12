@@ -32,9 +32,12 @@ namespace ASPCoreMVC.Web
         public const string UserProfileViewable = "~/Pages/_Common/Partials/UserProfiles/UserProfileViewable.cshtml";
 
         public const string PartialQARender = "~/Pages/Exams/Partials/PartialQARender.cshtml";
+        public const string PartialQAReviewRender = "~/Pages/Exams/Partials/PartialQAReviewRender.cshtml";
+
         public const string ExamHeaderBar = "~/Pages/Exams/Partials/ExamHeaderBar.cshtml";
 
         public const string ExamContainer = "~/Pages/Exams/Exam.cshtml";
+        public const string ExamPreview = "~/Pages/Exams/ExamReview.cshtml";
 
         public virtual string GetLayout(string name, bool fallbackToDefault = true)
         {

@@ -14,7 +14,7 @@
 
     .text-ans:hover, .img-ans:hover {
         cursor: pointer;
-        color: #0F0;
+        color: #48ad1e;
     }
 
         .text-ans:hover .border-dark, .img-ans:hover .border-dark {

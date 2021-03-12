@@ -3,15 +3,17 @@ using System;
 using ASPCoreMVC.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
 namespace ASPCoreMVC.Migrations
 {
     [DbContext(typeof(ASPCoreMVCMigrationsDbContext))]
-    partial class ASPCoreMVCMigrationsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210312070405_Update ExamLog Entity")]
+    partial class UpdateExamLogEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -277,9 +279,6 @@ namespace ASPCoreMVC.Migrations
 
                     b.Property<DateTime?>("InstructorCompletionTime")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsDoneScore")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsPassed")
                         .HasColumnType("tinyint(1)");

@@ -1,0 +1,148 @@
+﻿@using ASPCoreMVC.TCUEnglish.ExamLogs;
+@using ASPCoreMVC.TCUEnglish.UserExams;
+
+@model ASPCoreMVC.Web.Models.QARenderModal
+@{
+    var qaPairs = (List<QAPairDTO>)ViewBag.Answers;
+    var circleAnswerClasses = "rounded-circle border px-2";
+    bool IsUserCorrectAns(Guid qId, MicroAnswerDTO ans)
+    {
+        return qaPairs.Any(x => x.QuestionId == qId && x.Answer == ans.Id.ToString()) && ans.IsCorrect;
+    }
+    string CorrectClass(Guid qId, MicroAnswerDTO ans)
+    {
+        var classes = "";
+        var isUserCorrectAns = IsUserCorrectAns(qId, ans);
+        if (isUserCorrectAns && ans.IsCorrect)
+        {
+            classes = circleAnswerClasses + " border-success";
+        }
+        else if (ans.IsCorrect)
+        {
+            classes = circleAnswerClasses + " border-danger";
+        }
+        else if (isUserCorrectAns)
+        {
+            classes = circleAnswerClasses + " border-dark";
+        }
+        return classes;
+    }
+}
+@foreach (var q in Model.Questions)
+{
+    var affectedId = Guid.NewGuid();
+
+
+    <input type="hidden" class="question-answered" data-q-id="@q.Id" id="@affectedId" data-ans-type="@Model.SkillPart.AnswerType.ToString()" />
+    // Render for question
+    if (Model.SkillPart.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video && Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer && Model.SkillPart.QuestionContainers.Count >= 1)
+    {
+        <div class="pt-3">
+            <label>
+                @Html.Raw(q.Text)
+            </label>
+            <button class="btn btn-sm btn-success shadow-sm float-right" id="start-recorder-@affectedId">
+                <i class="fa fa-play mr-1"></i>
+                @L["Start Recorder"]
+            </button>
+            <button class="btn btn-sm btn-danger shadow-sm d-none float-right" id="finish-recorder-@affectedId">
+                <i class="fa fa-stop mr-1"></i>
+                @L["Stop Recorder"]
+            </button>
+            <div class="d-none" id="audio-player-@affectedId">
+
+            </div>
+        </div>
+    }
+    else if (Model.SkillPart.IsHaveQuestionText)
+    {
+        <div class="pt-3">
+            <label>
+                @Html.Raw($"{Model.Counter++}. {q.Text}")
+            </label>
+        </div>
+    }
+    else
+    {
+        <span class="float-left" style="width: 35px;">
+            @Html.Raw($"{Model.Counter++}.")
+        </span>
+    }
+    if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.TextAnswer)
+    {
+        var count = 0;
+        var columnCount = (int)Math.Ceiling(12 / (decimal)q.Answers.Count);
+        if (Model.SkillPart.IsVerticalAnswerDisplay)
+            columnCount = 12;
+        <div class="row">
+            @* Render for answers *@
+            @foreach (var ans in q.Answers)
+            {
+                <div class="col-12 col-lg-@columnCount" data-affect-id="@affectedId"
+                     id="@ans.Id">
+                    <span class="@CorrectClass(q.Id, ans)">@(EzNumber.ToAlphabetNumeral(count++))</span>.
+                    @Html.Raw(ans.AnswerContent)
+                </div>
+            }
+        </div>
+    }
+    else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.FillAnswer)
+    {
+        bool isSplitInput = false;
+        if (Model.SkillPart.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Rewrite)
+        {
+            isSplitInput = q.TextClone.Contains("{{input}}");
+        }
+        if (isSplitInput)
+        {
+            var strings = q.TextClone.Split("{{input}}", 2);
+            <div class="pt-0">
+                <label>
+                    @Html.Raw(strings.JoinAsString($"<input class=\"auto-sizing input-border fill-ans\" type=\"text\" data-affect-id=\"{affectedId}\">"))
+                </label>
+            </div>
+        }
+        else
+        {
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">@L["Your answer"]</span>
+                </div>
+                <input type="text" class="form-control fill-ans" data-affect-id="@affectedId">
+            </div>
+        }
+    }
+    else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.ImageAnswer)
+    {
+        var count = 0;
+        var columnCount = (int)Math.Ceiling(12 / (decimal)q.Answers.Count);
+        if (Model.SkillPart.IsVerticalAnswerDisplay)
+            columnCount = 12;
+        <div class="row">
+            @* Render for answers *@
+            @foreach (var ans in q.Answers)
+            {
+                var alpha = EzNumber.ToAlphabetNumeral(count++);
+                <div class="col-12 col-lg-@columnCount">
+                    <div class="" data-affect-id="@affectedId"
+                         id="@ans.Id">
+                        <span class="@CorrectClass(q.Id, ans)">@alpha</span>.
+                        @L["Picture"] @alpha
+                    </div>
+                    <div class="mt-2">
+                        <img src="@Html.Raw(ans.AnswerContent)" class="w-100 border rounded" />
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)
+    {
+
+    }
+    else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.WriteAnswer)
+    {
+        var id = Guid.NewGuid().ToString();
+        <textarea id="@id" class="" editor-mint="true" data-affect-id="@affectedId"></textarea>
+    }
+}

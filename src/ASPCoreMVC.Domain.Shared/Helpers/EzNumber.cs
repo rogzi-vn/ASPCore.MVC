@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ASPCoreMVC.Helpers
 {
@@ -27,6 +28,16 @@ namespace ASPCoreMVC.Helpers
         public static string ToAlphabetNumeral(int number)
         {
             return alphabet[number % alphabet.Length].ToString();
+        }
+
+        public static string WithCommas(this string inp)
+        {
+            string pattern = @"\B(?=(\d{3})+(?!\d))";
+            return Regex.Replace(inp, pattern, ",");
+        }
+        public static string WithoutCommas(this string inp)
+        {
+            return inp.Replace(",", "");
         }
     }
 }

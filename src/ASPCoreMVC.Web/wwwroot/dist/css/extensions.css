@@ -555,3 +555,25 @@ table.tb {
     background-position: center;
     line-height: normal;
 }
+
+.exam-statistic {
+    background-color: #4663b9;
+    -webkit-transition: background-color 0.3s ease-out;
+    -moz-transition: background-color 0.3s ease-out;
+    -o-transition: background-color 0.3s ease-out;
+    transition: background-color 0.3s ease-out;
+}
+
+    .exam-statistic:hover {
+        background-color: #f7d338;
+        font-weight: bold;
+        cursor: pointer;
+        -webkit-transition: background-color 0.3s ease-out;
+        -moz-transition: background-color 0.3s ease-out;
+        -o-transition: background-color 0.3s ease-out;
+        transition: background-color 0.3s ease-out;
+    }
+
+.white-child-btn .btn-light {
+    background-color: #FFF !important;
+}

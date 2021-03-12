@@ -39,6 +39,22 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         /// </summary>
         public float ExamScores { get; set; }
         /// <summary>
+        /// Điểm tối đa cho bài thi thiện tại
+        /// </summary>
+        public float CurrentMaxScore { get; set; }
+        /// <summary>
+        /// Bài thi đã vượt qua hay chưa
+        /// </summary>
+        public bool IsPassed { get; set; }
+        /// <summary>
+        /// Bài thi đã chấm điểm hay chưa
+        /// </summary>
+        public bool IsDoneScore { get; set; }
+        /// <summary>
+        /// Thời gian tối đã cho phần thi hiện tại
+        /// </summary>
+        public float CurrentMaxTimeInMinutes { get; set; }
+        /// <summary>
         /// Mã GVHD kèm vào nếu có
         /// </summary>
         public Guid? ExamCatInstructorId { get; set; }

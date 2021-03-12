@@ -253,6 +253,7 @@ function deleteOldFile(fileName, complete) {
 }
 
 $("#complete-exam-button").click(function () {
+    var logId = $("#exam-log-id").val();
     Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -265,32 +266,37 @@ $("#complete-exam-button").click(function () {
         preConfirm: () => {
             var token = $('input[name="__RequestVerificationToken"]').val();
             var jsonData = {
-                logId: $("#exam-log-id").val(),
+                logId: logId,
                 answers: collectAnswers()
             };
             console.log(jsonData);
-            return null;
-            //return fetch(decodeURI(deleteUrl), {
-            //    method: 'DELETE',
-            //    headers: {
-            //        RequestVerificationToken: token,
-            //        accept: '*/*',
-            //    },
-            //})
-            //    .then((response) => {
-            //        if (!response.ok) {
-            //            var response = JSON.parse(res.responseText);
-            //            showToast('error', response.error.message);
-            //        }
-            //        return response;
-            //    })
-            //    .catch((error) => {
-            //        Swal.showValidationMessage(`Request failed: ${error}`);
-            //    });
+            stopExamCountDown();
+            return fetch(decodeURI(`/api/app/exam-log/result-processing`), {
+                method: 'POST',
+                headers: {
+                    RequestVerificationToken: token,
+                    accept: '*/*',
+                    "Content-Type": 'application/json',
+                },
+                body: JSON.stringify(jsonData)
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        var response = JSON.parse(res.responseText);
+                        showToast('error', response.error.message);
+                    }
+                    return response;
+                })
+                .catch((error) => {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+                });
         },
     }).then((result) => {
         if (result.isConfirmed) {
-
+            if (result.value.status == 200) {
+                $("body").html("");
+                window.location.href = `/exams/preview/${logId}`;
+            }
         }
     });
 });
