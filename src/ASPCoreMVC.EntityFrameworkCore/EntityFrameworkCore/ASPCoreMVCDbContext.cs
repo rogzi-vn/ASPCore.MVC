@@ -25,6 +25,7 @@ using ASPCoreMVC.TCUEnglish.MesGroups;
 using ASPCoreMVC.TCUEnglish.UserMessages;
 using ASPCoreMVC.TCUEnglish.MemberInstructors;
 using ASPCoreMVC.TCUEnglish.ExamLogs;
+using ASPCoreMVC.TCUEnglish.ScoreLogs;
 
 namespace ASPCoreMVC.EntityFrameworkCore
 {
@@ -62,6 +63,7 @@ namespace ASPCoreMVC.EntityFrameworkCore
         public DbSet<MemberInstructor> MemberInstructors { get; set; }
 
         public DbSet<ExamLog> ExamLogs { get; set; }
+        public DbSet<ScoreLog> ScoreLogs { get; set; }
 
         /* Add DbSet properties for your Aggregate Roots / Entities here.
          * Also map them inside ASPCoreMVCDbContextModelCreatingExtensions.ConfigureASPCoreMVC

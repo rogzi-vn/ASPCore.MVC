@@ -2,6 +2,7 @@
 using ASPCoreMVC._Commons.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
@@ -18,6 +19,11 @@ namespace ASPCoreMVC.TCUEnglish.ExamCategories
         public ExamCategoryService(IRepository<ExamCategory, Guid> repo) : base(repo)
         {
 
+        }
+
+        protected override IQueryable<ExamCategory> ApplySorting(IQueryable<ExamCategory> query, PagedAndSortedResultRequestDto input)
+        {
+            return query.OrderBy(x => x.CreationTime);
         }
 
         public override Task DeleteAsync(Guid id)

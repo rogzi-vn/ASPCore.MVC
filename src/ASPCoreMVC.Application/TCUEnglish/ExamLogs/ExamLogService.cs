@@ -1,5 +1,6 @@
 ﻿using ASPCoreMVC._Commons;
 using ASPCoreMVC._Commons.Services;
+using ASPCoreMVC.TCUEnglish.ScoreLogs;
 using ASPCoreMVC.TCUEnglish.UserExams;
 using Newtonsoft.Json;
 using System;
@@ -15,9 +16,13 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
     public class ExamLogService : WrapperCrudAppService<ExamLog, ExamLogDTO, Guid, GetExamLogDTO>,
         IExamLogService
     {
-        public ExamLogService(IRepository<ExamLog, Guid> repo) : base(repo)
-        {
+        private readonly IRepository<ScoreLog, Guid> ScoreLogRepository;
 
+        public ExamLogService(
+            IRepository<ExamLog, Guid> repo,
+            IRepository<ScoreLog, Guid> ScoreLogRepository) : base(repo)
+        {
+            this.ScoreLogRepository = ScoreLogRepository;
         }
 
         protected override async Task<IQueryable<ExamLog>> CreateFilteredQueryAsync(GetExamLogDTO input)
@@ -91,11 +96,12 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             return examScores >= examMaxScores / 2;
         }
 
-        public async Task ResultProcessing(ExamLogResultDTO examResult)
+        private async Task<ExamLog> ExamLogProcessing(ExamLogResultDTO examResult)
         {
             var examLog = await Repository.GetAsync(examResult.LogId);
             if (examLog.CompletionTime != null)
-                return;
+                return null;
+
             // Tổng điểm của bài thi hiện tại
             var totalScore = 0F;
 
@@ -120,16 +126,21 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                     // Điểm tối đa của skill part
                     var skpMaxScores = skp.MaxScores;
 
+                    // Điểm cho phần thi thiện tại
+                    var skpScores = 0F;
+
                     // Điểm khả dụng cho mỗi câu hỏi đúng
                     var skpScorePerQuestion = skp.MaxScores /
                         skp.QuestionContainers.SelectMany(x => x.Questions).Count();
 
+
+                    #region Bắt đầu phần chấm tự động
                     // Phân giải khung chứa ds câu hỏi
                     for (int k = 0; k < exam
-                        .SkillCategories[i]
-                        .SkillParts[j]
-                        .QuestionContainers
-                        .Count; k++)
+                    .SkillCategories[i]
+                    .SkillParts[j]
+                    .QuestionContainers
+                    .Count; k++)
                     {
                         // Phân giải danh sách câu hỏi
                         for (int l = 0; l < exam
@@ -139,20 +150,20 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                         .Questions.Count; l++)
                         {
                             // Luu tam cau hoi hien tai
-                            var question = exam
-                                .SkillCategories[i]
-                                .SkillParts[j]
-                                .QuestionContainers[k]
-                                .Questions[l];
+                            var question = exam.SkillCategories[i].SkillParts[j].QuestionContainers[k].Questions[l];
 
                             // Lay cau tra loi cua nguoi dung cho cau hoi hien tai
                             var userAnswer = examResult.Answers.Find(x => x.QuestionId == question.Id);
 
-                            // Nếu các câu trả lời nằm trong phạm trù có thể chấm được
+                            // Nếu phần này có thể chấm tự động được
                             if (skp.AnswerType == Common.AnswerTypes.TextAnswer ||
                                skp.AnswerType == Common.AnswerTypes.ImageAnswer ||
                                skp.AnswerType == Common.AnswerTypes.FillAnswer)
                             {
+                                //// Nếu nội dung này đã được chấm trước đó thì bỏ qua, vì đây là nội dung chấm tự động
+                                //if (skp.QuestionContainers.Any(x => x.Questions.Any(y => y.CorrectionContentTime != null)))
+                                //    continue;
+
                                 var isCorrect = false;
 
                                 if (skp.AnswerType == Common.AnswerTypes.FillAnswer)
@@ -170,38 +181,69 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                                     StringComparison.OrdinalIgnoreCase) && x.IsCorrect);
                                 }
 
-                                if (isCorrect)
-                                {
-                                    totalScore += skpScorePerQuestion;
-                                }
-
                                 // Luu ket qua dung sai
-                                exam
-                                    .SkillCategories[i]
+                                exam.SkillCategories[i]
                                     .SkillParts[j]
                                     .QuestionContainers[k]
                                     .Questions[l].IsCorrect = isCorrect;
 
                                 // Lưu giá trị điểm vào
-                                exam
-                                    .SkillCategories[i]
+                                exam.SkillCategories[i]
                                     .SkillParts[j]
                                     .QuestionContainers[k]
                                     .Questions[l].Scores = skpScorePerQuestion;
 
                                 // Lưu thời gian chấm
-                                exam
-                                    .SkillCategories[i]
+                                exam.SkillCategories[i]
                                     .SkillParts[j]
                                     .QuestionContainers[k]
                                     .Questions[l].CorrectionContentTime = DateTime.Now;
 
-                                // Đánh dấu rằng bài thi đã được chấm hoàn tất
-                                examLog.IsDoneScore = true;
+                            }
+                            else
+                            {
+                                if (exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].IsCorrect)
+                                {
+                                    exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].CorrectionContentTime = DateTime.Now;
+                                }
+                            }
+
+                            // Tính điểm nếu câu trả lời này là đúng
+                            if (exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].IsCorrect)
+                            {
+                                totalScore += skpScorePerQuestion;
+                                skpScores += skpScorePerQuestion;
+                            }
+
+                            if (exam.SkillCategories[i].SkillParts[j].QuestionContainers[k].Questions[l].CorrectionContentTime != null)
+                            {
+                                // Lưu kết quả chấm vào log Điểm
+                                await SaveScoreLog(examLog.Id, exam.GetDesId(), skpScores, skpMaxScores);
                             }
                         }
                     }
+                    #endregion
+
+
                 }
+            }
+
+            if (!exam.SkillCategories
+                .SelectMany(x => x.SkillParts
+                .SelectMany(y => y.QuestionContainers
+                .SelectMany(z => z.Questions))).Any(x => x.CorrectionContentTime == null))
+            {
+                // Đánh dấu rằng bài thi đã được chấm hoàn tất
+                examLog.IsDoneScore = true;
             }
 
             examLog.ExamScores = totalScore;
@@ -213,8 +255,37 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             // Cho biết bài thi đã đạt hay chưa
             examLog.IsPassed = IsExamPassesed(examLog.ExamScores, examLog.CurrentMaxScore);
 
+            return examLog;
+        }
+
+        public async Task ResultProcessing(ExamLogResultDTO examResult)
+        {
+            var examLog = await ExamLogProcessing(examResult);
+            if (examLog == null)
+                return;
+
             // Cập nhật exam Logs
             await Repository.UpdateAsync(examLog);
+        }
+
+        // Lưu lại log điểm của bài kiểm tra
+        private async Task SaveScoreLog(Guid examLogId, Guid? destId, float scores, float maxScores)
+        {
+            if (destId == null || destId == Guid.Empty)
+                return;
+            var scoreLog = new ScoreLog
+            {
+                ExamLogId = examLogId,
+                DestId = destId.Value,
+                Scores = scores,
+                MaxScores = maxScores,
+                RateInParent = scores / maxScores
+            };
+
+            // Xóa các bản đã tổn tại có examLogId và desId trùng đã tồn tại trước đó
+            await ScoreLogRepository.DeleteAsync(x => x.ExamLogId == examLogId && x.DestId == destId.Value);
+            // Lưu mới vào CSDL
+            await ScoreLogRepository.InsertAsync(scoreLog);
         }
 
         public async Task<int> GetCompletedTest(Guid examCategoryId)
