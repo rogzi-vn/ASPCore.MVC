@@ -1,5 +1,6 @@
 ﻿using ASPCoreMVC._Commons;
 using ASPCoreMVC._Commons.Services;
+using ASPCoreMVC.TCUEnglish.ExamSkillCategories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,13 @@ namespace ASPCoreMVC.TCUEnglish.ExamCategories
         PagedAndSortedResultRequestDto,
         CreateUpdateExamCategoryDTO>, IExamCategoryService
     {
-        public ExamCategoryService(IRepository<ExamCategory, Guid> repo) : base(repo)
-        {
 
+        private readonly IRepository<ExamSkillCategory, Guid> ExamSkillCategoryRepory;
+
+        public ExamCategoryService(IRepository<ExamCategory, Guid> repo,
+            IRepository<ExamSkillCategory, Guid> ExamSkillCategoryRepory) : base(repo)
+        {
+            this.ExamSkillCategoryRepory = ExamSkillCategoryRepory;
         }
 
         protected override IQueryable<ExamCategory> ApplySorting(IQueryable<ExamCategory> query, PagedAndSortedResultRequestDto input)
@@ -58,6 +63,13 @@ namespace ASPCoreMVC.TCUEnglish.ExamCategories
                             ObjectMapper.Map<ExamCategory, ExamCategoryBaseDTO>(
                             await Repository.GetAsync(guid)),
                             "Successful");
+        }
+
+        public float GetMaxScores(Guid id)
+        {
+            return ExamSkillCategoryRepory
+                .Where(x => x.ExamCategoryId == id)
+                .Sum(x => x.MaxScores);
         }
     }
 }

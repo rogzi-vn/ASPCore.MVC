@@ -63,7 +63,7 @@
     <None Include="wwwroot\dist\img\undraw_rocket.svg" />
     <None Include="wwwroot\dist\js\demo\chart-area-demo.js" />
     <None Include="wwwroot\dist\js\demo\chart-bar-demo.js" />
-    <None Include="wwwroot\dist\js\demo\chart-pie-demo.js" />
+    <None Include="wwwroot\dist\js\dashboard.chart.pie.js" />
     <None Include="wwwroot\dist\js\sb-admin-2.js" />
     <None Include="wwwroot\dist\js\sb-admin-2.min.js" />
     <None Include="wwwroot\dist\scss\navs\_global.scss" />

@@ -133,6 +133,11 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                     var skpScorePerQuestion = skp.MaxScores /
                         skp.QuestionContainers.SelectMany(x => x.Questions).Count();
 
+                    // Cờ kiểm tra có thể chấm tự động hay không
+                    var isAutoCorrectable = skp.AnswerType == Common.AnswerTypes.TextAnswer ||
+                               skp.AnswerType == Common.AnswerTypes.ImageAnswer ||
+                               skp.AnswerType == Common.AnswerTypes.FillAnswer;
+
 
                     #region Bắt đầu phần chấm tự động
                     // Phân giải khung chứa ds câu hỏi
@@ -156,9 +161,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                             var userAnswer = examResult.Answers.Find(x => x.QuestionId == question.Id);
 
                             // Nếu phần này có thể chấm tự động được
-                            if (skp.AnswerType == Common.AnswerTypes.TextAnswer ||
-                               skp.AnswerType == Common.AnswerTypes.ImageAnswer ||
-                               skp.AnswerType == Common.AnswerTypes.FillAnswer)
+                            if (isAutoCorrectable)
                             {
                                 //// Nếu nội dung này đã được chấm trước đó thì bỏ qua, vì đây là nội dung chấm tự động
                                 //if (skp.QuestionContainers.Any(x => x.Questions.Any(y => y.CorrectionContentTime != null)))
@@ -223,16 +226,16 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                                 totalScore += skpScorePerQuestion;
                                 skpScores += skpScorePerQuestion;
                             }
-
-                            if (exam.SkillCategories[i].SkillParts[j].QuestionContainers[k].Questions[l].CorrectionContentTime != null)
-                            {
-                                // Lưu kết quả chấm vào log Điểm
-                                await SaveScoreLog(examLog.Id, exam.GetDesId(), skpScores, skpMaxScores);
-                            }
                         }
                     }
                     #endregion
 
+                    // Lưu điểm vào log điểm
+                    if (isAutoCorrectable)
+                    {
+                        // Lưu kết quả chấm vào log Điểm
+                        await SaveScoreLog(examLog.Id, skp.Id, skpScores, skpMaxScores);
+                    }
 
                 }
             }

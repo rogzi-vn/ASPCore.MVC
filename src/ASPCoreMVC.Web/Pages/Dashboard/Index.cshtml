@@ -20,13 +20,15 @@
 
     <!-- Page level custom scripts -->
     <script src="/dist/js/demo/chart-area-demo.js"></script>
-    <script src="/dist/js/demo/chart-pie-demo.js"></script>
+    <script src="~/dist/js/dashboard.chart.pie.js"></script>
 
     <script>
         $(".exam-statistic").click(event => {
             var parent = $(event.currentTarget).parent("form");
             parent.submit();
         });
+
+        balanceSkillPieChart("balance-skill-pie-chart", @Html.Raw(ViewData["BalanceSkillsJson"]));
     </script>
 }
 

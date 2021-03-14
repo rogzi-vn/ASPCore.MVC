@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamLogs;
+using ASPCoreMVC.TCUEnglish.ScoreLogs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 namespace ASPCoreMVC.Web.Pages.Dashboard
 {
@@ -15,13 +17,16 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
     {
         private readonly IExamCategoryService _ExamCategoryService;
         private readonly IExamLogService _ExamLogService;
+        private readonly IScoreLogService _ScoreLogService;
 
         public DashboardIndexModel(
             IExamCategoryService _ExamCategoryService,
-            IExamLogService _ExamLogService)
+            IExamLogService _ExamLogService,
+            IScoreLogService _ScoreLogService)
         {
             this._ExamCategoryService = _ExamCategoryService;
             this._ExamLogService = _ExamLogService;
+            this._ScoreLogService = _ScoreLogService;
         }
 
         public List<ExamCategoryBaseDTO> ExamCats { get; set; } = new List<ExamCategoryBaseDTO>();
@@ -35,6 +40,7 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
         public int PassedTests { get; set; }
         public int FailedTests { get; set; }
         public float UserGPA { get; set; }
+        public float UserGPARate { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -61,7 +67,16 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
             CompletedTests = await _ExamLogService.GetCompletedTest(ExamCategoryId.Value);
             PassedTests = await _ExamLogService.GetPassedTest(ExamCategoryId.Value);
             FailedTests = await _ExamLogService.GetFaildTest(ExamCategoryId.Value);
-            UserGPA = await _ExamLogService.GetGPA(ExamCategoryId.Value);
+            UserGPA = await _ScoreLogService.GetExamCategoryGPA(ExamCategoryId.Value);
+
+            // Lấy điểm cân bằng kỹ năng
+            var balanceSkills = await _ScoreLogService.GetSkillCategoryGPAs(ExamCategoryId.Value);
+            ViewData["BalanceSkills"] = balanceSkills;
+            ViewData["BalanceSkillsJson"] = JsonConvert.SerializeObject(balanceSkills);
+
+            // Lấy điểm tối đã của phần thi
+            var examCategoryMaxScores = _ExamCategoryService.GetMaxScores(ExamCategoryId.Value);
+            UserGPARate = UserGPA / examCategoryMaxScores;
 
             CurrentExamCategory = ExamCats.First(x => x.Id == ExamCategoryId);
         }
