@@ -18,6 +18,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         /// Mã của mục thi sẽ được render
         /// </summary>
         public Guid DestinationId { get; set; }
+        public Guid ExamCategoryId { get; set; }
         /// <summary>
         /// Tên bài thi
         /// </summary>

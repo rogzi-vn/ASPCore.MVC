@@ -173,7 +173,8 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
                 Name = examRaw.Name,
                 RawExamRendered = JsonConvert.SerializeObject(examRaw),
                 ExamCatInstructorId = instructor,
-                DestinationId = destId
+                DestinationId = destId,
+                ExamCategoryId = examRaw.Id
             };
 
             var res = await _ExamLogService.CreateAsync(examLog);

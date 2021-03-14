@@ -74,6 +74,7 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                 var examCat = await _ExamCategoryRepository.GetAsync(skillCat.ExamCategoryId);
                 examForRender = new ExamForRenderDTO
                 {
+                    Id = examCat.Id,
                     Name = examCat.Name,
                     Description = examCat.Description,
                     RenderExamType = type,
@@ -91,6 +92,7 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                 var examCat = await _ExamCategoryRepository.GetAsync(skillCat.ExamCategoryId);
                 examForRender = new ExamForRenderDTO
                 {
+                    Id = examCat.Id,
                     Name = examCat.Name,
                     Description = examCat.Description,
                     RenderExamType = type,
@@ -107,11 +109,11 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                 .SuccessReponseWrapper(examForRender, "Success");
         }
 
-        private async Task<ExamForRenderDTO> ConvertExamForRender(ExamCategory skillCategory, RenderExamTypes type)
+        private async Task<ExamForRenderDTO> ConvertExamForRender(ExamCategory examCat, RenderExamTypes type)
         {
             var query = await _ExamSkillCategoryRepository.GetQueryableAsync();
             var skillCats = query
-                .Where(x => x.ExamCategoryId == skillCategory.Id)
+                .Where(x => x.ExamCategoryId == examCat.Id)
                 .ToList();
             var microSkillCats = new List<MicroSkillCategoryDTO>();
             foreach (var item in skillCats)
@@ -123,8 +125,9 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
             microSkillCats = microSkillCats.OrderBy(x => x.Order).ToList();
             return new ExamForRenderDTO
             {
-                Name = skillCategory.Name,
-                Description = skillCategory.Description,
+                Id = examCat.Id,
+                Name = examCat.Name,
+                Description = examCat.Description,
                 RenderExamType = type,
                 SkillCategories = microSkillCats
             };

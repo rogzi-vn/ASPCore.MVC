@@ -13,6 +13,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         /// </summary>
         public RenderExamTypes RenderExamType { get; set; }
         public Guid DestinationId { get; set; }
+        public Guid ExamCategoryId { get; set; }
         /// <summary>
         /// Tên bài thi
         /// </summary>
@@ -33,6 +34,10 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         /// Bài thi đã vượt qua hay chưa
         /// </summary>
         public bool IsPassed { get; set; }
+        /// <summary>
+        /// Bài thi đã chấm điểm hay chưa
+        /// </summary>
+        public bool IsDoneScore { get; set; }
         /// <summary>
         /// Thời gian tối đã cho phần thi hiện tại
         /// </summary>

@@ -13,5 +13,10 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         public Task<ResponseWrapper<PagedResultDto<ExamLogBaseDTO>>> GetBaseListAsync(GetExamLogDTO input);
         public Guid? GetLastExamNotFinished();
         public Task ResultProcessing(ExamLogResultDTO examResult);
+
+        public Task<int> GetCompletedTest(Guid examCategoryId);
+        public Task<int> GetPassedTest(Guid examCategoryId);
+        public Task<int> GetFaildTest(Guid examCategoryId);
+        public Task<float> GetGPA(Guid examCategoryId);
     }
 }
