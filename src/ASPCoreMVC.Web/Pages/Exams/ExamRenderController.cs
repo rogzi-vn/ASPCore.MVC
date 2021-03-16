@@ -54,6 +54,7 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
                 ViewBag.Scores = res.Data.ExamScores.ToString("0.0");
 
                 ViewBag.TimeInMinutes = res.Data.ExamTimeInMinutes;
+                ViewBag.IsDoneScore = res.Data.IsDoneScore;
 
                 return View(AppTheme.ExamPreview, model);
             }

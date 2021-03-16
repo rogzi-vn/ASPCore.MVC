@@ -57,11 +57,13 @@ namespace ASPCoreMVC
 
             CreateMap<ExamSkillCategory, SkillCategoryDTO>().ReverseMap();
             CreateMap<ExamSkillCategory, SkillCategoryBaseDTO>();
+            CreateMap<ExamSkillCategory, SkillCatMinifyDTO>();
             CreateMap<ExamSkillCategory, CreateUpdateSkillCategoryDTO>().ReverseMap();
             CreateMap<SkillCategoryDTO, CreateUpdateSkillCategoryDTO>().ReverseMap();
 
             CreateMap<ExamSkillPart, SkillPartDTO>().ReverseMap();
             CreateMap<ExamSkillPart, SkillPartBaseDTO>();
+            CreateMap<ExamSkillPart, SkillPartMinifyDTO>();
             CreateMap<ExamSkillPart, CreateUpdateSkillPartDTO>().ReverseMap();
             CreateMap<SkillPartDTO, CreateUpdateSkillPartDTO>().ReverseMap();
 

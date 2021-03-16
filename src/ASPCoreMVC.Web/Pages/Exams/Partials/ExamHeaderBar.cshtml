@@ -1,7 +1,31 @@
-﻿<nav class="navbar sticky-top navbar-expand bg-transparent border-top-exam-success p-0" id="line-counter">
-    <div class="ml-auto bf-exam-counter mr-2">
-        <div class="px-4 text-white font-weight-bold" id="counter-content">
-            00:00
+﻿@{
+    var isHaveBack = false;
+    if (ViewData["IsHaveBack"] != null)
+    {
+        isHaveBack = (bool)ViewData["IsHaveBack"];
+    }
+}
+<nav class="navbar sticky-top navbar-expand bg-transparent border-top-exam-success p-0" id="line-counter">
+    @if (isHaveBack)
+    {
+        <div class="mr-auto bf-exam-counter ml-2">
+            <div class="px-4 text-white font-weight-bold px-2" id="back-button"
+                 style="cursor: pointer;" onclick="location.href = '/';">
+                <i class="fas fa-arrow-left"></i> @L["Back"]
+            </div>
         </div>
-    </div>
+        <div class="float-right bf-exam-counter mr-2">
+            <div class="px-4 text-white font-weight-bold" id="counter-content">
+                00:00
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="ml-auto bf-exam-counter mr-2">
+            <div class="px-4 text-white font-weight-bold" id="counter-content">
+                00:00
+            </div>
+        </div>
+    }
 </nav>

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -50,23 +51,32 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         public override Task<ResponseWrapper<ExamLogDTO>> CreateAsync(ExamLogDTO input)
         {
             var exam = JsonConvert.DeserializeObject<ExamForRenderDTO>(input.RawExamRendered);
+            var skillPart = exam.SkillCategories.FirstOrDefault()?.SkillParts?.FirstOrDefault();
+            var skillCat = exam.SkillCategories.FirstOrDefault();
+
             if (input.RenderExamType == Common.RenderExamTypes.SkillPart)
             {
-                input.CurrentMaxScore = exam.SkillCategories.FirstOrDefault()?.SkillParts?.FirstOrDefault()?.MaxScores ?? 0F;
-                input.CurrentMaxTimeInMinutes = exam.SkillCategories.FirstOrDefault()?.SkillParts?.FirstOrDefault()?.LimitTimeInMinutes ?? 0F;
+                input.CurrentMaxScore = skillPart?.MaxScores ?? 0F;
+                input.CurrentMaxTimeInMinutes = skillPart?.LimitTimeInMinutes ?? 0F;
                 input.IsPassed = false;
+
+                input.Name = $"{skillCat.Name} {skillPart.Name} - {exam.Name}";
             }
             else if (input.RenderExamType == Common.RenderExamTypes.SkillCategory)
             {
-                input.CurrentMaxScore = exam.SkillCategories.FirstOrDefault()?.SkillParts?.Sum(x => x.MaxScores) ?? 0F;
-                input.CurrentMaxTimeInMinutes = exam.SkillCategories.FirstOrDefault()?.SkillParts?.Sum(x => x.LimitTimeInMinutes) ?? 0F;
+                input.CurrentMaxScore = skillCat?.SkillParts?.Sum(x => x.MaxScores) ?? 0F;
+                input.CurrentMaxTimeInMinutes = skillCat?.SkillParts?.Sum(x => x.LimitTimeInMinutes) ?? 0F;
                 input.IsPassed = false;
+
+                input.Name = $"{skillCat.Name} - {exam.Name}";
             }
             else if (input.RenderExamType == Common.RenderExamTypes.Synthetic)
             {
                 input.CurrentMaxScore = exam.SkillCategories?.Sum(x => x.MaxScores) ?? 0F;
                 input.CurrentMaxTimeInMinutes = exam.SkillCategories?.Sum(x => x.LimitTimeInMinutes) ?? 0F;
                 input.IsPassed = false;
+
+                input.Name = $"{skillCat.Name} - {exam.Name}";
             }
             input.IsDoneScore = false;
             return base.CreateAsync(input);
@@ -112,7 +122,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             examLog.CompletionTime = DateTime.Now;
 
             // Thời gian thực hiện bài thi
-            examLog.ExamTimeInMinutes = (examLog.CompletionTime.Value - examLog.CreationTime).Seconds / 60;
+            examLog.ExamTimeInMinutes = (float)(examLog.CompletionTime.Value - examLog.CreationTime).Seconds / 60;
 
             // Phân giải để thực hiện chấm bài thi
             for (int i = 0; i < exam.SkillCategories.Count; i++)
@@ -335,6 +345,60 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                 .Where(x => x.IsDoneScore)
                 .Where(x => !x.IsPassed);
             return query.Count();
+        }
+
+        public async Task<ExamHistoryStatDTO> GetExamHistoryStats(Guid? destId)
+        {
+            var query = await Repository.GetQueryableAsync();
+            query = query
+                .Where(x => x.CreatorId == CurrentUser.Id)
+                .Where(x => x.CompletionTime != null)
+                .Where(x => x.IsDoneScore);
+
+            if (destId != null && destId != Guid.Empty)
+            {
+                query = query.Where(x => x.DestinationId == destId.Value);
+            }
+
+            var passedCount = query.Where(x => x.IsPassed).Count();
+            var failedCount = query.Where(x => !x.IsPassed).Count();
+            var highestScores = query.Select(x => x.ExamScores).DefaultIfEmpty().Max();
+
+            return new ExamHistoryStatDTO
+            {
+                Passed = passedCount,
+                Failded = failedCount,
+                HighestScore = highestScores
+            };
+        }
+
+        public async Task<PagedResultDto<ExamLogBaseDTO>> GetExamHistories(Guid? destId, PagedAndSortedResultRequestDto input)
+        {
+            var query = await Repository.GetQueryableAsync();
+            query = query
+                .Where(x => x.CreatorId == CurrentUser.Id);
+            if (destId != null && destId != Guid.Empty)
+            {
+                query = query.Where(x => x.DestinationId == destId.Value);
+            }
+            if (!input.Sorting.IsNullOrEmpty())
+            {
+                query = query.OrderBy(input.Sorting);
+            }
+
+            var totalCount = query.Count();
+
+            if (input.SkipCount > 0)
+            {
+                query = query.Skip(input.SkipCount);
+            }
+            if (input.MaxResultCount > 0)
+            {
+                query = query.Take(input.MaxResultCount);
+            }
+            return new PagedResultDto<ExamLogBaseDTO>(totalCount,
+                ObjectMapper.Map<List<ExamLog>,
+                List<ExamLogBaseDTO>>(query.ToList()));
         }
     }
 }

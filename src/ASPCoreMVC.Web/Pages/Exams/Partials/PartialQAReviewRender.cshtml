@@ -9,6 +9,30 @@
     {
         return qaPairs.Any(x => x.QuestionId == qId && x.Answer == ans.Id.ToString()) && ans.IsCorrect;
     }
+    string AnsByQuestion(Guid qId)
+    {
+        return qaPairs.FirstOrDefault(x => x.QuestionId == qId)?.Answer ?? "";
+    }
+    string RenderForQuestionState(MicroQuestionDTO q)
+    {
+        var fillAns = qaPairs.FirstOrDefault(x => x.QuestionId == q.Id)?.Answer ?? "";
+        if (q.Answers.Any(x => x.IsCorrect && x.AnswerContent.Trim().Equals(fillAns.Trim(), StringComparison.OrdinalIgnoreCase)))
+            return "correct-fill";
+        else
+            return "wrong-fill";
+    }
+    string RenderForOtherResult(MicroQuestionDTO q)
+    {
+        var fillAns = qaPairs.FirstOrDefault(x => x.QuestionId == q.Id)?.Answer ?? "";
+        var otherAns = q.Answers.Where(x => x.IsCorrect &&
+        !x.AnswerContent.Trim().Equals(fillAns.Trim(), StringComparison.OrdinalIgnoreCase) &&
+        !x.AnswerContent.IsNullOrEmpty())
+            .Select(x => x.AnswerContent).ToList();
+        if (otherAns.Count > 0)
+            return otherAns.JoinAsString(" / ");
+        else
+            return "";
+    }
     string CorrectClass(Guid qId, MicroAnswerDTO ans)
     {
         var classes = "";
@@ -89,6 +113,7 @@
     else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.FillAnswer)
     {
         bool isSplitInput = false;
+        var otherAns = RenderForOtherResult(q);
         if (Model.SkillPart.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Rewrite)
         {
             isSplitInput = q.TextClone.Contains("{{input}}");
@@ -98,7 +123,11 @@
             var strings = q.TextClone.Split("{{input}}", 2);
             <div class="pt-0">
                 <label>
-                    @Html.Raw(strings.JoinAsString($"<input class=\"auto-sizing input-border fill-ans\" type=\"text\" data-affect-id=\"{affectedId}\">"))
+                    @Html.Raw(strings.JoinAsString($"<input class=\"auto-sizing input-border fill-ans {RenderForQuestionState(q)}\" type=\"text\" data-affect-id=\"{affectedId}\" value=\"{AnsByQuestion(q.Id)}\" disabled>"))
+                    @if (!otherAns.IsNullOrEmpty())
+                    {
+                        <span class="text-primary">(@Html.Raw(otherAns))</span>
+                    }
                 </label>
             </div>
         }
@@ -108,7 +137,11 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon1">@L["Your answer"]</span>
                 </div>
-                <input type="text" class="form-control fill-ans" data-affect-id="@affectedId">
+                <input type="text" class="form-control fill-ans @RenderForQuestionState(q)" data-affect-id="@affectedId" disabled value="@AnsByQuestion(q.Id)">
+                @if (!otherAns.IsNullOrEmpty())
+                {
+                    <span class="text-primary">(@Html.Raw(otherAns))</span>
+                }
             </div>
         }
     }

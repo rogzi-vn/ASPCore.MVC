@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamLogs;
 using ASPCoreMVC.TCUEnglish.ScoreLogs;
+using ASPCoreMVC.TCUEnglish.SkillCategories;
+using ASPCoreMVC.TCUEnglish.SkillParts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -74,11 +76,17 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
             ViewData["BalanceSkills"] = balanceSkills;
             ViewData["BalanceSkillsJson"] = JsonConvert.SerializeObject(balanceSkills);
 
-            // Lấy điểm tối đã của phần thi
+            // Lấy điểm tối đa của phần thi
             var examCategoryMaxScores = _ExamCategoryService.GetMaxScores(ExamCategoryId.Value);
             UserGPARate = UserGPA / examCategoryMaxScores;
 
             CurrentExamCategory = ExamCats.First(x => x.Id == ExamCategoryId);
+
+            // Lấy danh sách skill cat
+            ViewData["AllSkillCats"] = await _ExamCategoryService.GetFullChild(ExamCategoryId.Value);
+            ViewData["CurrentExamCatId"] = ExamCategoryId.Value;
+            ViewData["CurrentExamCatName"] = CurrentExamCategory.Name;
+
         }
     }
 }

@@ -18,6 +18,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamCategories
         public Task<ResponseWrapper<ExamCategoryBaseDTO>> GetSimpify(Guid guid);
         public Task<ResponseWrapper<CreateUpdateExamCategoryDTO>> GetForUpdate(Guid guid);
         public Task<ResponseWrapper<bool>> GetHasAsync(Guid id);
+        public Task<List<SkillCatMinifyDTO>> GetFullChild(Guid id);
         public float GetMaxScores(Guid id);
     }
 }

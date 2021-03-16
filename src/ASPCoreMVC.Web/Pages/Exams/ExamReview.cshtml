@@ -3,6 +3,7 @@
 @model ASPCoreMVC.Web.Models.ExamRenderViewModel
 @{
     Layout = AppTheme.ExamLayout;
+    ViewData["IsHaveBack"] = true;
     float timeInMinutes = (float)ViewBag.TimeInMinutes;
 }
 @section Styles {
@@ -73,7 +74,10 @@
                         <h2 class="m-0 font-weight-bold font-italic text-danger">
                             @ViewBag.Scores
                         </h2>
-                        <div class="small font-italic text-warning">(@L["Incomplete score"])</div>
+                        @if (!ViewBag.IsDoneScore)
+                        {
+                            <div class="small font-italic text-warning">(@L["Incomplete score"])</div>
+                        }
                     </div>
                 </div>
                 <div class="col-9 p-0">

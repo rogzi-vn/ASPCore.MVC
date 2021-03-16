@@ -29,6 +29,38 @@
         });
 
         balanceSkillPieChart("balance-skill-pie-chart", @Html.Raw(ViewData["BalanceSkillsJson"]));
+
+        var defHis = {
+            desId: null,
+            p:1
+        }
+        function loadHistories(desId = defHis.desId, p = defHis.p) {
+            defHis.desId = desId;
+            defHis.p = p;
+
+            var requestUrl = `/dasboard/histories?p=${p}`;
+            if (desId && desId.length > 0)
+                requestUrl += `&desId=${desId}`;
+            $("#history-content").load(requestUrl, function () {
+                var count = $("#total-loaded-count").val();
+                $("#show-count").html(count);
+                $(".xlhis").click(event => {
+                    var id = $(event.currentTarget).data('id');
+                    location.href = `/exams/preview/${id}`;
+                });
+            });
+        }
+
+        loadHistories();
+
+        $("#show-history-type").change(function () {
+            var value = this.value;
+            if (value) {
+                loadHistories(value, 1);
+            } else {
+                loadHistories(null, 1);
+            }
+        });
     </script>
 }
 

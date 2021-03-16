@@ -577,3 +577,16 @@ table.tb {
 .white-child-btn .btn-light {
     background-color: #FFF !important;
 }
+
+input.fill-ans:disabled {
+    background: #FFFFFF;
+}
+
+input.wrong-fill {
+    text-decoration: line-through;
+    color: #F00;
+}
+
+input.correct-fill {
+    color: #1cc88a;
+}

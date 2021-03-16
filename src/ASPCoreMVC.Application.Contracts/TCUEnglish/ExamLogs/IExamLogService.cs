@@ -18,5 +18,8 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         public Task<int> GetPassedTest(Guid examCategoryId);
         public Task<int> GetFaildTest(Guid examCategoryId);
         public Task<float> GetGPA(Guid examCategoryId);
+
+        public Task<ExamHistoryStatDTO> GetExamHistoryStats(Guid? destId);
+        public Task<PagedResultDto<ExamLogBaseDTO>> GetExamHistories(Guid? destId, PagedAndSortedResultRequestDto input);
     }
 }
