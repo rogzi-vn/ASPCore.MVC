@@ -3,6 +3,9 @@
 
 @model ASPCoreMVC.Web.Models.QARenderModal
 @{
+    var IsInstructorReview = (bool)ViewBag.IsInstructorReview;
+    var ExamLogId = (Guid)ViewBag.ExamLogId;
+
     var qaPairs = (List<QAPairDTO>)ViewBag.Answers;
     var circleAnswerClasses = "rounded-circle border px-2";
     bool IsUserCorrectAns(Guid qId, MicroAnswerDTO ans)
@@ -175,7 +178,78 @@
     }
     else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.WriteAnswer)
     {
-        var id = Guid.NewGuid().ToString();
-        <textarea id="@id" class="" editor-mint="true" data-affect-id="@affectedId"></textarea>
+        <div class="">
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a class="nav-link active" id="nav-student-res-tab" data-toggle="tab" href="#nav-student-res" role="tab" aria-controls="nav-student-res" aria-selected="true">
+                        @L["Original paragraph"]
+                    </a>
+                    <a class="nav-link" id="nav-instructor-res-tab-tab" data-toggle="tab" href="#nav-instructor-res-tab" role="tab" aria-controls="nav-instructor-res-tab" aria-selected="false">
+                        @if (IsInstructorReview)
+                        {
+                            @L["Edit your student paragraph"]
+                        }
+                        else
+                        {
+                            @L["Paragraph after editing"]
+                        }
+                    </a>
+                </div>
+            </nav>
+            <div class="tab-content border" id="nav-tabContent">
+                <div class="tab-pane fade show active p-3" id="nav-student-res" role="tabpanel" aria-labelledby="nav-student-res-tab">
+                    @Html.Raw(AnsByQuestion(q.Id))
+                </div>
+                <div class="tab-pane fade p-3" id="nav-instructor-res-tab" role="tabpanel" aria-labelledby="nav-instructor-res-tab-tab">
+                    @if (IsInstructorReview)
+                    {
+                        var tempZId = Guid.NewGuid().ToString();
+                        if (q.CorrectContentByInstructor.IsNullOrEmpty())
+                            q.CorrectContentByInstructor = AnsByQuestion(q.Id);
+                        <form action="/api/app/exam-log/correct-content-answer/@ExamLogId" method="put" class="form-update-corrent-question">
+                            <input type="hidden" name="id" value="@q.Id" />
+                            <input type="hidden" name="scores" value="@q.Scores" id="@tempZId-scores-hi" />
+                            <div class="form-group">
+                                <label>
+                                    @L["Scores"]: <span class="text-danger" id="@tempZId-scores">@q.Scores</span>
+                                    <i class="fas fa-star text-info"></i>
+                                </label>
+                                <input type="range" class="form-control-range" id="@tempZId-inp"
+                                       value="@q.Scores"
+                                       min="0"
+                                       max="@(Model.SkillPart.MaxScores/Model.SkillPart.QuestionContainers.Sum(x=>x.Questions.Count))">
+                            </div>
+                            <div class="form-group">
+                                <label for="correctContentByInstructor">@L["Correct student paragraph"]</label>
+                                <textarea class="form-control editor"
+                                          name="correctContentByInstructor"
+                                          editor-mint="true">@q.CorrectContentByInstructor</textarea>
+                            </div>
+                            <script>
+                                document.getElementById('@tempZId-inp')
+                                    .addEventListener('change', function (e) {
+                                        document.getElementById('@tempZId-scores').innerHTML = e.target.value;
+                                        document.getElementById('@tempZId-scores-hi').value = e.target.value;
+                                    });
+                            </script>
+                            <div class="row">
+                                <button type="submit" class="btn btn-primary btn-sm shadow-sm mx-auto">@L["Confirm"]</button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        if (q.CorrectContentByInstructor.IsNullOrEmpty())
+                        {
+                            <div class="text-primary font-italic text-center">@L["There is no editing from the instructor for your essay"]</div>
+                        }
+                        else
+                        {
+                            @Html.Raw(q.CorrectContentByInstructor)
+                        }
+                    }
+                </div>
+            </div>
+        </div>
     }
 }

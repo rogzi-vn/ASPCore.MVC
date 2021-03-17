@@ -85,8 +85,19 @@
                     <td class="align-middle text-center">
                         @item.Name
                     </td>
-                    <td class="align-middle text-center">
+                    <td class="align-middle text-center"
+                        data-toggle="tooltip" data-placement="bottom" title="@($"Instructor: {item.InstructorName}")">
                         @item.ExamScores/@item.CurrentMaxScore
+                        <span class="float-right">
+                            @if (item.IsDoneScore)
+                            {
+                                <img src="~/dist/img/check-green-64.png" width="16" height="16" />
+                            }
+                            else
+                            {
+                                <img src="~/dist/img/check-gray-64.png" width="16" height="16" />
+                            }
+                        </span>
                     </td>
                 </tr>
             }

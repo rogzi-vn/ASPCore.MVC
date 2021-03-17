@@ -46,8 +46,11 @@
                 $("#show-count").html(count);
                 $(".xlhis").click(event => {
                     var id = $(event.currentTarget).data('id');
-                    location.href = `/exams/preview/${id}`;
+                    location.href = `/exams/review/${id}`;
                 });
+                $(function () {
+                    $('[data-toggle="tooltip"]').tooltip()
+                })
             });
         }
 
@@ -59,6 +62,42 @@
                 loadHistories(value, 1);
             } else {
                 loadHistories(null, 1);
+            }
+        });
+
+
+        var defStudentExam = {
+            studentId: null,
+            p: 1
+        }
+        function loadStudentExam(studentId = defStudentExam.studentId, p = defStudentExam.p) {
+            defStudentExam.studentId = studentId;
+            defStudentExam.p = p;
+
+            var requestUrl = `/dasboard/student-exams?p=${p}`;
+            if (studentId && studentId.length > 0)
+                requestUrl += `&studentId=${studentId}`;
+            $("#student-exam-log-content").load(requestUrl, function () {
+                var count = $("#total-student-exam-loaded-count").val();
+                $("#student-show-count").html(count);
+                $(".st-exam-i").click(event => {
+                    var id = $(event.currentTarget).data('id');
+                    location.href = `/exams/instructor-review/@CurrentUser.Id/${id}`;
+                });
+                $(function () {
+                    $('[data-toggle="tooltip"]').tooltip()
+                })
+            });
+        }
+
+        loadStudentExam();
+
+        $("#students-list-selector").change(function () {
+            var value = this.value;
+            if (value) {
+                loadStudentExam(value, 1);
+            } else {
+                loadStudentExam(null, 1);
             }
         });
     </script>
@@ -91,5 +130,11 @@
 <div class="row">
     <div class="col-12">
         <partial name="~/Pages/Dashboard/Partials/History.cshtml" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <partial name="~/Pages/Dashboard/Partials/StudentExamLog.cshtml" />
     </div>
 </div>

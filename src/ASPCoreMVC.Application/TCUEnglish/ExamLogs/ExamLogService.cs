@@ -1,7 +1,9 @@
 ﻿using ASPCoreMVC._Commons;
 using ASPCoreMVC._Commons.Services;
+using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
 using ASPCoreMVC.TCUEnglish.ScoreLogs;
 using ASPCoreMVC.TCUEnglish.UserExams;
+using ASPCoreMVC.Users;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,12 +20,18 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         IExamLogService
     {
         private readonly IRepository<ScoreLog, Guid> ScoreLogRepository;
+        private readonly IRepository<AppUser, Guid> AppUserRepository;
+        private readonly IRepository<ExamCatInstructor, Guid> ExamCatInstructorRepository;
 
         public ExamLogService(
             IRepository<ExamLog, Guid> repo,
-            IRepository<ScoreLog, Guid> ScoreLogRepository) : base(repo)
+            IRepository<ScoreLog, Guid> ScoreLogRepository,
+            IRepository<AppUser, Guid> AppUserRepository,
+            IRepository<ExamCatInstructor, Guid> ExamCatInstructorRepository) : base(repo)
         {
             this.ScoreLogRepository = ScoreLogRepository;
+            this.AppUserRepository = AppUserRepository;
+            this.ExamCatInstructorRepository = ExamCatInstructorRepository;
         }
 
         protected override async Task<IQueryable<ExamLog>> CreateFilteredQueryAsync(GetExamLogDTO input)
@@ -386,6 +394,8 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                 query = query.OrderBy(input.Sorting);
             }
 
+            query = query.OrderByDescending(x => x.CreationTime);
+
             var totalCount = query.Count();
 
             if (input.SkipCount > 0)
@@ -396,9 +406,266 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             {
                 query = query.Take(input.MaxResultCount);
             }
-            return new PagedResultDto<ExamLogBaseDTO>(totalCount,
-                ObjectMapper.Map<List<ExamLog>,
-                List<ExamLogBaseDTO>>(query.ToList()));
+            var resultList = new List<ExamLogBaseDTO>();
+
+            query
+                .Join(ExamCatInstructorRepository,
+                el => el.ExamCatInstructorId,
+                eci => eci.Id,
+                (el, eci) => new { el, eci })
+                .Join(AppUserRepository,
+                x => x.eci.UserId,
+                au => au.Id,
+                (x, au) => new { x, au })
+                .ToList().ForEach(x =>
+                {
+                    var el = ObjectMapper.Map<ExamLog, ExamLogBaseDTO>(x.x.el);
+                    el.InstructorName = x.au.DisplayName;
+                    resultList.Add(el);
+                });
+
+            return new PagedResultDto<ExamLogBaseDTO>(totalCount, resultList);
+        }
+
+        public async Task<Guid?> GetCreatorId(Guid examLogId)
+        {
+            var query = await Repository.GetQueryableAsync();
+            return query.Where(x => x.Id == examLogId)
+                .DefaultIfEmpty().Select(x => x.CreatorId).FirstOrDefault();
+        }
+
+        public async Task<List<ExamLogStudentDTO>> GetExamLogStudents(Guid examCategoryId)
+        {
+            var examCatInstructor = ExamCatInstructorRepository.FirstOrDefault(x => x.UserId == CurrentUser.Id);
+            if (examCatInstructor == null)
+                throw new Exception("Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
+
+            var query = await Repository.GetQueryableAsync();
+            query = query
+                 .Where(x => x.ExamCategoryId == examCategoryId)
+                 .Where(x => x.ExamCatInstructorId == examCatInstructor.Id);
+
+            var result = new List<ExamLogStudentDTO>();
+            foreach (var examLog in query.ToList())
+            {
+                if (examLog.CreatorId != null &&
+                   examLog.CreatorId != Guid.Empty)
+                {
+                    if (!result.Any(z => z.Id == examLog.CreatorId))
+                    {
+                        var els = new ExamLogStudentDTO
+                        {
+                            Id = examLog.CreatorId,
+                            ExamCount = 1
+                        };
+                        // Get user info
+                        var user = await AppUserRepository.GetAsync(examLog.CreatorId.Value);
+                        if (user != null)
+                        {
+                            els.UserName = user.UserName;
+                            els.Name = user.Name;
+                            els.DisplayName = user.DisplayName;
+                            els.Surname = user.Surname;
+                            result.Add(els);
+                        }
+                    }
+                    else
+                    {
+                        var index = result.FindIndex(z => z.Id == examLog.CreatorId);
+                        if (index >= 0)
+                        {
+                            result[index].ExamCount++;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        public async Task<PagedResultDto<ExamLogBaseDTO>> GetStudentExams(Guid? creatorId, PagedAndSortedResultRequestDto input)
+        {
+            var examCatInstructor = ExamCatInstructorRepository.FirstOrDefault(x => x.UserId == CurrentUser.Id);
+            if (examCatInstructor == null)
+                throw new Exception("Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
+
+            var query = await Repository.GetQueryableAsync();
+            query = query
+                .Where(x => x.ExamCatInstructorId == examCatInstructor.Id);
+            if (creatorId != null && creatorId != Guid.Empty)
+            {
+                query = query.Where(x => x.CreatorId == creatorId.Value);
+            }
+            if (!input.Sorting.IsNullOrEmpty())
+            {
+                query = query.OrderBy(input.Sorting);
+            }
+
+            query = query
+                .OrderBy(x => x.IsDoneScore);
+
+            var totalCount = query.Count();
+
+            if (input.SkipCount > 0)
+            {
+                query = query.Skip(input.SkipCount);
+            }
+            if (input.MaxResultCount > 0)
+            {
+                query = query.Take(input.MaxResultCount);
+            }
+            var resultList = new List<ExamLogBaseDTO>();
+
+            query.Join(AppUserRepository,
+                x => x.CreatorId,
+                au => au.Id,
+                (x, au) => new { x, au })
+                .ToList().ForEach(x =>
+                {
+                    var el = ObjectMapper.Map<ExamLog, ExamLogBaseDTO>(x.x);
+                    el.StudentName = x.au.DisplayName;
+                    resultList.Add(el);
+                });
+
+            return new PagedResultDto<ExamLogBaseDTO>(totalCount, resultList);
+        }
+
+        public async Task UpdateCorrectContentAnswer(Guid examLogId, MicroQuestionDTO inp)
+        {
+            var examCatInstructor = ExamCatInstructorRepository.FirstOrDefault(x => x.UserId == CurrentUser.Id);
+            var examLog = await Repository.GetAsync(examLogId);
+            if (examCatInstructor == null || examLog.ExamCatInstructorId != examCatInstructor.Id)
+                throw new Exception("Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
+
+            // Tổng điểm của bài thi hiện tại
+            var totalScore = 0F;
+
+            // Phân giải thành bài thi đọc được
+            var exam = JsonConvert.DeserializeObject<ExamForRenderDTO>(examLog.RawExamRendered);
+
+            // Phân giải để thực hiện chấm bài thi
+            for (int i = 0; i < exam.SkillCategories.Count; i++)
+            {
+                for (int j = 0; j < exam.SkillCategories[i].SkillParts.Count; j++)
+                {
+                    var skp = exam.SkillCategories[i].SkillParts[j];
+
+                    // Điểm tối đa của skill part
+                    var skpMaxScores = skp.MaxScores;
+
+                    // Điểm cho phần thi thiện tại
+                    var skpScores = 0F;
+
+                    // Điểm khả dụng cho mỗi câu hỏi đúng
+                    var skpScorePerQuestion = skp.MaxScores /
+                        skp.QuestionContainers.SelectMany(x => x.Questions).Count();
+
+                    // Cờ kiểm tra có thể chấm tự động hay không
+                    var isAutoCorrectable = skp.AnswerType == Common.AnswerTypes.TextAnswer ||
+                               skp.AnswerType == Common.AnswerTypes.ImageAnswer ||
+                               skp.AnswerType == Common.AnswerTypes.FillAnswer;
+
+
+                    #region Bắt đầu phần chấm tự động
+                    // Phân giải khung chứa ds câu hỏi
+                    for (int k = 0; k < exam
+                    .SkillCategories[i]
+                    .SkillParts[j]
+                    .QuestionContainers
+                    .Count; k++)
+                    {
+                        // Phân giải danh sách câu hỏi
+                        for (int l = 0; l < exam
+                        .SkillCategories[i]
+                        .SkillParts[j]
+                        .QuestionContainers[k]
+                        .Questions.Count; l++)
+                        {
+                            // Luu tam cau hoi hien tai
+                            var question = exam.SkillCategories[i].SkillParts[j].QuestionContainers[k].Questions[l];
+
+
+                            // Nếu phần này có thể chấm tự động được
+                            if (!isAutoCorrectable)
+                            {
+                                exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].IsCorrect = true;
+                                exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].Scores = inp.Scores;
+                                exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].CorrectContentByInstructor = inp.CorrectContentByInstructor;
+                                exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].CorrectionContentTime = DateTime.Now;
+                            }
+
+                            // Tính điểm nếu câu trả lời này là đúng
+                            if (exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].IsCorrect)
+                            {
+                                if (isAutoCorrectable)
+                                {
+                                    totalScore += skpScorePerQuestion;
+                                    skpScores += skpScorePerQuestion;
+                                }
+                                else
+                                {
+                                    totalScore += inp.Scores;
+                                    skpScores += inp.Scores;
+                                }
+                            }
+                        }
+                    }
+                    #endregion
+
+                    // Lưu điểm vào log điểm
+                    // Lưu kết quả chấm vào log Điểm
+                    await SaveScoreLog(examLog.Id, skp.Id, skpScores, skpMaxScores);
+                }
+            }
+
+
+            if (!exam.SkillCategories
+                .SelectMany(x => x.SkillParts
+                .SelectMany(y => y.QuestionContainers
+                .SelectMany(z => z.Questions))).Any(x => x.CorrectionContentTime == null))
+            {
+                // Đánh dấu rằng bài thi đã được chấm hoàn tất
+                examLog.IsDoneScore = true;
+            }
+
+            examLog.ExamScores = totalScore;
+
+            // Chuyển đổi lại thành Json
+            examLog.RawExamRendered = JsonConvert.SerializeObject(exam);
+
+            // Cho biết bài thi đã đạt hay chưa
+            examLog.IsPassed = IsExamPassesed(examLog.ExamScores, examLog.CurrentMaxScore);
+
+            // Cập nhật exam Logs
+            await Repository.UpdateAsync(examLog);
+        }
+
+        public async Task UpdateInstructorComments(Guid examLogId, string comments)
+        {
+            var examCatInstructor = ExamCatInstructorRepository.FirstOrDefault(x => x.UserId == CurrentUser.Id);
+            var examLog = await Repository.GetAsync(examLogId);
+            if (examCatInstructor == null || examLog.ExamCatInstructorId != examCatInstructor.Id)
+                throw new Exception("Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
+
+            examLog.InstructorComments = comments;
+            examLog.InstructorCompletionTime = DateTime.Now;
+
+            // Cập nhật exam Logs
+            await Repository.UpdateAsync(examLog);
         }
     }
 }

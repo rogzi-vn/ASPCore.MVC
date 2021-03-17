@@ -87,6 +87,9 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
             ViewData["CurrentExamCatId"] = ExamCategoryId.Value;
             ViewData["CurrentExamCatName"] = CurrentExamCategory.Name;
 
+            // Lấy danh sách học viên
+            ViewData["Students"] = await _ExamLogService.GetExamLogStudents(ExamCategoryId.Value);
+
         }
     }
 }

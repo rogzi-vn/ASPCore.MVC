@@ -476,3 +476,10 @@ function numberWithCommas(x) {
 function numberWithoutCommas(x) {
     return x.toString().replace(/,/g, '');
 }
+
+$("textarea.auto-resize").each(function () {
+    this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
+}).on("input", function () {
+    this.style.height = "auto";
+    this.style.height = (this.scrollHeight) + "px";
+});

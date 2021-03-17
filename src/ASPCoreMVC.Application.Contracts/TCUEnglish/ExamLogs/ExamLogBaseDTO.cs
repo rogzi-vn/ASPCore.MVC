@@ -58,5 +58,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         /// Thời điểm GVHD cập nhật
         /// </summary>
         public DateTime? InstructorCompletionTime { get; set; }
+        public string InstructorName { get; set; }
+        public string StudentName { get; set; }
     }
 }

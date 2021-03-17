@@ -23,9 +23,15 @@ namespace ASPCoreMVC.Web.Middleware
             var guid = examLogService.GetLastExamNotFinished();
             if (guid != null && guid != Guid.Empty)
             {
+                var ignores = new List<string> {
+                    "/api",
+                    "/exams"
+                };
                 var destinationUri = $"/exams/re-work/{guid}";
-                if (!httpContext.Request.Path.StartsWithSegments("/exams", StringComparison.OrdinalIgnoreCase))
+                if (!ignores.Any(x => httpContext.Request.Path.StartsWithSegments(x, StringComparison.OrdinalIgnoreCase)))
+                {
                     httpContext.Response.Redirect(destinationUri);
+                }
             }
             await _next(httpContext);
         }

@@ -590,3 +590,7 @@ input.wrong-fill {
 input.correct-fill {
     color: #1cc88a;
 }
+
+.no-outline {
+    outline: unset !important;
+}

@@ -293,9 +293,9 @@ $("#complete-exam-button").click(function () {
         },
     }).then((result) => {
         if (result.isConfirmed) {
-            if (result.value.status == 200) {
+            if (result.value.status >= 200 && result.value.status <= 299) {
                 $("body").html("");
-                window.location.href = `/exams/preview/${logId}`;
+                window.location.href = `/exams/review/${logId}`;
             }
         }
     });

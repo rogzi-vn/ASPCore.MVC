@@ -1,0 +1,22 @@
+﻿@using ASPCoreMVC.TCUEnglish.ExamCategories
+@{
+    var allStudents = (List<ASPCoreMVC.TCUEnglish.ExamLogs.ExamLogStudentDTO>)ViewData["Students"];
+    var currenExamCatId = (Guid)ViewData["CurrentExamCatId"];
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">@L["Your Student Exams"] (<span id="student-show-count">0</span>)</h6>
+        <div class="">
+            <select class="form-control selectpicker" data-live-search="true" id="students-list-selector">
+                <option value="">All student of @ViewData["CurrentExamCatName"]</option>
+                @foreach (var st in allStudents)
+                {
+                    <option value="@st.Id">@st.DisplayName (@st.ExamCount)</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="card-body" id="student-exam-log-content">
+    </div>
+</div>

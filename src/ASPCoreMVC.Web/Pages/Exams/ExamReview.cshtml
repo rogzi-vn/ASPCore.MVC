@@ -5,6 +5,8 @@
     Layout = AppTheme.ExamLayout;
     ViewData["IsHaveBack"] = true;
     float timeInMinutes = (float)ViewBag.TimeInMinutes;
+
+    var IsInstructorReview = (bool)ViewBag.IsInstructorReview;
 }
 @section Styles {
     <link rel="stylesheet"
@@ -22,6 +24,7 @@
 
 @section Scripts {
     <script src="~/dist/js/te.exam-preview.js"></script>
+    <script src="~/dist/js/te.exam-instructor.js"></script>
     @if (Model.ExamContent.SkillCategories.Any(x => x.SkillParts.Any(y => y.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video)))
     {
         <script src="/plugins/plyr-3.6.4/plyr.polyfilled.js"></script>
@@ -50,7 +53,7 @@
         <div>
             <img class="rounded-circle m-2 border border-white shadow-sm" src="@Model.ExamUser.Picture" style="width:2.5rem;height:2.5rem;" />
             <span class="font-weight-bold">
-                @Html.Raw(Model.ExamUser.UserName)
+                @Html.Raw(Model.ExamUser.DisplayName)
             </span>
         </div>
         <div class="text-right m-2 pr-2">
@@ -85,7 +88,22 @@
                         @L["Criticism of instructors"]
                     </div>
                     <div class="p-3">
-
+                        @if (IsInstructorReview)
+                        {
+                            <div class="row">
+                                <div class="col-12">
+                                    <input type="hidden" id="hidden-exam-log-id" value="@Model.ExamLogId" />
+                                    <textarea class="w-100 auto-resize border-0 no-outline text-danger" placeholder="Enter your comment here" maxlength="512" id="instructor-comment">@ViewBag.InstructorComment</textarea>
+                                    <button type="button" class="btn btn-primary btn-sm shadow-sm float-right mt-2 d-none" id="instructor-comment-submit">@L["Confirm"]</button>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-danger">
+                                @Html.Raw(ViewBag.InstructorComment)
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

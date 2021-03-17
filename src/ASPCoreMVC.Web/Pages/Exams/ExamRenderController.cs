@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ASPCoreMVC.AppUsers;
 using ASPCoreMVC.Common;
+using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
 using ASPCoreMVC.TCUEnglish.ExamLogs;
 using ASPCoreMVC.TCUEnglish.UserExams;
 using ASPCoreMVC.Web.Helpers;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.Domain.Repositories;
 
 namespace ASPCoreMVC.Web.Pages.Exams.Partials
 {
@@ -21,24 +23,28 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
         private readonly IAppUserService _AppUserService;
 
         private readonly IExamLogService _ExamLogService;
+        private readonly IRepository<ExamCatInstructor, Guid> ExamCatInstructorRepository;
 
         public ExamModel(
             IRenderExamService _RenderExamService,
             IAppUserService _AppUserService,
-            IExamLogService _ExamLogService)
+            IExamLogService _ExamLogService,
+            IRepository<ExamCatInstructor, Guid> ExamCatInstructorRepository)
         {
             this._RenderExamService = _RenderExamService;
             this._AppUserService = _AppUserService;
             this._ExamLogService = _ExamLogService;
+            this.ExamCatInstructorRepository = ExamCatInstructorRepository;
         }
 
         [HttpGet]
-        [Route("/exams/preview/{logId:Guid}")]
-        public async Task<IActionResult> RenderPreviewExam(Guid? logId)
+        [Route("/exams/review/{logId:Guid}")]
+        [Route("/exams/instructor-review/{currentInstructorId:Guid}/{logId:Guid}")]
+        public async Task<IActionResult> RenderPreviewExam(Guid? logId, Guid? currentInstructorId)
         {
             if (logId == null || logId == Guid.Empty)
             {
-                this.ToastError(L["Can not process your preview exam"]);
+                this.ToastError(L["Can not process your review exam"]);
                 return Redirect("/");
             }
 
@@ -46,15 +52,35 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
             var model = new ExamRenderViewModel();
             if (res.Success)
             {
+                #region Kiểm tra xem có phải là GVHD xem lại hay không
+                var isInstructorReview = false;
+                if (currentInstructorId != null &&
+                    currentInstructorId.Value != Guid.Empty &&
+                    currentInstructorId.Value == CurrentUser.Id)
+                {
+                    isInstructorReview = await ExamCatInstructorRepository.AnyAsync(x => x.UserId == CurrentUser.Id.Value && x.ExamCategoryId == res.Data.ExamCategoryId);
+                }
+                ViewBag.IsInstructorReview = isInstructorReview;
+                #endregion
+
                 model.ExamContent = JsonConvert.DeserializeObject<ExamForRenderDTO>(res.Data.RawExamRendered);
                 model.ExamLogId = res.Data.Id;
 
                 model = await ProcessParams(model);
+                var creatorId = await _ExamLogService.GetCreatorId(logId.Value);
+                if (creatorId != null && creatorId != Guid.Empty)
+                {
+                    model.ExamUser = (await _AppUserService.GetAsync(creatorId.Value)).Data;
+                }
                 ViewBag.Answers = JsonConvert.DeserializeObject<List<QAPairDTO>>(res.Data.UserAnswers);
                 ViewBag.Scores = res.Data.ExamScores.ToString("0.0");
 
                 ViewBag.TimeInMinutes = res.Data.ExamTimeInMinutes;
                 ViewBag.IsDoneScore = res.Data.IsDoneScore;
+
+                ViewBag.ExamLogId = res.Data.Id;
+
+                ViewBag.InstructorComment = res.Data.InstructorComments;
 
                 return View(AppTheme.ExamPreview, model);
             }
@@ -85,7 +111,7 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
                 if (!res.Data.UserAnswers.IsNullOrEmpty())
                 {
                     // Prevent user re work done exam
-                    return Redirect($"/exams/preview/{logId}");
+                    return Redirect($"/exams/review/{logId}");
                 }
 
                 model = await ProcessParams(model);
