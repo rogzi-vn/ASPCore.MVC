@@ -2,6 +2,7 @@
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
 using ASPCoreMVC.Web.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using Volo.Abp.AspNetCore.Mvc;
 
 namespace ASPCoreMVC.Web.Pages.Manager.Users.Partials
 {
+    [Authorize]
     [Route("/manager/users")]
     public class PartialsController : AbpController
     {

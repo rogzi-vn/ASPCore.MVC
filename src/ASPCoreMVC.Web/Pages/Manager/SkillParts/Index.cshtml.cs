@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ASPCoreMVC.Web.Pages.Manager.SkillParts
 {
+    [Authorize]
     public class SkillPartsIndexModel : AppPageModel
     {
         private readonly IExamCategoryService _ExamCategoryService;

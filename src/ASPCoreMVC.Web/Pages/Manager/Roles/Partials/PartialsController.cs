@@ -4,6 +4,7 @@ using ASPCoreMVC.TCUEnglish.GrammarCategories;
 using ASPCoreMVC.TCUEnglish.Grammars;
 using ASPCoreMVC.TCUEnglish.UserNotes;
 using ASPCoreMVC.Web.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -18,6 +19,7 @@ using Volo.Abp.PermissionManagement;
 
 namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
 {
+    [Authorize]
     [Route("/manager/roles")]
     public class PartialsController : AbpController
     {

@@ -65,8 +65,13 @@
             }
         });
 
+        syncChartGPAOverview('@Model.ExamCategoryId','week');
+    </script>
 
-        var defStudentExam = {
+    @if (ViewData["IsInstructor"] != null && (bool)ViewData["IsInstructor"] == true)
+    {
+        <script>
+            var defStudentExam = {
             studentId: null,
             p: 1
         }
@@ -100,7 +105,8 @@
                 loadStudentExam(null, 1);
             }
         });
-    </script>
+        </script>
+    }
 }
 
 <partial name="~/Pages/Dashboard/Partials/SummaryTopDetail.cshtml" />
@@ -133,8 +139,11 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <partial name="~/Pages/Dashboard/Partials/StudentExamLog.cshtml" />
+@if (ViewData["IsInstructor"] != null && (bool)ViewData["IsInstructor"] == true)
+{
+    <div class="row">
+        <div class="col-12">
+            <partial name="~/Pages/Dashboard/Partials/StudentExamLog.cshtml" />
+        </div>
     </div>
-</div>
+}

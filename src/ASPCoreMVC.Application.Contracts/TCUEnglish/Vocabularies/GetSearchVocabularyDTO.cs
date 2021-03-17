@@ -8,5 +8,6 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
     public class GetSearchVocabularyDTO : PagedAndSortedResultRequestDto
     {
         public string Filter { get; set; }
+        public bool IsMustConfirm { get; set; } = true;
     }
 }

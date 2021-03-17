@@ -11,5 +11,6 @@ namespace ASPCoreMVC.TCUEnglish.ScoreLogs
         public Task<float> GetSkillCategoryGPA(Guid skillCategoryGPA);
         public Task<List<SkillCatScoresAvgDTO>> GetSkillCategoryGPAs(Guid examCategoryGPA);
         public Task<float> GetExamCategoryGPA(Guid examCategoryGPA);
+        public Task<List<DayScoreLogGPADTO>> GetGpaUptoNow(Guid examCatId, DateTime startDate);
     }
 }

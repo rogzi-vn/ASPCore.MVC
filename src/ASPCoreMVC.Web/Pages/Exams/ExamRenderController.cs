@@ -9,6 +9,7 @@ using ASPCoreMVC.TCUEnglish.ExamLogs;
 using ASPCoreMVC.TCUEnglish.UserExams;
 using ASPCoreMVC.Web.Helpers;
 using ASPCoreMVC.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -17,6 +18,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace ASPCoreMVC.Web.Pages.Exams.Partials
 {
+    [Authorize]
     public class ExamModel : AbpController
     {
         private readonly IRenderExamService _RenderExamService;

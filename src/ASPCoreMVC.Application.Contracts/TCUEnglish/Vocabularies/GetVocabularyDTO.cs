@@ -12,5 +12,6 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
         public Guid? VocabularyTopicId { get; set; }
         // Phân loại từ (Danh từ, Tính từ,...)
         public Guid? WordClassId { get; set; }
+        public bool IsMustConfirm { get; set; } = true;
     }
 }

@@ -4,6 +4,7 @@ using ASPCoreMVC.TCUEnglish.ExamQuestionGroups;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
 using ASPCoreMVC.Web.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using Volo.Abp.AspNetCore.Mvc;
 
 namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
 {
+    [Authorize]
     [Route("/manager/exam-data-libraries")]
     public class ExamDataLibraryController : AbpController
     {

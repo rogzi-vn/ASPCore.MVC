@@ -1,6 +1,7 @@
 ﻿using ASPCoreMVC.TCUEnglish.VocabularyTopics;
 using ASPCoreMVC.TCUEnglish.WordClasses;
 using ASPCoreMVC.Web.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace ASPCoreMVC.Web.Pages.Manager.VocabularyTopics.Partials
 {
+    [Authorize]
     [Route("/manager/vocabulary-topics")]
     public class VocabularyTopicsController : Controller
     {
@@ -35,6 +37,7 @@ namespace ASPCoreMVC.Web.Pages.Manager.VocabularyTopics.Partials
                 Filter = filter ?? "",
                 MaxResultCount = AppTheme.Limit,
                 SkipCount = (p.Value - 1) * AppTheme.Limit,
+                IsMustConfirm = false
             };
             var res = await _VocabularyTopicService.GetListAsync(serchInp);
 

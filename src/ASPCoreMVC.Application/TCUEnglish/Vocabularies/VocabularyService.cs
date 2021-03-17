@@ -42,7 +42,10 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
         protected override async Task<IQueryable<Vocabulary>> CreateFilteredQueryAsync(GetVocabularyDTO input)
         {
             var query = await Repository.GetQueryableAsync();
-            query = query.Where(x => x.IsConfirmed);
+            if (input.IsMustConfirm)
+            {
+                query = query.Where(x => x.IsConfirmed);
+            }
             if (input.VocabularyTopicId != null && input.VocabularyTopicId != Guid.Empty)
                 query = query.Where(x => x.VocabularyTopicId == input.VocabularyTopicId);
 
@@ -91,6 +94,10 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
         {
             var query = await Repository.GetQueryableAsync();
             query = query.Where(x => input.Filter.IsNullOrEmpty() || x.Word.Contains(input.Filter));
+            if (input.IsMustConfirm)
+            {
+                query = query.Where(x => x.IsConfirmed);
+            }
             if (input.Sorting != null)
                 query = query.OrderBy(input.Sorting);
 
@@ -126,6 +133,7 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
             int toSkip = rand.Next(0, query.Count());
 
             var resQuery = query
+                .Where(x => x.IsConfirmed)
                 .Skip(toSkip)
                 .Take(maxCount)
                 .Join(_WordClassRepository,

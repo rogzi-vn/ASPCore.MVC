@@ -83,13 +83,13 @@
                         <div class="row no-gutters align-items-center">
                             <div class="col-auto">
                                 <div class="h5 mb-0 mr-3 font-weight-bold text-success">
-                                    @Html.Raw(Model.UserGPA.ToString().WithCommas())
+                                    @Html.Raw(Model.UserGPA.ToString("0.0").WithCommas())
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="progress progress-sm mr-2">
                                     <div class="progress-bar bg-info" role="progressbar"
-                                         style="width: @Html.Raw($"{(int)Model.UserGPARate}%")" aria-valuenow="50" aria-valuemin="0"
+                                         style="width: @Html.Raw($"{(int)(Model.UserGPARate*100)}%")" aria-valuenow="50" aria-valuemin="0"
                                          aria-valuemax="100"></div>
                                 </div>
                             </div>

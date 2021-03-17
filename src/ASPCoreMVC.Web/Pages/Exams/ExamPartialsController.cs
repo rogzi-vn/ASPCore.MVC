@@ -2,6 +2,7 @@
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace ASPCoreMVC.Web.Pages.Exams
 {
+    [Authorize]
     [Route("exams/partials/exam-partials")]
     public class ExamPartialsController : Controller
     {

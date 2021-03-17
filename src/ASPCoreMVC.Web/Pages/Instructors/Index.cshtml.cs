@@ -6,12 +6,14 @@ using System.Web;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
 using ASPCoreMVC.Web.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Volo.Abp.Application.Dtos;
 
 namespace ASPCoreMVC.Web.Pages.Instructors
 {
+    [Authorize]
     public class IndexModel : AppPageModel
     {
         private readonly IExamCatInstructService _ExamCatInstructService;

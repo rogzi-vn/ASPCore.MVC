@@ -35,14 +35,14 @@ namespace ASPCoreMVC.AppUsers
         {
             this.userManager = userManager;
             this.tools = tools;
-            GetPolicyName = ASPCoreMVCPermissions.UserProfiles.Default;
-            GetListPolicyName = ASPCoreMVCPermissions.UserProfiles.Default;
-            CreatePolicyName = ASPCoreMVCPermissions.UserProfiles.Create;
-            UpdatePolicyName = ASPCoreMVCPermissions.UserProfiles.Edit;
-            DeletePolicyName = ASPCoreMVCPermissions.UserProfiles.Delete;
+            //GetPolicyName = ASPCoreMVCPermissions.UserManager.Default;
+            //GetListPolicyName = ASPCoreMVCPermissions.UserManager.Default;
+            //CreatePolicyName = ASPCoreMVCPermissions.UserManager.Default;
+            //UpdatePolicyName = ASPCoreMVCPermissions.UserManager.Default;
+            //DeletePolicyName = ASPCoreMVCPermissions.UserManager.Default;
         }
 
-        [Authorize(ASPCoreMVCPermissions.UserProfiles.Default)]
+        //[Authorize(ASPCoreMVCPermissions.UserManager.Default)]
         public async Task<ResponseWrapper<AppUserProfileDTO>> GetProfileAsync(Guid id)
         {
             var res = await Repository.GetAsync(id);
@@ -136,7 +136,7 @@ namespace ASPCoreMVC.AppUsers
             #endregion
         }
 
-        [Authorize(ASPCoreMVCPermissions.UserProfiles.Edit)]
+        //[Authorize(ASPCoreMVCPermissions.UserManager.Default)]
         public async Task<ResponseWrapper<AppUserProfileDTO>> UpdateProfileAsync(Guid id, AppUserProfileDTO profile)
         {
             return await _UpdateProfileAsync(id, profile);

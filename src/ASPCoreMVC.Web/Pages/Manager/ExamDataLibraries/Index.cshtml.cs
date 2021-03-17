@@ -5,11 +5,13 @@ using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamDataLibraries;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.Application.Dtos;
 
 namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries
 {
+    [Authorize]
     public class ExamDataLibrariesIndexModel : AppPageModel
     {
         private readonly IExamCategoryService _ExamCategoryService;

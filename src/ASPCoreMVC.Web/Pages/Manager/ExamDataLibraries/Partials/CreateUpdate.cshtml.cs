@@ -8,10 +8,12 @@ using ASPCoreMVC.TCUEnglish.ExamDataLibraries;
 using ASPCoreMVC.TCUEnglish.Grammars;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
 {
+    [Authorize]
     public class ExamDataCreateUpdateModel : AppPageModel
     {
         private readonly IExamCategoryService _ExamCategoryService;

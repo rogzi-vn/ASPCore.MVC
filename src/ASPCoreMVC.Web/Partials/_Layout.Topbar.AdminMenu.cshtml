@@ -1,4 +1,43 @@
-﻿<li class="nav-item dropdown no-arrow mx-1">
+﻿@using Microsoft.AspNetCore.Authorization
+@using ASPCoreMVC.Permissions
+@inject IAuthorizationService _IAuthorizationService
+@{
+    var UserManagerGranted = (await _IAuthorizationService
+    .AuthorizeAsync(ASPCoreMVCPermissions.UserManager.Default)).Succeeded;
+
+    var WordClassesManagerGranted = (await _IAuthorizationService
+    .AuthorizeAsync(ASPCoreMVCPermissions.WordClassesManager.Default)).Succeeded;
+
+    var VocabularyTopicManagerGranted = (await _IAuthorizationService
+    .AuthorizeAsync(ASPCoreMVCPermissions.VocabularyTopicManager.Default)).Succeeded;
+
+    var VocabularyManagerGranted = (await _IAuthorizationService
+    .AuthorizeAsync(ASPCoreMVCPermissions.VocabularyManager.Default)).Succeeded;
+
+    var FileManagerGranted = (await _IAuthorizationService
+    .AuthorizeAsync(ASPCoreMVCPermissions.FileManager.Default)).Succeeded;
+
+    var GrammarManagerGranted = (await _IAuthorizationService
+    .AuthorizeAsync(ASPCoreMVCPermissions.GrammarManager.Default)).Succeeded;
+
+    var ExamManagerGranted = (await _IAuthorizationService
+    .AuthorizeAsync(ASPCoreMVCPermissions.ExamManager.Default)).Succeeded;
+
+    var IsDisplayAdmin = UserManagerGranted ||
+        WordClassesManagerGranted ||
+        VocabularyTopicManagerGranted ||
+        VocabularyManagerGranted ||
+        FileManagerGranted ||
+        GrammarManagerGranted ||
+        ExamManagerGranted || CurrentUser.IsInRole("admin");
+}
+
+@if (!IsDisplayAdmin)
+{
+    return;
+}
+
+<li class="nav-item dropdown no-arrow mx-1">
     <a class="nav-link dropdown-toggle" href="#" id="adminMenuDropdown" role="button" data-toggle="dropdown"
        aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-user-tie"></i>

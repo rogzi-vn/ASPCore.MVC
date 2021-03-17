@@ -13,6 +13,7 @@ using Volo.Abp.Authorization;
 
 namespace ASPCoreMVC.Controllers
 {
+    [Authorize]
     public class FilesController : AppController
     {
         private readonly IAppFileService _AppFileService;

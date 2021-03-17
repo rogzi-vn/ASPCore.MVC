@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
+using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
 using ASPCoreMVC.TCUEnglish.ExamLogs;
 using ASPCoreMVC.TCUEnglish.ScoreLogs;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
+using Volo.Abp.Domain.Repositories;
 
 namespace ASPCoreMVC.Web.Pages.Dashboard
 {
@@ -21,14 +23,18 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
         private readonly IExamLogService _ExamLogService;
         private readonly IScoreLogService _ScoreLogService;
 
+        private readonly IReadOnlyRepository<ExamCatInstructor, Guid> _ExamCatInstructorRepository;
+
         public DashboardIndexModel(
             IExamCategoryService _ExamCategoryService,
             IExamLogService _ExamLogService,
-            IScoreLogService _ScoreLogService)
+            IScoreLogService _ScoreLogService,
+            IReadOnlyRepository<ExamCatInstructor, Guid> _ExamCatInstructorRepository)
         {
             this._ExamCategoryService = _ExamCategoryService;
             this._ExamLogService = _ExamLogService;
             this._ScoreLogService = _ScoreLogService;
+            this._ExamCatInstructorRepository = _ExamCatInstructorRepository;
         }
 
         public List<ExamCategoryBaseDTO> ExamCats { get; set; } = new List<ExamCategoryBaseDTO>();
@@ -87,8 +93,16 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
             ViewData["CurrentExamCatId"] = ExamCategoryId.Value;
             ViewData["CurrentExamCatName"] = CurrentExamCategory.Name;
 
-            // Lấy danh sách học viên
-            ViewData["Students"] = await _ExamLogService.GetExamLogStudents(ExamCategoryId.Value);
+            var isInstructor = false;
+            // Kiểm tra xem đây có phải là giáo viên hướng dẫn không
+            if (await _ExamCatInstructorRepository.AnyAsync(x => x.UserId == CurrentUser.Id && x.ExamCategoryId == ExamCategoryId.Value))
+            {
+                isInstructor = true;
+                ViewData["IsInstructor"] = isInstructor;
+
+                // Lấy danh sách học viên
+                ViewData["Students"] = await _ExamLogService.GetExamLogStudents(ExamCategoryId.Value);
+            }
 
         }
     }

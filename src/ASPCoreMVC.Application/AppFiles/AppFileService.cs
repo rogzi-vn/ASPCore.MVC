@@ -33,11 +33,9 @@ namespace ASPCoreMVC.AppFileService
         {
             _fileContainer = fileContainer;
             this._UserRepository = _UserRepository;
-            GetPolicyName = ASPCoreMVCPermissions.AppFiles.Default;
-            GetListPolicyName = ASPCoreMVCPermissions.AppFiles.Default;
-            CreatePolicyName = ASPCoreMVCPermissions.AppFiles.Create;
-            UpdatePolicyName = ASPCoreMVCPermissions.AppFiles.Edit;
-            DeletePolicyName = ASPCoreMVCPermissions.AppFiles.Delete;
+            //GetPolicyName = ASPCoreMVCPermissions.FileManager.Default;
+            //GetListPolicyName = ASPCoreMVCPermissions.FileManager.Default;
+            //DeletePolicyName = ASPCoreMVCPermissions.FileManager.Default;
         }
 
         [AllowAnonymous]

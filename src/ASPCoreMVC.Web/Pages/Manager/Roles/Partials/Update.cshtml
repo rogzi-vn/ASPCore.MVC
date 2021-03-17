@@ -5,7 +5,8 @@
         <label asp-for="Name" class="mb-1"></label>
         @if (Model.Name.Equals("admin", StringComparison.OrdinalIgnoreCase))
         {
-            <input asp-for="Name" class="form-control" id="role-name" disabled>
+            <input asp-for="Name" type="hidden" id="role-name">
+            <div class="form-control">@Model.Name</div>
         }
         else
         {

@@ -7,20 +7,39 @@
         //Add your own permission names. Example:
         //public const string MyPermission1 = GroupName + ".MyPermission1";
 
-        public static class UserProfiles
+        public static class UserManager
         {
-            public const string Default = GroupName + ".UserProfiles";
-            public const string Create = Default + ".Create";
-            public const string Edit = Default + ".Edit";
-            public const string Delete = Default + ".Delete";
+            public const string Default = GroupName + ".UserManager";
         }
 
-        public static class AppFiles
+        public static class WordClassesManager
         {
-            public const string Default = GroupName + ".AppFiles";
-            public const string Create = Default + ".Create";
-            public const string Edit = Default + ".Edit";
-            public const string Delete = Default + ".Delete";
+            public const string Default = GroupName + ".WordClassesManager";
+        }
+
+        public static class VocabularyTopicManager
+        {
+            public const string Default = GroupName + ".VocabularyTopicManager";
+        }
+
+        public static class VocabularyManager
+        {
+            public const string Default = GroupName + ".VocabularyManager";
+        }
+
+        public static class FileManager
+        {
+            public const string Default = GroupName + ".FileManager";
+        }
+
+        public static class GrammarManager
+        {
+            public const string Default = GroupName + ".GrammarManager";
+        }
+
+        public static class ExamManager
+        {
+            public const string Default = GroupName + ".ExamManager";
         }
     }
 }

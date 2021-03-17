@@ -42,6 +42,7 @@ function initSearchVt() {
 
 function initRemoveAction() {
     $(".__remove_instructor").click(event => {
+        pd(event);
         var p = $(event.currentTarget);
         var id = p.data('id');
         var uName = p.data('uname');

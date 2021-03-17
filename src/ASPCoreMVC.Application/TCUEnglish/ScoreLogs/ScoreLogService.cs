@@ -1,6 +1,8 @@
 ﻿using ASPCoreMVC.Helpers;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
+using ASPCoreMVC.TCUEnglish.ExamLogs;
 using ASPCoreMVC.TCUEnglish.ExamSkillCategories;
+using ASPCoreMVC.TCUEnglish.ExamSkillParts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,35 +17,94 @@ namespace ASPCoreMVC.TCUEnglish.ScoreLogs
     {
         private readonly IRepository<ScoreLog, Guid> ScoreLogRepository;
 
+        private readonly IRepository<ExamLog, Guid> ExamLogRepository;
+
         private readonly IRepository<ExamSkillCategory, Guid> ExamSkillCategoryRepositoty;
+        private readonly IRepository<ExamSkillPart, Guid> ExamSkillPartRepositoty;
         private readonly IRepository<ExamCategory, Guid> ExamCategoryRepository;
 
         public ScoreLogService(
             IRepository<ScoreLog, Guid> ScoreLogRepository,
             IRepository<ExamSkillCategory, Guid> ExamSkillCategoryRepositoty,
-            IRepository<ExamCategory, Guid> ExamCategoryRepository)
+            IRepository<ExamCategory, Guid> ExamCategoryRepository,
+            IRepository<ExamSkillPart, Guid> ExamSkillPartRepositoty,
+            IRepository<ExamLog, Guid> ExamLogRepository)
         {
             this.ScoreLogRepository = ScoreLogRepository;
             this.ExamSkillCategoryRepositoty = ExamSkillCategoryRepositoty;
             this.ExamCategoryRepository = ExamCategoryRepository;
+            this.ExamSkillPartRepositoty = ExamSkillPartRepositoty;
+            this.ExamLogRepository = ExamLogRepository;
         }
 
         public async Task<float> GetExamCategoryGPA(Guid examCategoryGPA)
         {
-            var tempRes = await GetSkillCategoryGPAs(examCategoryGPA);
+            return await _GetExamCategoryGPA(examCategoryGPA, null);
+        }
+
+        private async Task<float> _GetExamCategoryGPA(Guid examCategoryGPA, DateTime? dest)
+        {
+            var tempRes = await _GetSkillCategoryGPAs(examCategoryGPA, dest);
             return tempRes.Sum(x => x.Scores);
+        }
+
+        public async Task<List<DayScoreLogGPADTO>> GetGpaUptoNow(Guid examCatId, DateTime startDate)
+        {
+            // Lấy danh sách tất cả các ngày từ ngày khởi đầu đến hôm nay
+            var dayScoreLogGPAs = new List<DayScoreLogGPADTO>();
+
+            for (var dt = startDate; dt <= DateTime.Now; dt = dt.AddDays(1))
+            {
+                var item = new DayScoreLogGPADTO
+                {
+                    Day = dt,
+                    DayInString = dt.ToString("dd/MM/yyyy"),
+                    GPAScores = await _GetExamCategoryGPA(examCatId, dt)
+                };
+                dayScoreLogGPAs.Add(item);
+            }
+
+            return dayScoreLogGPAs;
+        }
+
+        private async Task<float> _GetSkillCategoryGPA(Guid skillCatId, DateTime? dest)
+        {
+            var gpa = 0F;
+            var skillCat = await ExamSkillCategoryRepositoty.GetAsync(skillCatId);
+
+            var skpQuery = await ExamSkillPartRepositoty.GetQueryableAsync();
+            var skillParts = skpQuery.Where(x => x.ExamSkillCategoryId == skillCat.Id)
+                .ToList();
+            var query = await ScoreLogRepository.GetQueryableAsync();
+
+            if (dest != null)
+            {
+                query = query.Join(ExamLogRepository,
+                    s => s.ExamLogId,
+                    e => e.Id,
+                    (s, e) => new { s, e })
+                    .Where(x => x.e.CompletionTime == dest)
+                    .Select(x => x.s);
+            }
+
+            foreach (var skp in skillParts)
+            {
+                var avrgRate = query
+                    .Where(x => x.CreatorId == CurrentUser.Id)
+                    .Where(x => x.DestId == skp.Id)
+                    .Average(x => x.RateInParent);
+                gpa += avrgRate * skp.MaxScores;
+            }
+
+            return gpa;
         }
 
         public async Task<float> GetSkillCategoryGPA(Guid skillCategoryGPA)
         {
-            var skillCat = await ExamSkillCategoryRepositoty.GetAsync(skillCategoryGPA);
-            var query = await ScoreLogRepository.GetQueryableAsync();
-            return query
-                .Where(x => x.DestId == skillCategoryGPA)
-                .Sum(x => x.Scores / x.MaxScores * skillCat.MaxScores);
+            return await _GetSkillCategoryGPA(skillCategoryGPA, null);
         }
 
-        public async Task<List<SkillCatScoresAvgDTO>> GetSkillCategoryGPAs(Guid examCategoryGPA)
+        private async Task<List<SkillCatScoresAvgDTO>> _GetSkillCategoryGPAs(Guid examCategoryGPA, DateTime? dest)
         {
             var res = new List<SkillCatScoresAvgDTO>();
 
@@ -54,7 +115,7 @@ namespace ASPCoreMVC.TCUEnglish.ScoreLogs
                 .ToList();
             foreach (var sc in skillCats)
             {
-                var scores = await GetSkillCategoryGPA(sc.Id);
+                var scores = await _GetSkillCategoryGPA(sc.Id, dest);
                 var scsa = new SkillCatScoresAvgDTO
                 {
                     Name = sc.Name,
@@ -66,6 +127,11 @@ namespace ASPCoreMVC.TCUEnglish.ScoreLogs
             }
 
             return res;
+        }
+
+        public async Task<List<SkillCatScoresAvgDTO>> GetSkillCategoryGPAs(Guid examCategoryGPA)
+        {
+            return await _GetSkillCategoryGPAs(examCategoryGPA, null);
         }
     }
 }

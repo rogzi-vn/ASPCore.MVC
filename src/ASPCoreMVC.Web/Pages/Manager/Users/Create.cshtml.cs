@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ASPCoreMVC.AppUsers;
 using ASPCoreMVC.Users;
 using ASPCoreMVC.Web.Settings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Volo.Abp.Domain.Repositories;
@@ -13,6 +14,7 @@ using Volo.Abp.Settings;
 
 namespace ASPCoreMVC.Web.Pages.Manager.Users
 {
+    [Authorize]
     public class CreateUserModel : AppPageModel
     {
         private readonly ISettingProvider _SettingProvider;

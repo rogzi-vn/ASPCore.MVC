@@ -2,6 +2,7 @@
 using ASPCoreMVC.TCUEnglish.Grammars;
 using ASPCoreMVC.TCUEnglish.UserNotes;
 using ASPCoreMVC.Web.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using Volo.Abp.AspNetCore.Mvc;
 
 namespace ASPCoreMVC.Web.Pages.Dictionary.Notes.Partials
 {
+    [Authorize]
     [Route("/notes")]
     public class PartialsController : AbpController
     {

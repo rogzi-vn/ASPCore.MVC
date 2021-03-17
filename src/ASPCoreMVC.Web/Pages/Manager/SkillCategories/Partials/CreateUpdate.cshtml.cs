@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using ASPCoreMVC._Commons;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ASPCoreMVC.Web.Pages.Manager.SkillCategories.Partials
 {
+    [Authorize]
     public class SkillCategoryCreateUpdateModel : AppPageModel
     {
         private readonly IExamCategoryService _ExamCategoryService;

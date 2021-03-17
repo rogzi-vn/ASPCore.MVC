@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using ASPCoreMVC.AppUsers;
 using ASPCoreMVC.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Volo.Abp.Domain.Repositories;
 
 namespace ASPCoreMVC.Web.Pages.Manager.Users
 {
+    [Authorize]
     public class UpdateUserModel : AppPageModel
     {
         private readonly IAppUserService _AppUserService;

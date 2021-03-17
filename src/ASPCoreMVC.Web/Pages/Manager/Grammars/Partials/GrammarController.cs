@@ -1,6 +1,7 @@
 ﻿using ASPCoreMVC.TCUEnglish.GrammarCategories;
 using ASPCoreMVC.TCUEnglish.Grammars;
 using ASPCoreMVC.Web.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using Volo.Abp.AspNetCore.Mvc;
 
 namespace ASPCoreMVC.Web.Pages.Manager.Grammars.Partials
 {
+    [Authorize]
     [Route("/manager/grammars")]
     public class GrammarController : AbpController
     {

@@ -34,6 +34,7 @@ namespace ASPCoreMVC.Web.Pages.Account
             this._AppUserService = appUserService;
             this._FileAppService = fileAppService;
             this._IdentityUserManager = _IdentityUserManager;
+
         }
 
         public async Task<IActionResult> OnGetAsync()

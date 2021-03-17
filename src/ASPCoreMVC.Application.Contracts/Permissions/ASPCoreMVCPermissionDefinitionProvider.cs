@@ -13,15 +13,19 @@ namespace ASPCoreMVC.Permissions
             //Define your own permissions here. Example:
             //myGroup.AddPermission(ASPCoreMVCPermissions.MyPermission1, L("Permission:MyPermission1"));
 
-            var userProfilesPermission = aspCoreMVC.AddPermission(ASPCoreMVCPermissions.UserProfiles.Default, L("Trans:Permission:UserProfiles"));
-            userProfilesPermission.AddChild(ASPCoreMVCPermissions.UserProfiles.Create, L("Trans:Permission:UserProfiles:Create"));
-            userProfilesPermission.AddChild(ASPCoreMVCPermissions.UserProfiles.Edit, L("Trans:Permission:UserProfiles:Edit"));
-            userProfilesPermission.AddChild(ASPCoreMVCPermissions.UserProfiles.Delete, L("Trans:Permission:UserProfiles:Delete"));
+            var UserManagerPermission = aspCoreMVC.AddPermission(ASPCoreMVCPermissions.UserManager.Default, L("User Manager"));
 
-            var appFilesPermission = aspCoreMVC.AddPermission(ASPCoreMVCPermissions.AppFiles.Default, L("Trans:Permission:AppFiles"));
-            appFilesPermission.AddChild(ASPCoreMVCPermissions.AppFiles.Create, L("Trans:Permission:AppFiles:Create"));
-            appFilesPermission.AddChild(ASPCoreMVCPermissions.AppFiles.Edit, L("Trans:Permission:AppFiles:Edit"));
-            appFilesPermission.AddChild(ASPCoreMVCPermissions.AppFiles.Delete, L("Trans:Permission:AppFiles:Delete"));
+            var WordClassesManagerPermission = aspCoreMVC.AddPermission(ASPCoreMVCPermissions.WordClassesManager.Default, L("Word Classes Manager"));
+
+            var VocabularyTopicManagerPermission = aspCoreMVC.AddPermission(ASPCoreMVCPermissions.VocabularyTopicManager.Default, L("Vocabulary Topic Manager"));
+
+            var VocabularyManagerPermission = aspCoreMVC.AddPermission(ASPCoreMVCPermissions.VocabularyManager.Default, L("Vocabulary Manager"));
+
+            var FileManagerPermission = aspCoreMVC.AddPermission(ASPCoreMVCPermissions.FileManager.Default, L("File Manager"));
+
+            var GrammarManagerPermission = aspCoreMVC.AddPermission(ASPCoreMVCPermissions.GrammarManager.Default, L("Grammar Manager"));
+
+            var ExamManagerPermission = aspCoreMVC.AddPermission(ASPCoreMVCPermissions.ExamManager.Default, L("Exam Manager"));
 
         }
 

@@ -11,7 +11,7 @@
     <div class="card-body">
         @foreach (var bs in balanceSkills)
         {
-            var rate = (int)bs.ScoresRate * 100;
+            var rate = (int)(bs.ScoresRate * 100);
             <h4 class="small font-weight-bold">
                 @bs.Name <span class="float-right">@rate%</span>
             </h4>

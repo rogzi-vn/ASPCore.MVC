@@ -68,17 +68,17 @@
             <label>
                 @Html.Raw(q.Text)
             </label>
-            <button class="btn btn-sm btn-success shadow-sm float-right" id="start-recorder-@affectedId">
-                <i class="fa fa-play mr-1"></i>
-                @L["Start Recorder"]
-            </button>
-            <button class="btn btn-sm btn-danger shadow-sm d-none float-right" id="finish-recorder-@affectedId">
-                <i class="fa fa-stop mr-1"></i>
-                @L["Stop Recorder"]
-            </button>
-            <div class="d-none" id="audio-player-@affectedId">
+            @*<button class="btn btn-sm btn-success shadow-sm float-right" id="start-recorder-@affectedId">
+                    <i class="fa fa-play mr-1"></i>
+                    @L["Start Recorder"]
+                </button>
+                <button class="btn btn-sm btn-danger shadow-sm d-none float-right" id="finish-recorder-@affectedId">
+                    <i class="fa fa-stop mr-1"></i>
+                    @L["Stop Recorder"]
+                </button>
+                <div class="d-none" id="audio-player-@affectedId">
 
-            </div>
+                </div>*@
         </div>
     }
     else if (Model.SkillPart.IsHaveQuestionText)
@@ -174,7 +174,59 @@
     }
     else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer)
     {
-
+        <div class="col-12 my-2 v-audio audio-player mb-3">
+            <audio crossorigin="use-credentials">
+                <source src="@AnsByQuestion(q.Id)">
+            </audio>
+        </div>
+        @if (IsInstructorReview)
+        {
+            var tempZId = Guid.NewGuid().ToString();
+            <form action="/api/app/exam-log/correct-content-answer/@ExamLogId" method="put"
+                  class="form-update-corrent-question">
+                <input type="hidden" name="id" value="@q.Id" />
+                <input type="hidden" name="scores" value="@q.Scores" id="@tempZId-scores-hi" />
+                <div class="form-group">
+                    <label>
+                        @L["Scores"]: <span class="text-danger" id="@tempZId-scores">@q.Scores</span>
+                        <i class="fas fa-star text-info"></i>
+                    </label>
+                    <input type="range" class="form-control-range" id="@tempZId-inp"
+                           value="@q.Scores"
+                           min="0"
+                           max="@(Model.SkillPart.MaxScores/Model.SkillPart.QuestionContainers.Sum(x=>x.Questions.Count))">
+                </div>
+                <div class="form-group">
+                    <label for="correctContentByInstructor">@L["Comment and edit"]</label>
+                    <textarea class="form-control editor"
+                              name="correctContentByInstructor"
+                              editor-mint="true">@q.CorrectContentByInstructor</textarea>
+                </div>
+                <script>
+                                document.getElementById('@tempZId-inp')
+                                    .addEventListener('change', function (e) {
+                                        document.getElementById('@tempZId-scores').innerHTML = e.target.value;
+                                        document.getElementById('@tempZId-scores-hi').value = e.target.value;
+                                    });
+                </script>
+                <div class="row">
+                    <button type="submit" class="btn btn-primary btn-sm shadow-sm mx-auto">@L["Confirm"]</button>
+                </div>
+            </form>
+        }
+        else
+        {
+            <div class="border border-primary rounded p-3">
+                @if (q.CorrectContentByInstructor.IsNullOrEmpty())
+                {
+                    <div class="text-primary font-italic text-center">@L["Without any comment or correction from the instructor"]</div>
+                }
+                else
+                {
+                    @Html.Raw(q.CorrectContentByInstructor)
+                }
+            </div>
+        }
     }
     else if (Model.SkillPart.AnswerType == ASPCoreMVC.Common.AnswerTypes.WriteAnswer)
     {

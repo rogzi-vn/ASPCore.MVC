@@ -7,11 +7,13 @@ using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamDataLibraries;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ASPCoreMVC.Web.Pages.Manager.SkillParts.Partials
 {
+    [Authorize]
     public class SkillPartCreateUpdateModel : AppPageModel
     {
         private readonly IExamCategoryService _ExamCategoryService;
@@ -141,8 +143,8 @@ namespace ASPCoreMVC.Web.Pages.Manager.SkillParts.Partials
             if (res != null && res.Success)
             {
                 ToastSuccess(res.Message);
-                //return Redirect($"/manager/exam-categories/{CurrentExamCategory.Id}/skill-categories/{CurrentSkillCategory.Id}/skill-parts");
-                return await OnGetAsync(exId, skillCatId, id);
+                return Redirect($"/manager/exam-categories/{CurrentExamCategory.Id}/skill-categories/{CurrentSkillCategory.Id}/skill-parts");
+                //return await OnGetAsync(exId, skillCatId, id);
             }
 
             ToastError(res.Message);

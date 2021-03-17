@@ -8,12 +8,14 @@ using ASPCoreMVC.TCUEnglish.ExamSkillCategories;
 using ASPCoreMVC.TCUEnglish.ExamSkillParts;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Volo.Abp.Domain.Repositories;
 
 namespace ASPCoreMVC.Web.Pages.Exams
 {
+    [Authorize]
     public class ExamsIndexModel : AppPageModel
     {
         private readonly IExamCategoryService _ExamCategoryServices;

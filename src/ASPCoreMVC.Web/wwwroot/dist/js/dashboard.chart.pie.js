@@ -4,7 +4,7 @@ Chart.defaults.global.defaultFontColor = '#858796';
 
 function balanceSkillPieChart(id, json = []) {
     var _label = json.map(x => x.Name);
-    var _data = json.map(x => x.ScoresRate);
+    var _data = json.map(x => Math.round(x.Scores * 10) / 10);
     var _backgroundColors = json.map(x => x.HexColor);
     initPieChart(id, _label, _data, _backgroundColors);
 }

@@ -2,10 +2,12 @@ using System;
 using System.Threading.Tasks;
 using ASPCoreMVC._Commons;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ASPCoreMVC.Web.Pages.Manager.ExamCategories.Partials
 {
+    [Authorize]
     public class ExamCategoryCreateUpdateModel : AppPageModel
     {
         private readonly IExamCategoryService _ExamCategoryService;

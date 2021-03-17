@@ -241,8 +241,14 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                                     .QuestionContainers[k]
                                     .Questions[l].IsCorrect)
                             {
-                                totalScore += skpScorePerQuestion;
-                                skpScores += skpScorePerQuestion;
+                                totalScore += exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].Scores;
+                                skpScores += exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].Scores;
                             }
                         }
                     }
@@ -545,6 +551,12 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             // Phân giải để thực hiện chấm bài thi
             for (int i = 0; i < exam.SkillCategories.Count; i++)
             {
+                // Điểm tối đa của skill part
+                var skcMaxScores = exam.SkillCategories[i].MaxScores;
+
+                // Điểm cho phần thi thiện tại
+                var skcScores = 0F;
+
                 for (int j = 0; j < exam.SkillCategories[i].SkillParts.Count; j++)
                 {
                     var skp = exam.SkillCategories[i].SkillParts[j];
@@ -587,22 +599,25 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                             // Nếu phần này có thể chấm tự động được
                             if (!isAutoCorrectable)
                             {
-                                exam.SkillCategories[i]
-                                    .SkillParts[j]
-                                    .QuestionContainers[k]
-                                    .Questions[l].IsCorrect = true;
-                                exam.SkillCategories[i]
-                                    .SkillParts[j]
-                                    .QuestionContainers[k]
-                                    .Questions[l].Scores = inp.Scores;
-                                exam.SkillCategories[i]
-                                    .SkillParts[j]
-                                    .QuestionContainers[k]
-                                    .Questions[l].CorrectContentByInstructor = inp.CorrectContentByInstructor;
-                                exam.SkillCategories[i]
-                                    .SkillParts[j]
-                                    .QuestionContainers[k]
-                                    .Questions[l].CorrectionContentTime = DateTime.Now;
+                                if (question.Id == inp.Id)
+                                {
+                                    exam.SkillCategories[i]
+                                        .SkillParts[j]
+                                        .QuestionContainers[k]
+                                        .Questions[l].IsCorrect = true;
+                                    exam.SkillCategories[i]
+                                        .SkillParts[j]
+                                        .QuestionContainers[k]
+                                        .Questions[l].Scores = inp.Scores;
+                                    exam.SkillCategories[i]
+                                        .SkillParts[j]
+                                        .QuestionContainers[k]
+                                        .Questions[l].CorrectContentByInstructor = inp.CorrectContentByInstructor;
+                                    exam.SkillCategories[i]
+                                        .SkillParts[j]
+                                        .QuestionContainers[k]
+                                        .Questions[l].CorrectionContentTime = DateTime.Now;
+                                }
                             }
 
                             // Tính điểm nếu câu trả lời này là đúng
@@ -611,16 +626,14 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                                     .QuestionContainers[k]
                                     .Questions[l].IsCorrect)
                             {
-                                if (isAutoCorrectable)
-                                {
-                                    totalScore += skpScorePerQuestion;
-                                    skpScores += skpScorePerQuestion;
-                                }
-                                else
-                                {
-                                    totalScore += inp.Scores;
-                                    skpScores += inp.Scores;
-                                }
+                                totalScore += exam.SkillCategories[i]
+                                     .SkillParts[j]
+                                     .QuestionContainers[k]
+                                     .Questions[l].Scores;
+                                skpScores += exam.SkillCategories[i]
+                                .SkillParts[j]
+                                .QuestionContainers[k]
+                                .Questions[l].Scores;
                             }
                         }
                     }
@@ -629,6 +642,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                     // Lưu điểm vào log điểm
                     // Lưu kết quả chấm vào log Điểm
                     await SaveScoreLog(examLog.Id, skp.Id, skpScores, skpMaxScores);
+                    skcScores += skpScores;
                 }
             }
 
@@ -667,5 +681,6 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             // Cập nhật exam Logs
             await Repository.UpdateAsync(examLog);
         }
+
     }
 }

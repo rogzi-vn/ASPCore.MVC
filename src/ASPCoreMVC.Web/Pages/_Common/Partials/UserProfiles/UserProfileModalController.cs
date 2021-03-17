@@ -1,4 +1,5 @@
 ﻿using ASPCoreMVC.AppUsers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using Volo.Abp.Identity;
 
 namespace ASPCoreMVC.Web.Pages._Common.Partials.UserProfiles
 {
+    [Authorize]
     public class UserProfileModalController : AbpController
     {
         private readonly IAppUserService _AppUserService;
