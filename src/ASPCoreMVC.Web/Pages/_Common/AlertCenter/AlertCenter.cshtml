@@ -1,0 +1,62 @@
+﻿@using Volo.Abp.Application.Dtos
+@using ASPCoreMVC.TCUEnglish.Notifications
+
+@model PagedResultDto<NotificationDTO>
+
+@{
+
+}
+
+<input type="hidden" value="@Model.TotalCount" id="alert-center-count" />
+@if (Model.TotalCount <= 0)
+{
+    <div class="text-center text-secondary p-3 font-italic">@L["There are currently no announcements"]</div>
+}
+else
+{
+    @foreach (var item in Model.Items)
+    {
+        <a class="dropdown-item d-flex align-items-center notify-item" c-href="@item.HerfLink" id="@item.Id">
+            <div>
+                <div class="small text-gray-500">@(item.CreationTime.ToString("HH:mm dd/MM/yyyy"))</div>
+                @if (item.IsChecked)
+                {
+                    <span class="">@Html.Raw(item.NotificationMessage)</span>
+                }
+                else
+                {
+                    <span class="font-weight-bold">@Html.Raw(item.NotificationMessage)</span>
+                }
+            </div>
+        </a>
+    }
+}
+
+<script>
+    $(".notify-item").click(event => {
+        var parent = $(event.currentTarget);
+        var id = parent.attr('id');
+        var href = parent.attr('c-href');
+
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        // fetch seen
+        fetch(`/api/app/notification/${id}/notification-seen-state`, {
+            method: 'PUT',
+            headers: {
+                RequestVerificationToken: token,
+                accept: 'text/plain',
+                'content-type': 'application/json'
+            },
+        }).then(r => r.text())
+            .then(data => {
+                console.log(data);
+                if (href && href != "#") {
+                    if (!href.startsWith("javascript:")) {
+                        window.location = href;
+                    } else {
+                        eval(href.replace("javascript:", ""));
+                    }
+                }
+            });
+    });
+</script>

@@ -15,6 +15,7 @@ using ASPCoreMVC.TCUEnglish.GrammarCategories;
 using ASPCoreMVC.TCUEnglish.Grammars;
 using ASPCoreMVC.TCUEnglish.MesGroups;
 using ASPCoreMVC.TCUEnglish.MessGroups;
+using ASPCoreMVC.TCUEnglish.Notifications;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
 using ASPCoreMVC.TCUEnglish.UserMessages;
@@ -102,6 +103,8 @@ namespace ASPCoreMVC
             CreateMap<ExamLog, ExamLogDTO>().ReverseMap();
             CreateMap<ExamLogDTO, ExamLogBaseDTO>();
             CreateMap<ExamLog, ExamLogBaseDTO>();
+
+            CreateMap<Notification, NotificationDTO>().ReverseMap();
         }
     }
 }

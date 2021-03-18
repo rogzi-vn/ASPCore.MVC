@@ -21,6 +21,7 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
         /// Nội dung chỉnh sửa cho đúng bởi GVHD
         /// </summary>
         public string CorrectContentByInstructor { get; set; }
+        public string Explain { get; set; }
         /// <summary>
         /// Thời điểm mà GVHD chỉnh sửa nội dung
         /// </summary>

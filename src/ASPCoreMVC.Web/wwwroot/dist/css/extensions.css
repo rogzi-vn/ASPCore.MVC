@@ -594,3 +594,7 @@ input.correct-fill {
 .no-outline {
     outline: unset !important;
 }
+
+.notify-item {
+    cursor: pointer;
+}

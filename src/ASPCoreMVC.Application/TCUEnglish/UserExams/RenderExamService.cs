@@ -264,7 +264,8 @@ namespace ASPCoreMVC.TCUEnglish.UserExams
                 {
                     Id = x.Id,
                     Text = x.Text,
-                    TextClone = x.TextClone
+                    TextClone = x.TextClone,
+                    Explain = x.Explain
                 }).ToList();
         }
 

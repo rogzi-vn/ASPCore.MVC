@@ -84,6 +84,8 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
 
                 ViewBag.InstructorComment = res.Data.InstructorComments;
 
+                ViewBag.RenderType = res.Data.RenderExamType;
+
                 return View(AppTheme.ExamPreview, model);
             }
             else
@@ -115,6 +117,8 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
                     // Prevent user re work done exam
                     return Redirect($"/exams/review/{logId}");
                 }
+
+                ViewBag.RenderType = res.Data.RenderExamType;
 
                 model = await ProcessParams(model);
                 return View(AppTheme.ExamContainer, model);
@@ -162,6 +166,8 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
             }
 
             model = await ProcessParams(model);
+
+            ViewBag.RenderType = res.Data.RenderExamType;
 
             return View(AppTheme.ExamContainer, model);
         }

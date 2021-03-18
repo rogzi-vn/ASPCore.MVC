@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TCUEnglish\ExamLogs\ExamLogService.Notification.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="TCUEnglish\ExamLogs\ExamLogService.Notification.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ASPCoreMVC.Domain\ASPCoreMVC.Domain.csproj" />
     <ProjectReference Include="..\ASPCoreMVC.Application.Contracts\ASPCoreMVC.Application.Contracts.csproj" />
   </ItemGroup>

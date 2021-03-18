@@ -45,7 +45,7 @@ namespace ASPCoreMVC.TCUEnglish.ScoreLogs
         private async Task<float> _GetExamCategoryGPA(Guid examCategoryGPA, DateTime? dest)
         {
             var tempRes = await _GetSkillCategoryGPAs(examCategoryGPA, dest);
-            return tempRes.Sum(x => x.Scores);
+            return tempRes.Select(x => x.Scores).DefaultIfEmpty().Sum();
         }
 
         public async Task<List<DayScoreLogGPADTO>> GetGpaUptoNow(Guid examCatId, DateTime startDate)
@@ -83,7 +83,9 @@ namespace ASPCoreMVC.TCUEnglish.ScoreLogs
                     s => s.ExamLogId,
                     e => e.Id,
                     (s, e) => new { s, e })
-                    .Where(x => x.e.CompletionTime == dest)
+                    .Where(x => x.e.CreationTime.Year == dest.Value.Year &&
+                     x.e.CreationTime.Month == dest.Value.Month &&
+                      x.e.CreationTime.Day == dest.Value.Day)
                     .Select(x => x.s);
             }
 
@@ -92,7 +94,9 @@ namespace ASPCoreMVC.TCUEnglish.ScoreLogs
                 var avrgRate = query
                     .Where(x => x.CreatorId == CurrentUser.Id)
                     .Where(x => x.DestId == skp.Id)
-                    .Average(x => x.RateInParent);
+                    .Select(x => x.RateInParent)
+                    .DefaultIfEmpty()
+                    .Average();
                 gpa += avrgRate * skp.MaxScores;
             }
 

@@ -124,6 +124,14 @@ $('.editor').each(function () {
     bindEditor(this);
 });
 
+$('.editor-auto-value').each(function () {
+    var ck = bindEditor(this);
+    var textArea = $(this);
+    ck.on('change', function () {
+        textArea.val(ck.getData());
+    });
+});
+
 function bindCKEditor(className, isUserEditor = false) {
     $(`.${className}`).each(function () {
         var thisId = $(this).attr('id').valueOf();

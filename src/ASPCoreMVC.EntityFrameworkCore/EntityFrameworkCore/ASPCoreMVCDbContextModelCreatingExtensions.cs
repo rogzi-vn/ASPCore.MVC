@@ -21,6 +21,7 @@ using ASPCoreMVC.TCUEnglish.UserMessages;
 using ASPCoreMVC.TCUEnglish.MemberInstructors;
 using ASPCoreMVC.TCUEnglish.ExamLogs;
 using ASPCoreMVC.TCUEnglish.ScoreLogs;
+using ASPCoreMVC.TCUEnglish.Notifications;
 
 namespace ASPCoreMVC.EntityFrameworkCore
 {
@@ -39,6 +40,13 @@ namespace ASPCoreMVC.EntityFrameworkCore
             //    //...
             //});
 
+            builder.Entity<Notification>(b =>
+            {
+                b.ToTable(ASPCoreMVCConsts.DbTablePrefix + nameof(Notification), ASPCoreMVCConsts.DbSchema);
+                //Configure the base properties
+                b.ConfigureByConvention();
+
+            });
             builder.Entity<ExamLog>(b =>
             {
                 b.ToTable(ASPCoreMVCConsts.DbTablePrefix + nameof(ExamLog), ASPCoreMVCConsts.DbSchema);

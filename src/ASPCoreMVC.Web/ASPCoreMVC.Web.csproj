@@ -2579,6 +2579,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\" />
     <Folder Include="wwwroot\host\user_files\" />
     <Folder Include="wwwroot\plugins\ckeditor\plugins\imageresponsive\" />
     <Folder Include="wwwroot\plugins\plyr-3.6.4\" />

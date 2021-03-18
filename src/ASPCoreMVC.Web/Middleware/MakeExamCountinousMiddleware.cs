@@ -25,7 +25,8 @@ namespace ASPCoreMVC.Web.Middleware
             {
                 var ignores = new List<string> {
                     "/api",
-                    "/exams"
+                    "/exams",
+                    "/resources"
                 };
                 var destinationUri = $"/exams/re-work/{guid}";
                 if (!ignores.Any(x => httpContext.Request.Path.StartsWithSegments(x, StringComparison.OrdinalIgnoreCase)))

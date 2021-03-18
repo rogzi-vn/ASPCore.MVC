@@ -1,6 +1,7 @@
 ﻿using ASPCoreMVC._Commons;
 using ASPCoreMVC._Commons.Services;
 using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
+using ASPCoreMVC.TCUEnglish.Notifications;
 using ASPCoreMVC.TCUEnglish.ScoreLogs;
 using ASPCoreMVC.TCUEnglish.UserExams;
 using ASPCoreMVC.Users;
@@ -16,22 +17,26 @@ using Volo.Abp.Domain.Repositories;
 
 namespace ASPCoreMVC.TCUEnglish.ExamLogs
 {
-    public class ExamLogService : WrapperCrudAppService<ExamLog, ExamLogDTO, Guid, GetExamLogDTO>,
+    public partial class ExamLogService : WrapperCrudAppService<ExamLog, ExamLogDTO, Guid, GetExamLogDTO>,
         IExamLogService
     {
         private readonly IRepository<ScoreLog, Guid> ScoreLogRepository;
         private readonly IRepository<AppUser, Guid> AppUserRepository;
         private readonly IRepository<ExamCatInstructor, Guid> ExamCatInstructorRepository;
 
+        private readonly IRepository<Notification, Guid> NotificationRepository;
+
         public ExamLogService(
             IRepository<ExamLog, Guid> repo,
             IRepository<ScoreLog, Guid> ScoreLogRepository,
             IRepository<AppUser, Guid> AppUserRepository,
-            IRepository<ExamCatInstructor, Guid> ExamCatInstructorRepository) : base(repo)
+            IRepository<ExamCatInstructor, Guid> ExamCatInstructorRepository,
+            IRepository<Notification, Guid> NotificationRepository) : base(repo)
         {
             this.ScoreLogRepository = ScoreLogRepository;
             this.AppUserRepository = AppUserRepository;
             this.ExamCatInstructorRepository = ExamCatInstructorRepository;
+            this.NotificationRepository = NotificationRepository;
         }
 
         protected override async Task<IQueryable<ExamLog>> CreateFilteredQueryAsync(GetExamLogDTO input)
@@ -56,7 +61,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             return base.UpdateAsync(id, input);
         }
 
-        public override Task<ResponseWrapper<ExamLogDTO>> CreateAsync(ExamLogDTO input)
+        public override async Task<ResponseWrapper<ExamLogDTO>> CreateAsync(ExamLogDTO input)
         {
             var exam = JsonConvert.DeserializeObject<ExamForRenderDTO>(input.RawExamRendered);
             var skillPart = exam.SkillCategories.FirstOrDefault()?.SkillParts?.FirstOrDefault();
@@ -87,7 +92,27 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                 input.Name = $"{skillCat.Name} - {exam.Name}";
             }
             input.IsDoneScore = false;
-            return base.CreateAsync(input);
+
+            #region Nếu user lần đầu chọn GVDH
+            if (!Repository.Any(x => x.ExamCatInstructorId == input.ExamCatInstructorId))
+            {
+                var instructorUser = await ExamCatInstructorRepository.GetAsync(x => x.Id == input.ExamCatInstructorId);
+                var currentUser = await AppUserRepository.GetAsync(CurrentUser.Id.Value);
+                string msg = L["{0} chooses you as the instructor for the first time and begins the \"{1}\" exam. Please enthusiastically support that student"];
+                msg = string.Format(msg, currentUser.DisplayName, input.Name);
+
+                var notification = new Notification
+                {
+                    TargetUserId = instructorUser.UserId,
+                    NotificationMessage = msg,
+                    HerfLink = "#",
+                    IsChecked = false
+                };
+                await NotificationRepository.InsertAsync(notification, true);
+            }
+            #endregion
+
+            return await base.CreateAsync(input);
         }
 
         public async Task<ResponseWrapper<PagedResultDto<ExamLogBaseDTO>>> GetBaseListAsync(GetExamLogDTO input)
@@ -496,7 +521,8 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
 
             var query = await Repository.GetQueryableAsync();
             query = query
-                .Where(x => x.ExamCatInstructorId == examCatInstructor.Id);
+                .Where(x => x.ExamCatInstructorId == examCatInstructor.Id)
+                .Where(x => x.CompletionTime != null);
             if (creatorId != null && creatorId != Guid.Empty)
             {
                 query = query.Where(x => x.CreatorId == creatorId.Value);
@@ -666,6 +692,37 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
 
             // Cập nhật exam Logs
             await Repository.UpdateAsync(examLog);
+
+            #region Nếu user lần đầu chọn GVDH
+            var exCatInstructor = await ExamCatInstructorRepository.GetAsync(x => x.Id == examLog.ExamCatInstructorId);
+            var instructor = await AppUserRepository.GetAsync(exCatInstructor.UserId);
+            string msg = L["Instructor \"{0}\" has updated the score for the test \"{1} - {2}\" with a total score of {3}/{4} ({5})"];
+            var passedStateText = "";
+            if (examLog.IsPassed)
+            {
+                passedStateText = L["Passed"];
+            }
+            else
+            {
+                passedStateText = L["Failed"];
+            }
+            msg = string.Format(msg,
+                instructor.DisplayName,
+                examLog.Name,
+                examLog.CreationTime.ToString("HH:mm dd/MM/yyyy"),
+                examLog.ExamScores.ToString("0.0"),
+                examLog.CurrentMaxScore.ToString("0"),
+                passedStateText);
+
+            var notification = new Notification
+            {
+                TargetUserId = examLog.CreatorId,
+                NotificationMessage = msg,
+                HerfLink = $"/exams/review/{examLog.Id}",
+                IsChecked = false
+            };
+            await NotificationRepository.InsertAsync(notification, true);
+            #endregion
         }
 
         public async Task UpdateInstructorComments(Guid examLogId, string comments)
@@ -680,6 +737,25 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
 
             // Cập nhật exam Logs
             await Repository.UpdateAsync(examLog);
+
+            #region Nếu user lần đầu chọn GVDH
+            var exCatInstructor = await ExamCatInstructorRepository.GetAsync(x => x.Id == examLog.ExamCatInstructorId);
+            var instructor = await AppUserRepository.GetAsync(exCatInstructor.UserId);
+            string msg = L["Instructor \"{0}\" has updated the critique of your \"{1} - {2}\" exam"];
+            msg = string.Format(msg,
+                instructor.DisplayName,
+                examLog.Name,
+                examLog.CreationTime.ToString("HH:mm dd/MM/yyyy"));
+
+            var notification = new Notification
+            {
+                TargetUserId = examLog.CreatorId,
+                NotificationMessage = msg,
+                HerfLink = $"/exams/review/{examLog.Id}",
+                IsChecked = false
+            };
+            await NotificationRepository.InsertAsync(notification, true);
+            #endregion
         }
 
     }
