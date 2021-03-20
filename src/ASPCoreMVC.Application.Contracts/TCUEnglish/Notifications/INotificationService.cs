@@ -10,5 +10,7 @@ namespace ASPCoreMVC.TCUEnglish.Notifications
     {
         public Task UpdateNotificationSeenState(Guid id);
         public Task<int> GetCountUnreadNotification();
+
+        public Task MarkAllAsRead();
     }
 }

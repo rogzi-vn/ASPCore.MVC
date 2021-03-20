@@ -1,0 +1,70 @@
+﻿@using Volo.Abp.Application.Dtos
+@using ASPCoreMVC.TCUEnglish.MessGroups
+@model PagedResultDto<MessGroupDTO>
+
+@{
+    async Task RenderDisscussion(MessGroupDTO inp)
+    {
+        var photo = inp.Photo;
+        if (photo.IsNullOrEmpty())
+        {
+            photo = await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE);
+        }
+        <div class="d-flex mb-3">
+            <div style="z-index: 10;">
+                <div class="rounded-circle round-size-avt" style="background-image: url(@Html.Raw(photo));"></div>
+            </div>
+            <div class="right-bar-discuss d-inline-block w-100 border bg-light pt-2 discuss-hoverable">
+                <div class="font-weight-bold text-dark chat-name">
+                    @inp.GroupName
+                </div>
+                <div class="small text-gray-600 chat-name mt-1">
+                    @if (inp.LatestMessage.IsNullOrEmpty())
+                    {
+                        <div class="font-italic text-danger">@L["You have not yet conducted a discussion with this person"]</div>
+                    }
+                    else
+                    {
+                        @inp.LatestMessage
+                    }
+                </div>
+                @if (!inp.LatestMessage.IsNullOrEmpty())
+                {
+                    <div class="text-right chat-name font-weight-bold" style="font-size: 10px;">
+                        @inp.LatestMessageTime.ToString("HH:mm dd/MM/yyyy")
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+<div class="input-group">
+    <input type="text" class="form-control bg-light border-0 small"
+           id="search-vt-inp"
+           value="@ViewBag.Filter"
+           placeholder="Search for user..." aria-label="Search">
+    <div class="input-group-append">
+        <button class="btn btn-primary" type="button" id="search-vt-btn">
+            <i class="fas fa-search fa-sm"></i>
+        </button>
+    </div>
+</div>
+<div class="separator my-2" id="gi-list-state">@ViewBag.ListState</div>
+
+@if (Model.Items.Count > 0)
+{
+    @foreach (var mg in Model.Items)
+    {
+        await RenderDisscussion(mg);
+    }
+    <div class="card-footer bg-white d-flex justify-content-center align-items-center">
+        <ul class="pagination pagination-flat pagination-sm justify-content-between mt-2 mt-sm-0">
+            @Html.Raw(ViewBag.Pagination)
+        </ul>
+    </div>
+}
+else
+{
+    <div class="font-italic m-3 p-3 text-center text-primary">@L["You haven't made any discussions yet. Enter the name of the person to discuss in the search box and run the discussion."]</div>
+}

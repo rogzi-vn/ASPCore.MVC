@@ -14,5 +14,14 @@ namespace ASPCoreMVC.TCUEnglish.MessGroups
         public string GroupName { get; set; }
         [Required]
         public string Members { get; set; }
+        public string LatestMessage { get; set; }
+        public DateTime LatestMessageTime { get; set; }
+        public int UnReadCount { get; set; }
+        public string Photo { get; set; }
+
+        public void SetId(Guid id)
+        {
+            this.Id = id;
+        }
     }
 }

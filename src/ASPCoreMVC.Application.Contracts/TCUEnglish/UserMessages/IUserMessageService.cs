@@ -4,14 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Services;
 
 namespace ASPCoreMVC.TCUEnglish.UserMessages
 {
-    public interface IUserMessageService : IWrapperCrudAppService<
+    public interface IUserMessageService : ICrudAppService<
         UserMessageDTO,
         Guid,
         GetUserMessageDTO>
     {
-        public Task<ResponseWrapper<List<UserMessageDTO>>> GetPreviousMessages(Guid messGroupId, Guid latestMessId, int maxCount);
+        public Task<List<UserMessageDTO>> GetPreviousMessages(Guid messGroupId, int maxCount, Guid? oldestMsgId);
     }
 }

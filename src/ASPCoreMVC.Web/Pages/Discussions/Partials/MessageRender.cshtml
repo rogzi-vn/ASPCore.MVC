@@ -1,0 +1,64 @@
+﻿@using ASPCoreMVC.TCUEnglish.UserMessages
+@model UserMessageDTO
+@{
+    //var imgState = "";
+    //if (Model.IsReaded)
+    //{
+    //    imgState = "/dist/img/check-green-64.png";
+    //}
+    //else
+    //{
+    //    imgState = "/dist/img/check-gray-64.png";
+    //}
+
+}
+<div class="">
+    @if (Model.CreatorId != CurrentUser.Id.Value)
+    {
+        @* Start *@
+        @if (!Model.DisplayName.IsNullOrEmpty())
+        {
+            <div class="small text-gray-600 mt-2 ml-4 font-weight-bold" style="font-size: 10px;">
+                @Model.DisplayName
+            </div>
+        }
+        var photo = Model.Photo;
+        if (photo.IsNullOrEmpty())
+        {
+            photo = await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE);
+        }
+        <div class="d-flex mb-3">
+            <div style="z-index: 10;">
+                <div class="rounded-circle round-size-avt-sm" style="background-image: url(@Html.Raw(photo));"></div>
+            </div>
+            <div class="right-bar-msg d-inline-block w-100 border bg-light pt-2 pr-3 right-bar-msg-sm">
+                <div class="small text-gray-600 mt-2">
+                    @Html.Raw(Model.Message)
+                </div>
+                <div class="text-left font-weight-bold" style="font-size: 10px;">
+                    @Model.CreationTime.ToString("HH:mm:ss dd/MM/yyyy")
+                    @*<img src="@imgState" width="12" />*@
+                </div>
+            </div>
+        </div>
+        @* End *@
+    }
+    else
+    {
+        @* Start *@
+        <div class="justify-content-end align-content-end text-right">
+            <div class="d-flex mb-3">
+                <div class="right-bar-msg d-inline-block w-100 border pt-2 px-4 bg-primary text-white ml-auto">
+                    <div class="small mt-2 text-left">
+                        @Html.Raw(Model.Message)
+                    </div>
+                    <div class="text-right font-weight-bold" style="font-size: 10px;">
+                        @Model.CreationTime.ToString("HH:mm:ss dd/MM/yyyy")
+                        @*<img src="@imgState" width="12" />*@
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* End *@
+    }
+</div>

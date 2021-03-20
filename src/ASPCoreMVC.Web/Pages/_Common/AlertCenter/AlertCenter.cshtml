@@ -31,32 +31,3 @@ else
         </a>
     }
 }
-
-<script>
-    $(".notify-item").click(event => {
-        var parent = $(event.currentTarget);
-        var id = parent.attr('id');
-        var href = parent.attr('c-href');
-
-        var token = $('input[name="__RequestVerificationToken"]').val();
-        // fetch seen
-        fetch(`/api/app/notification/${id}/notification-seen-state`, {
-            method: 'PUT',
-            headers: {
-                RequestVerificationToken: token,
-                accept: 'text/plain',
-                'content-type': 'application/json'
-            },
-        }).then(r => r.text())
-            .then(data => {
-                console.log(data);
-                if (href && href != "#") {
-                    if (!href.startsWith("javascript:")) {
-                        window.location = href;
-                    } else {
-                        eval(href.replace("javascript:", ""));
-                    }
-                }
-            });
-    });
-</script>

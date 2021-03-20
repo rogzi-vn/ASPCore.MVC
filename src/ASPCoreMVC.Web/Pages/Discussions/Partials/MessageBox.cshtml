@@ -1,0 +1,11 @@
+﻿@using Volo.Abp.Application.Dtos
+@using ASPCoreMVC.TCUEnglish.UserMessages
+@model List<UserMessageDTO>
+@{
+    Model.Reverse();
+}
+
+@foreach (var item in Model)
+{
+    <partial name="@AppTheme.MessageRender" model="item" />
+}

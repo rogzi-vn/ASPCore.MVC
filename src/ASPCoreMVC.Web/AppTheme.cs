@@ -39,6 +39,8 @@ namespace ASPCoreMVC.Web
         public const string ExamContainer = "~/Pages/Exams/Exam.cshtml";
         public const string ExamPreview = "~/Pages/Exams/ExamReview.cshtml";
 
+        public const string MessageRender = "~/Pages/Discussions/Partials/MessageRender.cshtml";
+
         public virtual string GetLayout(string name, bool fallbackToDefault = true)
         {
             switch (name)

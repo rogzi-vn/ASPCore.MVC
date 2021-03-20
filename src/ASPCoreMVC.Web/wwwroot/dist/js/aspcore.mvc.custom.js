@@ -155,7 +155,9 @@ $.LoadingOverlaySetup({
 });
 
 $(document).ajaxSend(function (event, jqxhr, settings) {
-    $.LoadingOverlay('show');
+    if (settings.url != "/alert-center/sync") {
+        $.LoadingOverlay('show');
+    }
 });
 $(document).ajaxComplete(function (event, jqxhr, settings) {
     $.LoadingOverlay('hide');
@@ -163,13 +165,19 @@ $(document).ajaxComplete(function (event, jqxhr, settings) {
 
 const nativeFetch = window.fetch;
 window.fetch = function (...args) {
-    $.LoadingOverlay('show');
     var x = nativeFetch.apply(window, args);
-    x.then(function () {
-        $.LoadingOverlay('hide');
-    }).catch(function () {
-        $.LoadingOverlay('hide');
-    });
+    //console.log(args);
+    if (
+        args.indexOf("/api/app/notification/count-unread-notification") < 0 &&
+        args.indexOf("/alert-center/sync") < 0
+    ) {
+        $.LoadingOverlay('show');
+        x.then(function () {
+            $.LoadingOverlay('hide');
+        }).catch(function () {
+            $.LoadingOverlay('hide');
+        });
+    }
     return x;
 }
 

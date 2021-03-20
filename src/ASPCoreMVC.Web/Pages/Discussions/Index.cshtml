@@ -1,0 +1,137 @@
+﻿@page "/discussions"
+@model ASPCoreMVC.Web.Pages.Discussions.IndexModel
+@{
+    Model.SetBreadcrumbBtn(L["Create new"].Value,
+    $"javascript:showVtModal();",
+    icon: "fas fa-plus",
+    c: "btn-primary");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Disscussions"].Value });
+
+}
+
+@section Styles {
+    <style>
+        .round-size-avt, .round-size-avt-sm {
+            border: 1px solid #e6e6e6;
+            width: 4rem;
+            height: 4rem;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .round-size-avt-sm {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        .right-bar-discuss, .right-bar-msg {
+            z-index: 3;
+            margin-left: -2rem;
+            min-height: 4rem;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 3rem;
+            border-radius: 10px;
+        }
+
+        .right-bar-msg-sm {
+            padding-left: 40px !important;
+        }
+
+        .right-bar-msg {
+            width: unset !important;
+            min-width: 100px;
+            border-radius: 20px 50px;
+        }
+
+
+
+        .chat-name {
+            max-width: 300px;
+            text-overflow: ellipsis;
+            word-wrap: break-word;
+            overflow: hidden;
+            max-height: 1.2em;
+            line-height: 1.2em;
+        }
+
+        .message-list-box {
+            height: 60vh;
+            overflow-y: scroll;
+        }
+
+        .discuss-hoverable {
+        }
+
+            .discuss-hoverable:hover {
+                cursor: pointer;
+                background-color: #5cbacc !important;
+                color: #FFF !important;
+            }
+
+                .discuss-hoverable:hover .chat-name {
+                    color: #FFFFFF !important;
+                }
+    </style>
+}
+
+@section Scripts {
+    <script src="/dist/js/main-hub.js"></script>
+    <script>
+        var defDisL = {
+            p: 1,
+            filter: ""
+        }
+        function loadDiscussions(p = defDisL.p, filter = defDisL.filter) {
+            $("#discussion-list").load(`latest-discussion?p=${p}&filter=${filter}`, () => {
+                initDisSearch();
+            });
+        }
+        function initDisSearch() {
+            $("#search-vt-btn").click(event => {
+                var inp = $("#search-vt-inp").val();
+                loadDiscussions(1, inp);
+            });
+        }
+        loadDiscussions();
+    </script>
+}
+
+<div class="row">
+    <div class="col-12 col-lg-5">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-sm-flex align-items-center justify-content-between bg-info">
+                <h6 class="m-0 font-weight-bold text-white">@L["Discussion"]</h6>
+            </div>
+            <div class="card-body" id="discussion-list">
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-sm-flex align-items-center justify-content-between bg-info">
+                <h6 class="m-0 font-weight-bold text-white">@L["Messages"]</h6>
+            </div>
+            <div class="card-body" id="note-content">
+                <div class="message-list-box border border-info rounded p-3" id="message-content">
+                </div>
+                <hr />
+                <div class="d-flex mt-3">
+                    <form class="w-100">
+                        <textarea class="form-control" id="msg-value"></textarea>
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <button class="btn btn-primary shadow-sm btn-sm mt-3" id="send-message" disabled>
+                                    <i class="fas fa-paper-plane"></i> @L["Send"]
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

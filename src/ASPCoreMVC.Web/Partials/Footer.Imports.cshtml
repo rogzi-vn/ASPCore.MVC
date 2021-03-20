@@ -41,6 +41,8 @@
 
 <script src="/plugins/green-audio-player/green-audio-player.min.js"></script>
 
+<script src="/dist/js/signalr/dist/browser/signalr.min.js"></script>
+
 <script src="/dist/js/sidebar-menu.custom.js"></script>
 <script src="/dist/js/aspcore.mvc.custom.js"></script>
 
@@ -57,35 +59,6 @@
             }
         }
     }
-
-    function syncAlertCenter() {
-        $("#alert-center-content").load("/alert-center/sync", function () {
-            var total = $("#alert-center-count").val();
-
-        })
-    }
-
-    function syncCountNotification() {
-        fetch("/api/app/notification/count-unread-notification")
-            .then(r => r.text())
-            .then(data => {
-                var count = data;
-                if (count > 0) {
-                    $("#alert-center-badge").removeClass("d-none");
-                    var countZ = count;
-                    if (count > 5) {
-                        countZ = "5+";
-                    } else {
-                        countZ = count.toString();
-                    }
-                    $("#alert-center-badge").html(countZ);
-                } else {
-                    $("#alert-center-badge").addClass("d-none");
-                }
-            });
-    }
-    syncCountNotification();
-    syncAlertCenter();
 </script>
 
 @Html.ShowToasts()

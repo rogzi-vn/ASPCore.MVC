@@ -26,11 +26,6 @@ namespace ASPCoreMVC.TCUEnglish.Notifications
             }
         }
 
-        protected override IQueryable<Notification> CreateFilteredQuery(PagedAndSortedResultRequestDto input)
-        {
-            return Repository.Where(x => CurrentUser.Id == null || x.TargetUserId.Value == CurrentUser.Id.Value);
-        }
-
         protected override async Task<IQueryable<Notification>> CreateFilteredQueryAsync(PagedAndSortedResultRequestDto input)
         {
             var query = await Repository.GetQueryableAsync();
@@ -51,6 +46,19 @@ namespace ASPCoreMVC.TCUEnglish.Notifications
             query = query.Where(x => CurrentUser.Id == null || x.TargetUserId.Value == CurrentUser.Id.Value);
             query = query.Where(x => !x.IsChecked);
             return query.Count();
+        }
+
+        public async Task MarkAllAsRead()
+        {
+            var query = await Repository.GetQueryableAsync();
+            query = query.Where(x => CurrentUser.Id == null || x.TargetUserId.Value == CurrentUser.Id.Value);
+            query = query.Where(x => !x.IsChecked);
+            var unread = query.ToList();
+            unread.ForEach(notify =>
+            {
+                notify.IsChecked = true;
+            });
+            await Repository.UpdateManyAsync(unread);
         }
     }
 }

@@ -35,6 +35,7 @@ using Microsoft.AspNetCore.Http.Features;
 using ASPCoreMVC.Helpers;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using ASPCoreMVC.Web.Middleware;
+using Volo.Abp.AspNetCore.SignalR;
 
 namespace ASPCoreMVC.Web
 {
@@ -48,7 +49,8 @@ namespace ASPCoreMVC.Web
         typeof(AbpAspNetCoreAuthenticationJwtBearerModule), // Cho phép xác thực qua JWT
         typeof(AbpTenantManagementWebModule), // DI Modeul tenant
         typeof(AbpAspNetCoreSerilogModule), // :v Log
-        typeof(AbpSwashbuckleModule) // Swagger
+        typeof(AbpSwashbuckleModule), // Swagger
+        typeof(AbpAspNetCoreSignalRModule)
         )]
     public class ASPCoreMVCWebModule : AbpModule
     {
@@ -86,6 +88,13 @@ namespace ASPCoreMVC.Web
             ConfigureDefaultPath(context.Services);
 
             ConfigureBlobStorage(hostingEnvironment);
+
+            ConfigureSignalR(context.Services);
+        }
+
+        private void ConfigureSignalR(IServiceCollection services)
+        {
+            services.AddSignalR();
         }
 
         private void ConfigMaxUploadSize(IServiceCollection services)
