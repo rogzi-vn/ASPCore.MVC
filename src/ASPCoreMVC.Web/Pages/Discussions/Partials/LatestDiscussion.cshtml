@@ -10,15 +10,24 @@
         {
             photo = await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE);
         }
+        var unreadClass = "";
+
+        if (inp.UnReadCount > 0)
+        {
+            unreadClass = "font-weight-bold";
+        }
+
         <div class="d-flex mb-3">
             <div style="z-index: 10;">
                 <div class="rounded-circle round-size-avt" style="background-image: url(@Html.Raw(photo));"></div>
             </div>
-            <div class="right-bar-discuss d-inline-block w-100 border bg-light pt-2 discuss-hoverable">
-                <div class="font-weight-bold text-dark chat-name">
+            <div class="right-bar-discuss d-inline-block w-100 border bg-light pt-2 discuss-hoverable room-changeable"
+                 data-room-id="@inp.Id"
+                 data-room-name="@inp.GroupName">
+                <div class="font-weight-bold text-dark text-truncate">
                     @inp.GroupName
                 </div>
-                <div class="small text-gray-600 chat-name mt-1">
+                <div class="small text-gray-600 text-truncate mt-1 @unreadClass" id="@inp.Id-latest-msg">
                     @if (inp.LatestMessage.IsNullOrEmpty())
                     {
                         <div class="font-italic text-danger">@L["You have not yet conducted a discussion with this person"]</div>
@@ -30,8 +39,14 @@
                 </div>
                 @if (!inp.LatestMessage.IsNullOrEmpty())
                 {
-                    <div class="text-right chat-name font-weight-bold" style="font-size: 10px;">
+                    <div class="text-right text-truncate font-weight-bold mr-2" style="font-size: 10px;" id="@inp.Id-latest-msg-time">
                         @inp.LatestMessageTime.ToString("HH:mm dd/MM/yyyy")
+                    </div>
+                }
+                else
+                {
+                    <div class="text-right text-truncate font-weight-bold mr-2 d-none" style="font-size: 10px;" id="@inp.Id-latest-msg-time">
+                        @DateTime.Now.ToString("HH:mm dd/MM/yyyy")
                     </div>
                 }
             </div>

@@ -43,6 +43,7 @@ namespace ASPCoreMVC.AppUsers
         }
 
         //[Authorize(ASPCoreMVCPermissions.UserManager.Default)]
+        [Authorize]
         public async Task<ResponseWrapper<AppUserProfileDTO>> GetProfileAsync(Guid id)
         {
             var res = await Repository.GetAsync(id);
@@ -53,6 +54,7 @@ namespace ASPCoreMVC.AppUsers
                 "Successful");
         }
 
+        [Authorize]
         public async Task<ResponseWrapper<AppUserProfileDTO>> GetSelfProfileAsync()
         {
             var res = await Repository.GetAsync(CurrentUser.Id.Value);
@@ -63,7 +65,7 @@ namespace ASPCoreMVC.AppUsers
                 "Successful");
         }
 
-
+        [Authorize]
         private async Task<ResponseWrapper<AppUserProfileDTO>> _UpdateProfileAsync(Guid id, AppUserProfileDTO profile)
         {
             var res = await Repository.GetAsync(id);
@@ -137,16 +139,19 @@ namespace ASPCoreMVC.AppUsers
         }
 
         //[Authorize(ASPCoreMVCPermissions.UserManager.Default)]
+        [Authorize]
         public async Task<ResponseWrapper<AppUserProfileDTO>> UpdateProfileAsync(Guid id, AppUserProfileDTO profile)
         {
             return await _UpdateProfileAsync(id, profile);
         }
 
+        [Authorize]
         public async Task<ResponseWrapper<AppUserProfileDTO>> UpdateSelfProfileAsync(AppUserProfileDTO profile)
         {
             return await _UpdateProfileAsync(CurrentUser.Id.Value, profile);
         }
 
+        [Authorize]
         public override async Task<ResponseWrapper<PagedResultDto<AppUserDTO>>> GetListAsync(GetAppUserDTO input)
         {
             if (input.Sorting.IsNullOrWhiteSpace())
@@ -178,6 +183,7 @@ namespace ASPCoreMVC.AppUsers
                 "Successful");
         }
 
+        [Authorize]
         public override async Task<ResponseWrapper<AppUserDTO>> CreateAsync(CreateAppUserDTO input)
         {
             input.Id = Guid.NewGuid();
@@ -200,6 +206,7 @@ namespace ASPCoreMVC.AppUsers
             return null;
         }
 
+        [Authorize]
         public async Task<ResponseWrapper<bool>> PasswordValidate(string password)
         {
             List<string> passwordErrors = new List<string>();

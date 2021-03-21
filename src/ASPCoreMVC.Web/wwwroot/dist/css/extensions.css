@@ -595,6 +595,75 @@ input.correct-fill {
     outline: unset !important;
 }
 
-.notify-item {
+.notify-item, .room-changeable {
     cursor: pointer;
+}
+
+    .room-changeable:hover .text-lg {
+        color: deeppink !important;
+    }
+
+.round-size-avt, .round-size-avt-sm {
+    border: 1px solid #e6e6e6;
+    width: 4rem;
+    height: 4rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.round-size-avt-sm {
+    width: 3rem;
+    height: 3rem;
+}
+
+.right-bar-discuss, .right-bar-msg {
+    margin-left: -2rem;
+    min-height: 4rem;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 2.5rem;
+    border-radius: 10px;
+}
+
+.right-bar-msg-sm {
+    padding-left: 40px !important;
+}
+
+.right-bar-msg {
+    width: unset !important;
+    min-width: 100px;
+    border-radius: 20px 50px;
+}
+
+
+
+.chat-name {
+    max-width: 300px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-height: 1.2em;
+    line-height: 1.2em;
+}
+
+.message-list-box {
+    height: 60vh;
+    overflow-y: scroll;
+}
+
+.discuss-hoverable {
+}
+
+    .discuss-hoverable:hover {
+        cursor: pointer;
+        background-color: #5cbacc !important;
+        color: #FFF !important;
+    }
+
+        .discuss-hoverable:hover .chat-name {
+            color: #FFFFFF !important;
+        }
+
+.noty_type__new_msg_noty .noty_body {
+    padding: 0px !important;
 }

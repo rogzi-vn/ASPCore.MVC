@@ -38,73 +38,85 @@ namespace ASPCoreMVC.TCUEnglish.MessGroups
         protected override async Task<IQueryable<MessGroup>> CreateFilteredQueryAsync(GetMessGroupDTO input)
         {
             var query = await Repository.GetQueryableAsync();
+            // Lấy danh sách cuộc hội thoại mà người dùng hiện tại có tham gia
             query = query
-                .Where(x => x.Starter == CurrentUser.Id)
-                .Where(x => x.Members.Contains(CurrentUser.Id.Value.ToString()));
+                .Where(x => x.Starter == CurrentUser.Id.Value ||
+                x.Members.Contains(CurrentUser.Id.Value.ToString()));
+
+            // Nếu bộ lọc có giá trị nhập vào
             if (!input.Filter.IsNullOrEmpty())
             {
                 var userQuery = await AppUserRepository.GetQueryableAsync();
+                // Lấy danh sách người dùng khớp với từ lọc ngoại trừ user hiện tại
                 var allAvailiableUser = userQuery.Where(x => x.Id != CurrentUser.Id &&
                     x.DisplayName.Contains(input.Filter)).ToList();
+
+                IEnumerable<MessGroup> res = new List<MessGroup>();
                 foreach (var u in allAvailiableUser)
                 {
-                    query = query
-                        .Where(x => x.Starter == u.Id)
-                        .Where(x => x.Members.Contains(u.Id.ToString()));
+                    // Tìm room giữa người dùng hiện tại và user này
+                    var temp = query
+                        .Where(x => x.Starter == u.Id ||
+                        x.Members.Contains(u.Id.ToString())).ToList();
+                    // Nếu chưa có, tiến hành tạo room
+                    if (temp.Count <= 0)
+                    {
+                        var _mg = new MessGroupDTO
+                        {
+                            Id = Guid.NewGuid(),
+                            Starter = CurrentUser.Id.Value,
+                            GroupName = u.DisplayName,
+                            Members = u.Id.ToString(),
+                            LatestMessage = "",
+                            LatestMessageTime = DateTime.Now,
+                            UnReadCount = 0,
+                            Photo = u.Picture
+                        };
+                        // Tạo mới cuộc hội thoại
+                        var z = await Repository.InsertAsync(MapToEntity(_mg), true);
+                        temp.Add(z);
+                    }
+                    // Thêm từng phần tử vào ds kết quả
+                    foreach (var t in temp)
+                    {
+                        if (!res.Any(x => x.Id == t.Id))
+                        {
+                            res = res.Append(t);
+                        }
+                    }
                 }
+                return res.AsQueryable();
             }
+
             return query;
         }
 
         public override async Task<PagedResultDto<MessGroupDTO>> GetListAsync(GetMessGroupDTO input)
         {
-            var query = await Repository.GetQueryableAsync();
-
-            if (!input.Filter.IsNullOrEmpty())
-            {
-                query = query.Where(x => x.GroupName.Contains(input.Filter));
-            }
+            var query = await CreateFilteredQueryAsync(input);
 
             var userMessageQuery = await UserMessageRepository.GetQueryableAsync();
+            userMessageQuery = userMessageQuery.OrderBy(x => x.CreationTime);
 
             query = ApplyDefaultSorting(query);
             var allMesGroup = ObjectMapper.Map<List<MessGroup>, List<MessGroupDTO>>(query.ToList());
-
-            #region Nếu có filter nhưng không có cuộc hội thoại nào phù hợp, tiến hành lấy danh sách user
-            if (!input.Filter.IsNullOrEmpty() && allMesGroup.Count <= 0)
-            {
-                var userQuery = await AppUserRepository.GetQueryableAsync();
-                userQuery = userQuery
-                    .Where(x => x.Id != CurrentUser.Id)
-                    .Where(x => x.DisplayName.Contains(input.Filter));
-                var matchedUser = userQuery.ToList();
-                foreach (var mu in matchedUser)
-                {
-                    var _mg = new MessGroupDTO
-                    {
-                        Starter = CurrentUser.Id.Value,
-                        GroupName = mu.DisplayName,
-                        Members = mu.Id.ToString(),
-                        LatestMessage = "",
-                        LatestMessageTime = DateTime.Now,
-                        UnReadCount = 0,
-                        Photo = mu.Picture
-                    };
-                    allMesGroup.Add(_mg);
-                }
-            }
-            #endregion
 
             for (int i = 0; i < allMesGroup.Count; i++)
             {
                 var unreadQuery = userMessageQuery
                     .Where(x => x.MessGroupId == allMesGroup[i].Id)
+                    .Where(x => x.CreatorId != CurrentUser.Id.Value)
                     .Where(x => x.IsReaded == false)
                     .OrderBy(x => x.CreationTime);
 
-                allMesGroup[i].LatestMessage = unreadQuery.LastOrDefault()?.Message ?? "";
+                allMesGroup[i].LatestMessage = userMessageQuery.LastOrDefault()?.Message ?? "";
                 allMesGroup[i].UnReadCount = unreadQuery.Count();
-                allMesGroup[i].LatestMessageTime = (unreadQuery.LastOrDefault()?.CreationTime ?? DateTime.Now);
+                allMesGroup[i].LatestMessageTime = (userMessageQuery.LastOrDefault()?.CreationTime ?? DateTime.Now);
+            }
+
+            if (input.Filter.IsNullOrEmpty())
+            {
+                allMesGroup = allMesGroup.Where(x => x.LatestMessage.Length > 0).ToList();
             }
 
             var res = allMesGroup.Skip(input.SkipCount).Take(input.MaxResultCount);

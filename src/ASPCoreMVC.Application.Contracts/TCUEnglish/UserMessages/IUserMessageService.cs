@@ -14,5 +14,6 @@ namespace ASPCoreMVC.TCUEnglish.UserMessages
         GetUserMessageDTO>
     {
         public Task<List<UserMessageDTO>> GetPreviousMessages(Guid messGroupId, int maxCount, Guid? oldestMsgId);
+        public Task<int> GetCountUnreadMessage();
     }
 }

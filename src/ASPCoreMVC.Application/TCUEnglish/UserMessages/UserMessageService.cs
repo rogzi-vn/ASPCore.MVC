@@ -1,5 +1,6 @@
 ﻿using ASPCoreMVC._Commons;
 using ASPCoreMVC._Commons.Services;
+using ASPCoreMVC.TCUEnglish.MesGroups;
 using ASPCoreMVC.Users;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,13 @@ namespace ASPCoreMVC.TCUEnglish.UserMessages
         GetUserMessageDTO>, IUserMessageService
     {
         private readonly IRepository<AppUser, Guid> AppUserRepository;
+        private readonly IRepository<MessGroup, Guid> MessGroupMessGroup;
         public UserMessageService(IRepository<UserMessage, Guid> repo,
-            IRepository<AppUser, Guid> AppUserRepository) : base(repo)
+            IRepository<AppUser, Guid> AppUserRepository,
+            IRepository<MessGroup, Guid> MessGroupMessGroup) : base(repo)
         {
             this.AppUserRepository = AppUserRepository;
+            this.MessGroupMessGroup = MessGroupMessGroup;
         }
 
         protected override IQueryable<UserMessage> ApplyDefaultSorting(IQueryable<UserMessage> query)
@@ -62,7 +66,31 @@ namespace ASPCoreMVC.TCUEnglish.UserMessages
                 query = query.Where(x => x.CreationTime < currentUserMessage.CreationTime)
                     .Take(maxCount);
             }
-            return ObjectMapper.Map<List<UserMessage>, List<UserMessageDTO>>(query.ToList());
+            var currentMsgList = query.ToList();
+            for (int i = 0; i < currentMsgList.Count; i++)
+            {
+                currentMsgList[i].IsReceived = true;
+                currentMsgList[i].IsReaded = true;
+                await Repository.UpdateAsync(currentMsgList[i], true);
+            }
+            return ObjectMapper.Map<List<UserMessage>, List<UserMessageDTO>>(currentMsgList);
+        }
+
+        public async Task<int> GetCountUnreadMessage()
+        {
+            var query = await MessGroupMessGroup.GetQueryableAsync();
+            // Lấy danh sách các cuộc hội thoại mà người dùng đang tham gia
+            query = query
+                 .Where(x => x.Starter == CurrentUser.Id.Value ||
+                 x.Members.Contains(CurrentUser.Id.Value.ToString()));
+            return query.Join(
+                Repository,
+                g => g.Id,
+                m => m.MessGroupId,
+                (g, m) => new { g, m })
+                .Where(x => x.m.IsReaded == false && x.m.IsReceived == true)
+                .Count();
+
         }
     }
 }

@@ -1,0 +1,42 @@
+﻿@using Volo.Abp.Application.Dtos
+@using ASPCoreMVC.TCUEnglish.MessGroups
+
+@model PagedResultDto<MessGroupDTO>
+
+@{
+
+}
+
+@if (Model.TotalCount <= 0)
+{
+    <div class="text-center text-secondary p-3 font-italic">@L["There are currently no messages"]</div>
+}
+else
+{
+    @foreach (var item in Model.Items)
+    {
+        var photo = item.Photo;
+        if (photo.IsNullOrEmpty())
+        {
+            photo = await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE);
+        }
+        var bolder = "font-weight-bold";
+        if (item.UnReadCount <= 0)
+        {
+            bolder = "";
+        }
+        <a class="dropdown-item d-flex align-items-center message-item" href="#">
+            <div class="dropdown-list-image mr-3">
+                <img class="rounded-circle" src="@photo"
+                     alt="">
+                <div class="status-indicator"></div>
+            </div>
+            <div class="@bolder">
+                <div class="text-truncate" id="@item.Id-popup-latest-msg">
+                    @item.LatestMessage
+                </div>
+                <div class="small text-gray-500">@item.GroupName · @(item.LatestMessageTime.ToString("HH:mm:ss dd/MM/yyyy"))</div>
+            </div>
+        </a>
+    }
+}

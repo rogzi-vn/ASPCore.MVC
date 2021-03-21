@@ -42,6 +42,7 @@
 <script src="/plugins/green-audio-player/green-audio-player.min.js"></script>
 
 <script src="/dist/js/signalr/dist/browser/signalr.min.js"></script>
+<script src="/dist/js/notification-hub.js"></script>
 
 <script src="/dist/js/sidebar-menu.custom.js"></script>
 <script src="/dist/js/aspcore.mvc.custom.js"></script>
@@ -49,6 +50,7 @@
 
 <script>
     var images = document.getElementsByTagName("img");
+    var defaultImage = '@await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE)';
     for (var i = 0; i < images.length; i++) {
         if (images[i].src == undefined || images[i].src == null || images[i].src == '') {
                 images[i].src = '@await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE)';

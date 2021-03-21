@@ -2,9 +2,12 @@
 @using ASPCoreMVC.TCUEnglish.UserMessages
 @model List<UserMessageDTO>
 @{
+    var oldestId = Model.FirstOrDefault()?.Id.ToString() ?? "";
     Model.Reverse();
 }
-
+<script>
+    $("#oldest-mgs-id").val('@oldestId');
+</script>
 @foreach (var item in Model)
 {
     <partial name="@AppTheme.MessageRender" model="item" />

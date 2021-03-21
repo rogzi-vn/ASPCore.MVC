@@ -56,17 +56,8 @@ namespace ASPCoreMVC.Web.Pages.Discussions.Partials
 
         [HttpGet("/load-previous-messages")]
         public async Task<IActionResult> LoadPreviousMessage([FromQuery] Guid messGroupId,
-                        [FromQuery] Guid oldestUserMessageId,
-                        [FromQuery] int p = 1
-            )
+                        [FromQuery] Guid? oldestUserMessageId)
         {
-            var filtered = new GetUserMessageDTO
-            {
-                MessGroupId = messGroupId,
-                OldestUserMessageId = oldestUserMessageId,
-                MaxResultCount = 100,
-                SkipCount = (p - 1) * 100
-            };
             var res = await _UserMessageService.GetPreviousMessages(messGroupId, 10, oldestUserMessageId);
             return PartialView("~/Pages/Discussions/Partials/MessageBox.cshtml", res);
         }

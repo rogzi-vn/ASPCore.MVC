@@ -169,7 +169,9 @@ window.fetch = function (...args) {
     //console.log(args);
     if (
         args.indexOf("/api/app/notification/count-unread-notification") < 0 &&
-        args.indexOf("/alert-center/sync") < 0
+        args.indexOf("/alert-center/sync") < 0 &&
+        args.indexOf("/render-message") < 0 &&
+        args.indexOf("/api/app/user-message") < 0
     ) {
         $.LoadingOverlay('show');
         x.then(function () {
