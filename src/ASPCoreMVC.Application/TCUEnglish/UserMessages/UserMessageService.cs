@@ -55,6 +55,9 @@ namespace ASPCoreMVC.TCUEnglish.UserMessages
         {
             var query = await Repository.GetQueryableAsync();
             query = query.Where(x => x.MessGroupId == messGroupId);
+
+            var unreadMsgQuery = query.Where(x => x.IsReaded == false || x.IsReceived == false);
+
             query = query.OrderByDescending(x => x.CreationTime);
             if (oldestMsgId == null || oldestMsgId == Guid.Empty)
             {
@@ -67,11 +70,14 @@ namespace ASPCoreMVC.TCUEnglish.UserMessages
                     .Take(maxCount);
             }
             var currentMsgList = query.ToList();
-            for (int i = 0; i < currentMsgList.Count; i++)
+
+            // Cập nhật trạng thái là đã nhận, đã xem
+            var unreadMsg = unreadMsgQuery.ToList();
+            for (int i = 0; i < unreadMsg.Count; i++)
             {
-                currentMsgList[i].IsReceived = true;
-                currentMsgList[i].IsReaded = true;
-                await Repository.UpdateAsync(currentMsgList[i], true);
+                unreadMsg[i].IsReceived = true;
+                unreadMsg[i].IsReaded = true;
+                await Repository.UpdateAsync(unreadMsg[i], true);
             }
             return ObjectMapper.Map<List<UserMessage>, List<UserMessageDTO>>(currentMsgList);
         }

@@ -150,6 +150,7 @@ function initRoomChangeable() {
                 confirmButtonText: 'Yes, change it!',
             }).then((result) => {
                 if (result.isConfirmed) {
+                    isFirstScrollEnd = true;
                     ChangeRoom(roomId, roomName);
                 }
             });
@@ -163,6 +164,15 @@ function initAutoScroll() {
     $("#message-content").on('scroll', function () {
         var scrollTop = $(this).scrollTop();
         var scrollHeight = $(this).get(0).scrollHeight;
+        if (scrollTop == 0 && scrollHeight >= 200) {
+            var oldestMsg = $("#oldest-mgs-id").val();
+            loadPreviousMessage(currentRoomId);
+            if (oldestMsg) {
+                $(this).scrollTop(200);
+            }
+        } else {
+            chatBoxScrolling = false;
+        }
         chatBoxScrolling = true;
     });
 }

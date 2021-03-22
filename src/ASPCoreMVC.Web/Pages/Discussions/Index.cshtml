@@ -1,11 +1,6 @@
 ﻿@page "/discussions"
 @model ASPCoreMVC.Web.Pages.Discussions.IndexModel
 @{
-    Model.SetBreadcrumbBtn(L["Create new"].Value,
-    $"javascript:showVtModal();",
-    icon: "fas fa-plus",
-    c: "btn-primary");
-
     Model.SetBreadcrumb(
         new string[] { L["Disscussions"].Value });
 
@@ -37,18 +32,26 @@
                 loadDiscussions(1, '');
             }
         }
+        var isFirstScrollEnd = true;
         function loadPreviousMessage(msgId) {
             var oldestUserMessageId = $("#oldest-mgs-id").val();
             var query = `/load-previous-messages?messGroupId=${msgId}`;
             if (oldestUserMessageId && oldestUserMessageId.length > 0) {
                 query += `&oldestUserMessageId=${oldestUserMessageId}`;
+            } else if ($("#message-content").html()) {
+                return;
             }
+            $("#message-content").addClass("overflow-hidden");
             fetch(query)
                 .then(r => r.text())
                 .then(data => {
+                    $("#message-content").removeClass("overflow-hidden");
                     $(`#${msgId}-latest-msg`).removeClass("font-weight-bold");
                     $("#message-content").prepend(data);
-                    scrollEnd();
+                    if (isFirstScrollEnd) {
+                        isFirstScrollEnd = false;
+                        scrollEnd();
+                    }
                 });
         }
     </script>

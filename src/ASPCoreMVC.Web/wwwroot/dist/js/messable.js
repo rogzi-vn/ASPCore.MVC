@@ -29,7 +29,7 @@ function syncCountMessage() {
 
 function bindNotifyClick() {
     $(".message-item").click(event => {
-        alert('clicked');
+        location.href = "/discussions";
         //var parent = $(event.currentTarget);
         //var id = parent.attr('id');
         //var href = parent.attr('c-href');
