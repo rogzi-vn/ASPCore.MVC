@@ -4,19 +4,19 @@ var notifyAudio = new Audio('/dist/audios/messenger.mp3');
 
 var notificationHubConnection = new signalR.HubConnectionBuilder().withUrl("/notification-hub").build();
 
-notificationHubConnection.start().then(function () {
+notificationHubConnection.start({
+    pingInterval: 3000
+}).then(function () {
 
 }).catch(function (err) {
     return console.error(err.toString());
 });
 
+
 // Nhận thông báo khi có tin nhắn đến
 notificationHubConnection.on("NotyHaveNewMsgReciver", function (msgDTO) {
-    if (!location.pathname.startsWith("/discussions")) {
+    if (!location.pathname.startsWith('/discussions') || (location.pathname.startsWith('/discussions') && currentRoomId != msgDTO.messGroupId)) {
         showNewMessageNotification(msgDTO);
-        console.log(msgDTO);
-        console.log(msgDTO.message);
-        console.log(`#${msgDTO.messGroupId}-popup-latest-msg`);
         $(`#${msgDTO.messGroupId}-popup-latest-msg`).html(msgDTO.message);
     }
 });

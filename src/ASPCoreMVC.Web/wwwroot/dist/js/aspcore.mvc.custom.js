@@ -155,7 +155,10 @@ $.LoadingOverlaySetup({
 });
 
 $(document).ajaxSend(function (event, jqxhr, settings) {
-    if (settings.url != "/alert-center/sync") {
+    if (
+        settings.url != "/alert-center/sync" &&
+        settings.url != "/message-center/sync"
+    ) {
         $.LoadingOverlay('show');
     }
 });
@@ -166,12 +169,13 @@ $(document).ajaxComplete(function (event, jqxhr, settings) {
 const nativeFetch = window.fetch;
 window.fetch = function (...args) {
     var x = nativeFetch.apply(window, args);
-    //console.log(args);
     if (
-        args.indexOf("/api/app/notification/count-unread-notification") < 0 &&
-        args.indexOf("/alert-center/sync") < 0 &&
-        args.indexOf("/render-message") < 0 &&
-        args.indexOf("/api/app/user-message") < 0
+        args[0].indexOf("/api/app/notification/count-unread-notification") < 0 &&
+        args[0].indexOf("/alert-center/sync") < 0 &&
+        args[0].indexOf("/message-center/sync") < 0 &&
+        args[0].indexOf(location.origin + "/notification-hub") < 0 &&
+        args[0].indexOf("/render-message") < 0 &&
+        args[0].indexOf("/api/app/user-message") < 0
     ) {
         $.LoadingOverlay('show');
         x.then(function () {

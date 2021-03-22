@@ -5,7 +5,9 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/main-hub").build()
 var currentRoomId = "";
 var currentUserId = "";
 
-connection.start().then(function () {
+connection.start({
+    pingInterval: 3000
+}).then(function () {
     document.getElementById("send-message").disabled = false;
 }).catch(function (err) {
     return console.error(err.toString());
