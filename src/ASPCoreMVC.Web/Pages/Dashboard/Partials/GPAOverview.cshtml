@@ -10,15 +10,15 @@
             <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                  aria-labelledby="dropdownMenuLink">
                 <div class="dropdown-header">@L["View by"]:</div>
-                <a class="dropdown-item" href="#">@L["Week"]</a>
-                <a class="dropdown-item" href="#">@L["Month"]</a>
-                <a class="dropdown-item" href="#">@L["Year"]</a>
+                <a class="dropdown-item gpa-overview-changeable" data-type="week">@L["Week"]</a>
+                <a class="dropdown-item gpa-overview-changeable" data-type="month">@L["Month"]</a>
+                <a class="dropdown-item gpa-overview-changeable" data-type="year">@L["Year"]</a>
             </div>
         </div>
     </div>
     <!-- Card Body -->
     <div class="card-body">
-        <div class="chart-area">
+        <div class="chart-area" id="chartrender">
             <canvas id="gpa-overview-chart"></canvas>
         </div>
     </div>

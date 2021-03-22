@@ -94,7 +94,7 @@ namespace ASPCoreMVC.TCUEnglish.UserMessages
                 g => g.Id,
                 m => m.MessGroupId,
                 (g, m) => new { g, m })
-                .Where(x => x.m.IsReaded == false && x.m.IsReceived == true)
+                .Where(x => x.m.IsReaded == false && x.m.IsReceived == true && x.m.CreatorId != CurrentUser.Id.Value)
                 .Count();
 
         }

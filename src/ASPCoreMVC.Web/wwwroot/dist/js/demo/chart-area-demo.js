@@ -34,8 +34,11 @@ function syncChartGPAOverview(examCatId, code) {
             var _label = data.map(x => x.dayInString);
             var _data = data.map(x => Math.round(x.gpaScores * 10) / 10);
 
+            var id = `gpa-overview-chart-${code}`;
+            $("#chartrender").html(`<canvas id="${id}"></canvas>`);
+
             // Area Chart Example
-            var ctx = document.getElementById("gpa-overview-chart");
+            var ctx = document.getElementById(id);
             var myLineChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -123,6 +126,5 @@ function syncChartGPAOverview(examCatId, code) {
                     }
                 }
             });
-
         });
 }

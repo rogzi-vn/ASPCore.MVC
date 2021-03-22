@@ -65,7 +65,13 @@
             }
         });
 
-        syncChartGPAOverview('@Model.ExamCategoryId','week');
+        syncChartGPAOverview('@Model.ExamCategoryId', 'week');
+
+        $(".gpa-overview-changeable").click(event => {
+            var p = $(event.currentTarget);
+            var type = p.data('type');
+            syncChartGPAOverview('@Model.ExamCategoryId', type);
+        });
     </script>
 
     @if (ViewData["IsInstructor"] != null && (bool)ViewData["IsInstructor"] == true)

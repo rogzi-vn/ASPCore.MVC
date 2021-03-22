@@ -171,6 +171,7 @@ window.fetch = function (...args) {
     var x = nativeFetch.apply(window, args);
     if (
         args[0].indexOf("/api/app/notification/count-unread-notification") < 0 &&
+        args[0].indexOf("/api/app/user-message/count-unread-message") < 0 &&
         args[0].indexOf("/alert-center/sync") < 0 &&
         args[0].indexOf("/message-center/sync") < 0 &&
         args[0].indexOf(location.origin + "/notification-hub") < 0 &&
