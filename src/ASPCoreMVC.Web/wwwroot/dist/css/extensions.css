@@ -667,3 +667,7 @@ input.correct-fill {
 .noty_type__new_msg_noty .noty_body {
     padding: 0px !important;
 }
+
+.max-width-100 img {
+    max-width: 100%;
+}

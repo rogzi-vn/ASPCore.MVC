@@ -26,10 +26,19 @@ namespace ASPCoreMVC.Controllers
         [HttpGet]
         public async Task<IActionResult> PermissionsTreeJsDataForRole()
         {
+            var ignorePermission = new List<string> {
+            ASPCoreMVCPermissions.GroupName,
+            "AbpIdentity",
+            "FeatureManagement",
+            "AbpTenantManagement"
+            };
+
             var treeJsList = new List<TreeJs>();
             var res = await _PermissionAppService.GetAsync("R", "");
             foreach (var g in res.Groups)
             {
+                if (!ignorePermission.Any(x => x.Equals(g.DisplayName, StringComparison.OrdinalIgnoreCase)))
+                    continue;
                 var currentTreeJs = new TreeJs(g.Name, g.DisplayName);
                 foreach (var p in g.Permissions)
                 {

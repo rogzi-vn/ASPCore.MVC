@@ -88,10 +88,19 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
                 .CreateAsync(role);
             if (res != null)
             {
+                var ignorePermission = new List<string> {
+                    ASPCoreMVCPermissions.GroupName,
+                    "AbpIdentity",
+                    "FeatureManagement",
+                    "AbpTenantManagement"
+                    };
                 foreach (var permission in permissions.Split(","))
                 {
-                    if (permission != ASPCoreMVCPermissions.GroupName)
+                    if (!ignorePermission.Any(x => x.Equals(permission, StringComparison.OrdinalIgnoreCase)))
+                    {
                         await _PermissionManager.SetForRoleAsync(res.Name, permission, true);
+                    }
+
                 }
                 return Json(new ResponseWrapper<IdentityRoleDto>().SuccessReponseWrapper(res, "Create new role successful"));
             }
@@ -131,7 +140,17 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
             [FromBody] IdentityRoleUpdateDto role,
             [FromQuery] string permissions)
         {
+            var ignorePermission = new List<string> {
+            ASPCoreMVCPermissions.GroupName,
+            "AbpIdentity",
+            "FeatureManagement",
+            "AbpTenantManagement"
+            };
             var previousRoleName = await _IdentityRoleAppService.GetAsync(id);
+            if (previousRoleName.Name.Equals("admin", StringComparison.OrdinalIgnoreCase))
+            {
+                return Json(new ResponseWrapper<IdentityRoleDto>().SuccessReponseWrapper(default, "Update new role successful"));
+            }
             var res = await _IdentityRoleAppService
                 .UpdateAsync(id, role);
             if (res != null)
@@ -141,13 +160,16 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
                 // Add new permisison
                 foreach (var permission in permissions.Split(","))
                 {
-                    if (permission != ASPCoreMVCPermissions.GroupName)
+                    if (!ignorePermission.Any(x => x.Equals(permission, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        Console.WriteLine($"Update for permission: {permission}");
                         await _PermissionManager.SetForRoleAsync(res.Name, permission, true);
+                    }
                 }
-                return Json(new ResponseWrapper<IdentityRoleDto>().SuccessReponseWrapper(res, "Create new role successful"));
+                return Json(new ResponseWrapper<IdentityRoleDto>().SuccessReponseWrapper(res, "Update new role successful"));
             }
             else
-                return Json(new ResponseWrapper<IdentityRoleDto>().ErrorReponseWrapper(default, "Create new role successful", 400));
+                return Json(new ResponseWrapper<IdentityRoleDto>().ErrorReponseWrapper(default, "Update new role successful", 400));
         }
     }
 }

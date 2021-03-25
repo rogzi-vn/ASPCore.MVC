@@ -1,8 +1,106 @@
-﻿@model ASPCoreMVC.TCUEnglish.ExamDataLibraries.ExamQuestionContainerDTO
-gwrgwgrwgr
+﻿@using ASPCoreMVC.TCUEnglish.UserExams
+@using ASPCoreMVC.Web.Models
+@model ASPCoreMVC.TCUEnglish.ExamDataLibraries.ExamQuestionContainerDTO
+@{
+    var qaCol = 12; // Số cột của mục câu hỏi và câu trả lời
+    var skp = (ASPCoreMVC.TCUEnglish.SkillParts.SkillPartDTO)ViewBag.Spk;
+}
 @if (ViewData["OnlyDisplay"] == null || (!(bool)ViewData["OnlyDisplay"]))
 {
     @Html.AntiForgeryToken()
 }
 
-@Model.Id
+<div class="px-3">
+    @if ((Model.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video ||
+      Model.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Audio) && Model.Questions.Count > 1)
+    {
+        <div class="border border-warning p-3 artical transcriptable my-2" data-id="@Model.Questions.FirstOrDefault().Id"></div>
+    }
+    <div class="text-lg" style="font-size: 21px;">
+        <div class="row mb-4">
+            @if (Model.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Article)
+            {
+                <div class="col-12 p-2 my-2 border rounded border-dark replace-count artical load-artical-async"
+                     data-qc-id="@Model.Id"
+                     data-start-count="1">
+                </div>
+            }
+            else if (Model.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Audio)
+            {
+                <div class="col-12 my-2 v-audio audio-player">
+                    <audio crossorigin="use-credentials">
+                        <source src="@Model.MediaPath">
+                    </audio>
+                </div>
+            }
+            else if (Model.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Image)
+            {
+                qaCol = 8;
+                <div class="col-lg-4 order-md-2">
+                    <span>
+                        <img class="w-100 border border-dark rounded" src="@Html.Raw(Model.MediaPath)">
+                    </span>
+                </div>
+            }
+            else if (Model.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video)
+            {
+                <div class="col-12 text-center my-2">
+                    <video class="w-100 player" preload="metadata" playsinline controls>
+                        <source src="@Model.MediaPath">
+                        @L["Your browser does not support the video tag."]
+                    </video>
+                </div>
+            }
+            else
+            {
+
+            }
+            <div class="col-12 col-lg-@qaCol">
+                @await Html.PartialAsync("~/Pages/Manager/ExamDataLibraries/Partials/PartialQAPreviewRender.cshtml", new QARenderModal(1, Model.Questions.Convert(), skp.Convert(Model)))
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+    $(".transcriptable").each(function () {
+        var p = $(this);
+        var id = p.data('id');
+        $(this).load(`/manager/exam-data-libraries/transcript/${id}`);
+    });
+
+    $(".write-ans").each(function () {
+        var id = $(this).attr('id');
+        if (id) {
+            var affectedId = $(this).data('affect-id');
+            if (affectedId) {
+                var editor = bindEditor(this, true);
+                editor.on('change', function () {
+                    $(`#${affectedId}`).val(editor.getData());
+                });
+            }
+        }
+    });
+
+    $(".load-artical-async").each(function () {
+        var p = $(this);
+        var qcId = p.data("qc-id");
+        p.load(`/api/app/render-exam/render-artical/${qcId}`, function () {
+            var count = 1;
+            var startCount = p.data("start-count");
+            if (startCount)
+                count = startCount;
+            var paragraph = p.html();
+            paragraph = paragraph.replace(/{\$\$}/g, function () {
+                return count++;
+            });
+            p.html(paragraph);
+        });
+    });
+
+    initAudioPlayer();
+</script>

@@ -1,6 +1,9 @@
-﻿using ASPCoreMVC.TCUEnglish.ExamCategories;
+﻿using ASPCoreMVC.Common;
+using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamDataLibraries;
+using ASPCoreMVC.TCUEnglish.ExamQuestionContainers;
 using ASPCoreMVC.TCUEnglish.ExamQuestionGroups;
+using ASPCoreMVC.TCUEnglish.ExamQuestions;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
 using ASPCoreMVC.Web.Helpers;
@@ -12,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.Domain.Repositories;
 
 namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
 {
@@ -27,18 +31,43 @@ namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
 
         private readonly IExamQuestionGroupService _ExamQuestionGroupService;
 
+        private readonly IRepository<ExamQuestionContainer, Guid> _ExamQuestionContainerRepository;
+        private readonly IRepository<ExamQuestion, Guid> _ExamQuestionRepository;
+
         public ExamDataLibraryController(
             IExamCategoryService examCategoryService,
             ISkillCategoryService skillCategoryService,
             ISkillPartService skillPartService,
             IExamDataLibraryService examDataLibraryService,
-            IExamQuestionGroupService examQuestionGroupService)
+            IExamQuestionGroupService examQuestionGroupService,
+            IRepository<ExamQuestionContainer, Guid> _ExamQuestionContainerRepository,
+            IRepository<ExamQuestion, Guid> _ExamQuestionRepository)
         {
             _ExamCategoryService = examCategoryService;
             _SkillCategoryService = skillCategoryService;
             _SkillPartService = skillPartService;
             _ExamDataLibraryService = examDataLibraryService;
             _ExamQuestionGroupService = examQuestionGroupService;
+            this._ExamQuestionContainerRepository = _ExamQuestionContainerRepository;
+            this._ExamQuestionRepository = _ExamQuestionRepository;
+        }
+
+        [HttpGet]
+        [Route("transcript/{questionId:Guid}")]
+        public async Task<IActionResult> TranscriptLoader(Guid questionId)
+        {
+            var currentQuestion = await _ExamQuestionRepository.GetAsync(questionId);
+            if (currentQuestion != null)
+            {
+                ViewBag.Title = currentQuestion.Text;
+                var currentContainer = await _ExamQuestionContainerRepository.GetAsync(currentQuestion.ExamQuestionContainerId.Value);
+                if (currentContainer != null)
+                {
+                    return Content(currentContainer.Article);
+                }
+            }
+
+            return Content("");
         }
 
         [Route("questions/{id}/preview")]
@@ -48,7 +77,12 @@ namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
         {
             var res = await _ExamDataLibraryService.GetForUpdateAsync(id);
             if (res.Success && res.Data != null)
+            {
+                ViewBag.RenderType = RenderExamTypes.SkillPart;
+                var skillPart = (await _SkillPartService.GetAsync(res.Data.SkillPartId)).Data;
+                ViewBag.Spk = skillPart;
                 return PartialView("~/Partials/_Exam.QuestionDisplay.cshtml", res.Data);
+            }
             else
                 return PartialView(AppTheme.ContentNothing);
         }

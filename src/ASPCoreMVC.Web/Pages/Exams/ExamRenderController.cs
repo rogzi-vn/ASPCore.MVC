@@ -97,6 +97,7 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
 
         [HttpGet]
         [Route("/exams/re-work/{logId:Guid}")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<IActionResult> RenderReWorkExam(Guid? logId)
         {
             if (logId == null || logId == Guid.Empty)
@@ -132,6 +133,7 @@ namespace ASPCoreMVC.Web.Pages.Exams.Partials
 
         [HttpGet]
         [Route("/exams/{renderType:int}/exam/{destId:Guid}")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<IActionResult> RenderExam(
             RenderExamTypes renderType,
             Guid destId,

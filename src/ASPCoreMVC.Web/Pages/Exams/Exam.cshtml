@@ -41,9 +41,24 @@
         window.onload = function () {
             $("#loading-waiting").addClass("d-none");
             startExamCountDown('@Model.LimitTime', function () {
-                alert("Done");
+                endProcess('@Model.ExamLogId').then(result => {
+                    if (result.status >= 200 && result.status <= 299) {
+                        $("body").html("");
+                        window.location.href = `/exams/review/@Model.ExamLogId`;
+                    }
+                });
             });
         };
+    </script>
+
+    <script>
+        $(".transcriptable").click(event => {
+            var p = $(event.currentTarget);
+            var id = p.data('trans-id');
+            $("#exam-transcript-modal").load(`/exams/partials/exam-partials/transcript/${id}`, function () {
+                $("#exam-transcript-modal").modal('show');
+            });
+        });
     </script>
 }
 
@@ -102,7 +117,22 @@
                 <div>
                     @foreach (var skp in Model.ExamContent.SkillCategories[i].SkillParts)
                     {
-                        <h5 class="font-weight-bold">@(skpCount++). @skp.Name</h5>
+                        <h5 class="font-weight-bold d-inline">@(skpCount++). @skp.Name</h5>
+                        @if (Model.ExamContent.RenderExamType != ASPCoreMVC.Common.RenderExamTypes.Synthetic)
+                        {
+                            if ((skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Audio ||
+                                skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video) &&
+                                (skp.QuestionContainers.Count == 1 && skp.QuestionContainers.Sum(x => x.Questions.Count) > 1))
+                            {
+                                var qId = skp.QuestionContainers.FirstOrDefault().Questions.FirstOrDefault().Id;
+                                <span data-toggle="tooltip" data-placement="top"
+                                      data-html="true"
+                                      title="@L["Press to open transcript."]">
+                                    <i class="fa fa-comments align-middle shake-infinite-sm text-info transcriptable"
+                                       data-trans-id="@qId"></i>
+                                </span>
+                            }
+                        }
                         <div>
                             @Html.Raw(skp.Instructions)
                         </div>
@@ -164,4 +194,8 @@
             <button class="btn btn-primary btn-sm shadow-sm" id="complete-exam-button">@L["Complete the exam"]</button>
         </div>
     </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exam-transcript-modal" tabindex="-1" role="dialog" aria-hidden="true">
 </div>

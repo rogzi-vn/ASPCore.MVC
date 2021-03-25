@@ -14,27 +14,12 @@
             <label class="d-inline">
                 @Html.Raw(q.Text)
             </label>
-            @if (renderType != ASPCoreMVC.Common.RenderExamTypes.Synthetic)
-            {
-                <span data-toggle="tooltip" data-placement="top"
-                      data-html="true"
-                      title="@L["Press to open transcript."]">
-                    <i class="fa fa-comments align-middle shake-infinite-sm text-info transcriptable"
-                       data-trans-id="@q.Id"></i>
-                </span>
-            }
-            <button class="btn btn-sm btn-success shadow-sm float-right" id="start-recorder-@affectedId">
-                <i class="fa fa-play mr-1"></i>
-                @L["Start Recorder"]
-            </button>
-            <button class="btn btn-sm btn-danger shadow-sm d-none float-right" id="finish-recorder-@affectedId">
-                <i class="fa fa-stop mr-1"></i>
-                @L["Stop Recorder"]
-            </button>
-            <div class="d-none" id="audio-player-@affectedId">
 
-            </div>
         </div>
+        @if (Model.Questions.Count == 1)
+        {
+            <div class="border border-warning p-3 artical transcriptable my-2" data-id="@q.Id"></div>
+        }
     }
     else if (Model.SkillPart.IsHaveQuestionText)
     {
@@ -50,21 +35,12 @@
                     <i class="fas fa-info-circle align-middle shake-infinite-sm text-info mr-2"></i>
                 </span>
             }
-            @if (renderType != ASPCoreMVC.Common.RenderExamTypes.Synthetic)
-            {
-                if ((Model.SkillPart.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Audio ||
-                    Model.SkillPart.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video) &&
-                    Model.Questions.Count == 1)
-                {
-                    <span data-toggle="tooltip" data-placement="top"
-                          data-html="true"
-                          title="@L["Press to open transcript."]">
-                        <i class="fa fa-comments align-middle shake-infinite-sm text-info transcriptable"
-                           data-trans-id="@q.Id"></i>
-                    </span>
-                }
-            }
         </div>
+        @if ((Model.SkillPart.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Audio ||
+           Model.SkillPart.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video) && Model.Questions.Count == 1)
+        {
+            <div class="border border-warning p-3 artical transcriptable my-2" data-id="@q.Id"></div>
+        }
     }
     else
     {

@@ -14,16 +14,13 @@ namespace ASPCoreMVC.Web.Pages._Common.Partials.UserProfiles
     public class UserProfileModalController : AbpController
     {
         private readonly IAppUserService _AppUserService;
-        private readonly IIdentityRoleAppService _IdentityRoleAppService;
-        private readonly IIdentityUserAppService _IdentityUserAppService;
+        private readonly IdentityUserManager UserManager;
         public UserProfileModalController(
             IAppUserService _AppUserService,
-            IIdentityRoleAppService _IdentityRoleAppService,
-            IIdentityUserAppService _IdentityUserAppService)
+            IdentityUserManager UserManager)
         {
             this._AppUserService = _AppUserService;
-            this._IdentityRoleAppService = _IdentityRoleAppService;
-            this._IdentityUserAppService = _IdentityUserAppService;
+            this.UserManager = UserManager;
         }
 
         [HttpGet]
@@ -37,14 +34,22 @@ namespace ASPCoreMVC.Web.Pages._Common.Partials.UserProfiles
             if (!res.Success || res.Data == null)
                 return PartialView(AppTheme.ContentNothing);
 
+            // Get current User
+            var currentUser = await UserManager.GetByIdAsync(userId.Value);
+
             // Get all roles of user
-            var roleDtos = await _IdentityUserAppService.GetRolesAsync(res.Data.Id);
-            var roles = roleDtos.Items.Where(x => x.IsPublic).Select(x => x.Name).JoinAsString(", ");
-            if (roleDtos.Items.Count <= 0)
+            var roles = await UserManager.GetRolesAsync(currentUser);
+
+            //var roleDtos = await _IdentityUserAppService.GetRolesAsync(res.Data.Id);
+            //var roles = roleDtos.Items.Where(x => x.IsPublic).Select(x => x.Name).JoinAsString(", ");
+
+            var displayRoles = roles.JoinAsString(", ");
+            if (displayRoles.Length <= 0)
             {
-                roles = L["Member"];
+                displayRoles = L["Member"];
             }
-            ViewBag.Roles = roles;
+
+            ViewBag.Roles = displayRoles;
 
             return PartialView("~/Pages/_Common/Partials/UserProfiles/UserProfileModal.cshtml", res.Data);
         }

@@ -1,5 +1,8 @@
 ﻿using ASPCoreMVC.Common;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
+using ASPCoreMVC.TCUEnglish.ExamQuestionContainers;
+using ASPCoreMVC.TCUEnglish.ExamQuestionGroups;
+using ASPCoreMVC.TCUEnglish.ExamQuestions;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Domain.Repositories;
 
 namespace ASPCoreMVC.Web.Pages.Exams
 {
@@ -18,15 +22,21 @@ namespace ASPCoreMVC.Web.Pages.Exams
         private readonly IExamCategoryService _ExamCategoryServices;
         private readonly ISkillCategoryService _SkillCategoryServices;
         private readonly ISkillPartService _SkillPartServices;
+        private readonly IRepository<ExamQuestionContainer, Guid> _ExamQuestionContainerRepository;
+        private readonly IRepository<ExamQuestion, Guid> _ExamQuestionRepository;
 
         public ExamPartialsController(
             IExamCategoryService _ExamCategoryServices,
             ISkillCategoryService _SkillCategoryServices,
-            ISkillPartService _SkillPartServices)
+            ISkillPartService _SkillPartServices,
+            IRepository<ExamQuestionContainer, Guid> _ExamQuestionContainerRepository,
+            IRepository<ExamQuestion, Guid> _ExamQuestionRepository)
         {
             this._ExamCategoryServices = _ExamCategoryServices;
             this._SkillCategoryServices = _SkillCategoryServices;
             this._SkillPartServices = _SkillPartServices;
+            this._ExamQuestionContainerRepository = _ExamQuestionContainerRepository;
+            this._ExamQuestionRepository = _ExamQuestionRepository;
         }
 
         [HttpGet]
@@ -41,6 +51,25 @@ namespace ASPCoreMVC.Web.Pages.Exams
                 return Redirect("/exams/exam-categories");
 
             return Redirect($"/manager/exam-categories/{skillCat.Data.ExamCategoryId}/skill-categories/{skillCat.Data.Id}/skill-parts/{skillPart.Data.Id}/exam-data-libraries");
+        }
+
+        [HttpGet]
+        [Route("transcript/{questionId:Guid}")]
+        public async Task<IActionResult> TranscriptLoader(Guid questionId)
+        {
+            var currentQuestion = await _ExamQuestionRepository.GetAsync(questionId);
+            if (currentQuestion != null)
+            {
+                ViewBag.Title = currentQuestion.Text;
+                var currentContainer = await _ExamQuestionContainerRepository.GetAsync(currentQuestion.ExamQuestionContainerId.Value);
+                if (currentContainer != null)
+                {
+                    ViewBag.Content = currentContainer.Article;
+                    return PartialView("~/Pages/Exams/Partials/TranscriptDisplay.cshtml");
+                }
+            }
+
+            return PartialView(AppTheme.ContentNothing);
         }
 
         [HttpGet]

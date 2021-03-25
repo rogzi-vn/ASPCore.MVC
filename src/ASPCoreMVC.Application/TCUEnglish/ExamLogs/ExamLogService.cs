@@ -217,7 +217,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                                     // Xử ký KQ cho phần điền
                                     isCorrect = question.Answers.Any(
                                         x => x.AnswerContent.Equals(userAnswer?.Answer ?? "", StringComparison.OrdinalIgnoreCase) &&
-                                        x.IsCorrect);
+                                        x.IsCorrect) && (!userAnswer?.Answer.IsNullOrEmpty() == true);
                                 }
                                 else
                                 {

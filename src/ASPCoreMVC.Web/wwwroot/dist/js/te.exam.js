@@ -252,6 +252,31 @@ function deleteOldFile(fileName, complete) {
         });
 }
 
+function endProcess(logId) {
+    var token = $('input[name="__RequestVerificationToken"]').val();
+    var jsonData = {
+        logId: logId,
+        answers: collectAnswers()
+    };
+    //console.log(jsonData);
+    stopExamCountDown();
+    return fetch(decodeURI(`/api/app/exam-log/result-processing`), {
+        method: 'POST',
+        headers: {
+            RequestVerificationToken: token,
+            accept: '*/*',
+            "Content-Type": 'application/json',
+        },
+        body: JSON.stringify(jsonData)
+    }).then((response) => {
+        if (!response.ok) {
+            var response = JSON.parse(res.responseText);
+            showToast('error', response.error.message);
+        }
+        return response;
+    });
+}
+
 $("#complete-exam-button").click(function () {
     var logId = $("#exam-log-id").val();
     Swal.fire({
@@ -264,32 +289,9 @@ $("#complete-exam-button").click(function () {
         cancelButtonColor: '#4e73df',
         confirmButtonText: 'Yes, complete exam!',
         preConfirm: () => {
-            var token = $('input[name="__RequestVerificationToken"]').val();
-            var jsonData = {
-                logId: logId,
-                answers: collectAnswers()
-            };
-            console.log(jsonData);
-            stopExamCountDown();
-            return fetch(decodeURI(`/api/app/exam-log/result-processing`), {
-                method: 'POST',
-                headers: {
-                    RequestVerificationToken: token,
-                    accept: '*/*',
-                    "Content-Type": 'application/json',
-                },
-                body: JSON.stringify(jsonData)
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        var response = JSON.parse(res.responseText);
-                        showToast('error', response.error.message);
-                    }
-                    return response;
-                })
-                .catch((error) => {
-                    Swal.showValidationMessage(`Request failed: ${error}`);
-                });
+            return endProcess(logId).catch((error) => {
+                Swal.showValidationMessage(`Request failed: ${error}`);
+            });
         },
     }).then((result) => {
         if (result.isConfirmed) {

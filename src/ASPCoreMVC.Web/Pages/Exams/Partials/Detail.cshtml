@@ -1,4 +1,4 @@
-﻿<div class="modal-dialog modal-dialog-centered" role="document">
+﻿<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
         <div class="modal-header bg-gradient-primary">
             <h6 class="modal-title text-white">@ViewBag.ModalName</h6>
@@ -6,7 +6,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body max-width-100 artical">
             @Html.Raw(ViewBag.ModalContent)
         </div>
         <div class="modal-footer">
@@ -14,14 +14,13 @@
             {
                 <a href="/exams/partials/exam-partials/redirect-to-data-manager/@ViewBag.Id"
                    class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm mr-auto">
-                    <i class="fas fa-database fa-sm text-white mr-1"></i> Data manager
+                    <i class="fas fa-database fa-sm text-white mr-1"></i> @L["Data manager"]
                 </a>
             }
             <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm" data-dismiss="modal">Close</button>
-            <a href="@Html.Raw(ViewBag.StartExamUrl)"
-               onclick="$.LoadingOverlay('show');"
+            <a href="@Html.Raw(ViewBag.StartExamUrl)" onclick="$.LoadingOverlay('show');"
                class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm">
-                <i class="fas fa-star fa-sm text-white mr-1"></i> Start
+                <i class="fas fa-star fa-sm text-white mr-1"></i> @L["Start"]
             </a>
         </div>
     </div>

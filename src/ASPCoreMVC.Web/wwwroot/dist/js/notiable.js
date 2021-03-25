@@ -1,8 +1,31 @@
 ﻿function syncAlertCenter() {
     $("#alert-center-content").load("/alert-center/sync", function () {
         var total = $("#alert-center-count").val();
-        bindNotifyClick();
+        $(".notify-item").click(event => {
+            var parent = $(event.currentTarget);
+            var id = parent.attr('id');
+            var href = parent.attr('c-href');
 
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            // fetch seen
+            fetch(`/api/app/notification/${id}/notification-seen-state`, {
+                method: 'PUT',
+                headers: {
+                    RequestVerificationToken: token,
+                    accept: 'text/plain',
+                    'content-type': 'application/json'
+                },
+            }).then(r => r.text())
+                .then(data => {
+                    if (href && href != "#") {
+                        if (!href.startsWith("javascript:")) {
+                            window.location = href;
+                        } else {
+                            eval(href.replace("javascript:", ""));
+                        }
+                    }
+                });
+        });
     })
 }
 
@@ -27,34 +50,6 @@ function syncCountNotification() {
         });
 }
 
-function bindNotifyClick() {
-    $(".notify-item").click(event => {
-        var parent = $(event.currentTarget);
-        var id = parent.attr('id');
-        var href = parent.attr('c-href');
-
-        var token = $('input[name="__RequestVerificationToken"]').val();
-        // fetch seen
-        fetch(`/api/app/notification/${id}/notification-seen-state`, {
-            method: 'PUT',
-            headers: {
-                RequestVerificationToken: token,
-                accept: 'text/plain',
-                'content-type': 'application/json'
-            },
-        }).then(r => r.text())
-            .then(data => {
-                if (href && href != "#") {
-                    if (!href.startsWith("javascript:")) {
-                        window.location = href;
-                    } else {
-                        eval(href.replace("javascript:", ""));
-                    }
-                }
-            });
-    });
-}
-
 function markAllAsRead() {
     var token = $('input[name="__RequestVerificationToken"]').val();
     fetch(`/api/app/notification/mark-all-as-read`, {
@@ -71,8 +66,6 @@ function markAllAsRead() {
 }
 
 syncCountNotification();
-
-bindNotifyClick();
 
 $("#alertsDropdown").click(syncAlertCenter);
 
