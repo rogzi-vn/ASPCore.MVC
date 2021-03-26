@@ -1,4 +1,5 @@
-﻿using ASPCoreMVC.TCUEnglish.Vocabularies;
+﻿using ASPCoreMVC.Permissions;
+using ASPCoreMVC.TCUEnglish.Vocabularies;
 using ASPCoreMVC.TCUEnglish.VocabularyTopics;
 using ASPCoreMVC.TCUEnglish.WordClasses;
 using ASPCoreMVC.Web.Helpers;
@@ -12,7 +13,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace ASPCoreMVC.Web.Pages.Manager.Vocabularies.Partials
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.VocabularyManager.Default)]
     [Route("/manager/vocabularies")]
     public class VocabulariesController : Controller
     {

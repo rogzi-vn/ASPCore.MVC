@@ -1,4 +1,5 @@
-﻿using ASPCoreMVC.TCUEnglish.VocabularyTopics;
+﻿using ASPCoreMVC.Permissions;
+using ASPCoreMVC.TCUEnglish.VocabularyTopics;
 using ASPCoreMVC.TCUEnglish.WordClasses;
 using ASPCoreMVC.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace ASPCoreMVC.Web.Pages.Manager.VocabularyTopics.Partials
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.VocabularyTopicManager.Default)]
     [Route("/manager/vocabulary-topics")]
     public class VocabularyTopicsController : Controller
     {

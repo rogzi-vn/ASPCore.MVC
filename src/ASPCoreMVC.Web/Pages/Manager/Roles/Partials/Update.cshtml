@@ -31,7 +31,9 @@
     @if (Model.Name.Equals("admin", StringComparison.OrdinalIgnoreCase))
     {
         <input type="hidden" value="@ViewBag.Permissions" id="current-role-permissions" />
-        <div id="permisisons-tree"></div>
+        <div class="border border-danger p-3 font-italic text-center text-danger small">
+            @L["Admin will have all rights in the system"]
+        </div>
     }
     else
     {

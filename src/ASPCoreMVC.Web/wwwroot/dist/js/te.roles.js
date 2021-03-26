@@ -82,23 +82,41 @@ function showVtModal(event, id) {
         pd(event);
         var url = `${vtUpdateModalPartial}/${id}`;
         $(`#${ceVtModalId}-content`).load(url, function () {
-            $(`#${ceVtModalId} h5.modal-title`).html(uVtT);
-            // Xử lý sự kiện sau khi load xong
-            $(`#${ceVtModalId}`)
-                .parent()
-                .attr('action', `${vtBaseAPI}/update/${id}`)
-                .attr('method', 'PUT');
+            var currentRoleName = $("#role-name").val();
 
-            // selected permissions
-            var currentRolePermissions = $("#current-role-permissions").val();
-            // permisison tree
-            fetchTreeJs("/user-permissions/treejs-data", "#permisisons-tree", (nodes, values) => {
-                var selectedPermissionName = nodes.map((item) => { return item["id"]; });
+            $(`#${ceVtModalId} h5.modal-title`).html(uVtT);
+
+            if (currentRoleName == "admin") {
+                // Xử lý sự kiện sau khi load xong
                 $(`#${ceVtModalId}`)
                     .parent()
-                    .attr('action', `${vtBaseAPI}/update/${id}?permissions=${selectedPermissionName}`);
-            }, currentRolePermissions.split(","));
-            var currentRoleName = $("#role-name").val();
+                    .attr('action', '')
+                    .attr('method', 'GET');
+                $("#ce-vt-del-no-sub").hide();
+                $("#ce-vt button.btn.btn-primary").addClass("d-none");
+                $("#ce-vt button.btn.btn-primary").removeClass("d-inline-block");
+            } else {
+                // Xử lý sự kiện sau khi load xong
+                $(`#${ceVtModalId}`)
+                    .parent()
+                    .attr('action', `${vtBaseAPI}/update/${id}`)
+                    .attr('method', 'PUT');
+
+                $("#ce-vt-del-no-sub").show();
+                $("#ce-vt button.btn.btn-primary").removeClass("d-none");
+                $("#ce-vt button.btn.btn-primary").addClass("d-inline-block");
+
+                // selected permissions
+                var currentRolePermissions = $("#current-role-permissions").val();
+                // permisison tree
+                fetchTreeJs("/user-permissions/treejs-data", "#permisisons-tree", (nodes, values) => {
+                    var selectedPermissionName = nodes.map((item) => { return item["id"]; });
+                    $(`#${ceVtModalId}`)
+                        .parent()
+                        .attr('action', `${vtBaseAPI}/update/${id}?permissions=${selectedPermissionName}`);
+                }, currentRolePermissions.split(","));
+            }
+
             if (currentRoleName.toLocaleLowerCase() != "admin") {
                 // Cho phép xóa
                 $(`#${ceVtModalId}-del-no-sub`).removeClass("d-none");

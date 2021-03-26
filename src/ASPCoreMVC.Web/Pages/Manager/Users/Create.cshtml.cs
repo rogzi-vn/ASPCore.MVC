@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ASPCoreMVC.AppUsers;
+using ASPCoreMVC.Permissions;
 using ASPCoreMVC.Users;
+using ASPCoreMVC.Web.Models;
 using ASPCoreMVC.Web.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,28 +16,46 @@ using Volo.Abp.Settings;
 
 namespace ASPCoreMVC.Web.Pages.Manager.Users
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.UserManager.Default)]
     public class CreateUserModel : AppPageModel
     {
         private readonly ISettingProvider _SettingProvider;
         private readonly IAppUserService _AppUserService;
+
+        private readonly IIdentityRoleAppService _IdentityRoleAppService;
+        private readonly IdentityUserManager _IdentityUserManager;
 
         private readonly IRepository<AppUser, Guid> _IAppUserRepository;
 
         public CreateUserModel(
             ISettingProvider _SettingProvider,
             IAppUserService _AppUserService,
+            IIdentityRoleAppService _IdentityRoleAppService,
+            IdentityUserManager _IdentityUserManager,
             IRepository<AppUser, Guid> _IAppUserRepository)
         {
             this._SettingProvider = _SettingProvider;
             this._AppUserService = _AppUserService;
             this._IAppUserRepository = _IAppUserRepository;
+            this._IdentityRoleAppService = _IdentityRoleAppService;
+            this._IdentityUserManager = _IdentityUserManager;
         }
 
         [BindProperty]
         public CreateAppUserDTO UserAccount { get; set; }
+
+        [BindProperty]
+        public List<PairSelector> CurrentUserRoles { get; set; }
+
         public async Task OnGetAsync()
         {
+            CurrentUserRoles = new List<PairSelector>();
+            var roles = (await _IdentityRoleAppService.GetAllListAsync())
+                .Items.Where(x => x.IsPublic).Select(x => x.Name).ToList();
+            foreach (var role in roles)
+            {
+                CurrentUserRoles.Add(new PairSelector { Key = role, Value = false });
+            }
             UserAccount = new CreateAppUserDTO
             {
                 Password = await _SettingProvider.GetOrNullAsync(PageSettingProvider.USER_CREATOR_DEFAULT_PASSWORD_FOR_NEW_USER) ?? ""
@@ -63,7 +83,8 @@ namespace ASPCoreMVC.Web.Pages.Manager.Users
             }
 
 
-            var res = await _AppUserService.CreateAsync(UserAccount);
+            var res = await _AppUserService.CreateAsync(UserAccount,
+                CurrentUserRoles.Where(x => x.Value).Select(x => x.Key).ToList());
             if (res.Success)
             {
                 ToastSuccess(res.Message);

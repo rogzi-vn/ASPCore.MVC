@@ -1,4 +1,5 @@
-﻿using ASPCoreMVC.TCUEnglish.ExamQuestionGroups;
+﻿using ASPCoreMVC.Permissions;
+using ASPCoreMVC.TCUEnglish.ExamQuestionGroups;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ASPCoreMVC.Web.Pages.Manager.ExamQuestionGroups.Partials
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.ExamManager.Default)]
     [Route("/manager/question-groups")]
     public class ExamQuestionGroupController : Controller
     {

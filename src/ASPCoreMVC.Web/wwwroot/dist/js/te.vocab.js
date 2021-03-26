@@ -9,7 +9,7 @@ function syncVt(p = defVt.p, filter = defVt.filter) {
         p: p,
         filter: filter
     };
-    $("#vocabs").load(`/dictionary/vocabularies/search?p=${p}&filter=${filter}`, function () {
+    $("#vocabs").load(`/dictionary/vocabularies/search?p=${p}&filter=${encodeURI(filter)}`, function () {
         // Init search action
         initSearchVt();
         // Init Audio player

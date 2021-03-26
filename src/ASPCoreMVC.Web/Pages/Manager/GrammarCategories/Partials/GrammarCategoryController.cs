@@ -1,4 +1,5 @@
-﻿using ASPCoreMVC.TCUEnglish.GrammarCategories;
+﻿using ASPCoreMVC.Permissions;
+using ASPCoreMVC.TCUEnglish.GrammarCategories;
 using ASPCoreMVC.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace ASPCoreMVC.Web.Pages.Manager.GrammarCategories.Partials
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.GrammarManager.Default)]
     [Route("/manager/grammar-categories")]
     public class GrammarCategoryController : Controller
     {

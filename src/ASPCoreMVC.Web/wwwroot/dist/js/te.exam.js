@@ -258,7 +258,6 @@ function endProcess(logId) {
         logId: logId,
         answers: collectAnswers()
     };
-    //console.log(jsonData);
     stopExamCountDown();
     return fetch(decodeURI(`/api/app/exam-log/result-processing`), {
         method: 'POST',
@@ -269,10 +268,6 @@ function endProcess(logId) {
         },
         body: JSON.stringify(jsonData)
     }).then((response) => {
-        if (!response.ok) {
-            var response = JSON.parse(res.responseText);
-            showToast('error', response.error.message);
-        }
         return response;
     });
 }

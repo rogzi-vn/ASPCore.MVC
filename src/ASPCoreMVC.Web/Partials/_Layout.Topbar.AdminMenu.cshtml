@@ -51,85 +51,108 @@
             @L["Manager Options"]
         </h6>
 
-        <a class="dropdown-item d-flex align-items-center" href="/manager/users">
-            <div class="mr-3">
-                <div class="icon-circle bg-primary">
-                    <i class="fas fa-user-friends text-white"></i>
+        @if (UserManagerGranted)
+        {
+            <a class="dropdown-item d-flex align-items-center" href="/manager/users">
+                <div class="mr-3">
+                    <div class="icon-circle bg-primary">
+                        <i class="fas fa-user-friends text-white"></i>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <span class="font-weight-bold">@L["Users manager"]</span>
-                <div class="small text-gray-500">Manage all users</div>
-            </div>
-        </a>
-        <a class="dropdown-item d-flex align-items-center" href="/manager/word-classes">
-            <div class="mr-3">
-                <div class="icon-circle bg-info">
-                    <i class="fas fa-layer-group text-white"></i>
+                <div>
+                    <span class="font-weight-bold">@L["Users manager"]</span>
+                    <div class="small text-gray-500">Manage all users</div>
                 </div>
-            </div>
-            <div>
-                <span class="font-weight-bold">@L["Word classes"]</span>
-                <div class="small text-gray-500">Manage all word classes</div>
-            </div>
-        </a>
-        <a class="dropdown-item d-flex align-items-center" href="/manager/vocabulary-topics">
-            <div class="mr-3">
-                <div class="icon-circle bg-info">
-                    <i class="fas fa-hamburger text-white"></i>
+            </a>
+        }
+        @if (WordClassesManagerGranted)
+        {
+            <a class="dropdown-item d-flex align-items-center" href="/manager/word-classes">
+                <div class="mr-3">
+                    <div class="icon-circle bg-info">
+                        <i class="fas fa-layer-group text-white"></i>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <span class="font-weight-bold">@L["Vocabulary topics"]</span>
-                <div class="small text-gray-500">Manage all vocabulary topics</div>
-            </div>
-        </a>
-        <a class="dropdown-item d-flex align-items-center" href="/manager/vocabularies">
-            <div class="mr-3">
-                <div class="icon-circle bg-info">
-                    <i class="fas fa-book-open text-white"></i>
+                <div>
+                    <span class="font-weight-bold">@L["Word classes"]</span>
+                    <div class="small text-gray-500">Manage all word classes</div>
                 </div>
-            </div>
-            <div>
-                <span class="font-weight-bold">@L["Vocabularies manager"]</span>
-                <div class="small text-gray-500">Manage vocabularies</div>
-            </div>
-        </a>
+            </a>
+        }
 
-        <a class="dropdown-item d-flex align-items-center" href="/manager/files">
-            <div class="mr-3">
-                <div class="icon-circle bg-danger">
-                    <i class="fas fa-photo-video text-white"></i>
+        @if (VocabularyTopicManagerGranted)
+        {
+            <a class="dropdown-item d-flex align-items-center" href="/manager/vocabulary-topics">
+                <div class="mr-3">
+                    <div class="icon-circle bg-info">
+                        <i class="fas fa-hamburger text-white"></i>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <span class="font-weight-bold">@L["Files manager"]</span>
-                <div class="small text-gray-500">Manage all files</div>
-            </div>
-        </a>
+                <div>
+                    <span class="font-weight-bold">@L["Vocabulary topics"]</span>
+                    <div class="small text-gray-500">Manage all vocabulary topics</div>
+                </div>
+            </a>
+        }
 
-        <a class="dropdown-item d-flex align-items-center" href="/manager/grammars">
-            <div class="mr-3">
-                <div class="icon-circle bg-warning">
-                    <i class="fas fa-spell-check text-white"></i>
+        @if (VocabularyManagerGranted)
+        {
+            <a class="dropdown-item d-flex align-items-center" href="/manager/vocabularies">
+                <div class="mr-3">
+                    <div class="icon-circle bg-info">
+                        <i class="fas fa-book-open text-white"></i>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <span class="font-weight-bold">@L["Grammars"]</span>
-                <div class="small text-gray-500">Manage all grammars</div>
-            </div>
-        </a>
+                <div>
+                    <span class="font-weight-bold">@L["Vocabularies manager"]</span>
+                    <div class="small text-gray-500">Manage vocabularies</div>
+                </div>
+            </a>
+        }
 
-        <a class="dropdown-item d-flex align-items-center" href="/manager/exam-categories">
-            <div class="mr-3">
-                <div class="icon-circle bg-success">
-                    <i class="fas fa-graduation-cap text-white"></i>
+        @if (FileManagerGranted)
+        {
+            <a class="dropdown-item d-flex align-items-center" href="/manager/files">
+                <div class="mr-3">
+                    <div class="icon-circle bg-danger">
+                        <i class="fas fa-photo-video text-white"></i>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <span class="font-weight-bold">@L["Exams manager"]</span>
-                <div class="small text-gray-500">Manage all exams</div>
-            </div>
-        </a>
+                <div>
+                    <span class="font-weight-bold">@L["Files manager"]</span>
+                    <div class="small text-gray-500">Manage all files</div>
+                </div>
+            </a>
+        }
+
+        @if (GrammarManagerGranted)
+        {
+            <a class="dropdown-item d-flex align-items-center" href="/manager/grammars">
+                <div class="mr-3">
+                    <div class="icon-circle bg-warning">
+                        <i class="fas fa-spell-check text-white"></i>
+                    </div>
+                </div>
+                <div>
+                    <span class="font-weight-bold">@L["Grammars"]</span>
+                    <div class="small text-gray-500">Manage all grammars</div>
+                </div>
+            </a>
+        }
+
+        @if (ExamManagerGranted)
+        {
+            <a class="dropdown-item d-flex align-items-center" href="/manager/exam-categories">
+                <div class="mr-3">
+                    <div class="icon-circle bg-success">
+                        <i class="fas fa-graduation-cap text-white"></i>
+                    </div>
+                </div>
+                <div>
+                    <span class="font-weight-bold">@L["Exams manager"]</span>
+                    <div class="small text-gray-500">Manage all exams</div>
+                </div>
+            </a>
+        }
     </div>
 </li>

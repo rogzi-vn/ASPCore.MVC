@@ -114,6 +114,27 @@
 
                 </div>
             </div>
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">@L["Roles"]</h6>
+                </div>
+                <div class="card-body">
+                    @for (int i = 0; i < Model.CurrentUserRoles.Count; i++)
+                    {
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox small">
+                                <input type="hidden" asp-for="CurrentUserRoles[i].Key" />
+                                <input type="checkbox" class="custom-control-input"
+                                       asp-for="CurrentUserRoles[i].Value">
+                                <label class="custom-control-label" style="line-height:2;" asp-for="CurrentUserRoles[i].Value">
+                                    @Model.CurrentUserRoles[i].Key
+                                </label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
         </div>
         <div class="col-12 col-lg-8">
             <div class="card shadow mb-4">

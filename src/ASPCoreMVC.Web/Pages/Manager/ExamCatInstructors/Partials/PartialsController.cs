@@ -1,4 +1,5 @@
 ﻿using ASPCoreMVC.AppUsers;
+using ASPCoreMVC.Permissions;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamCatInstructors;
 using ASPCoreMVC.TCUEnglish.GrammarCategories;
@@ -16,7 +17,7 @@ using Volo.Abp.AspNetCore.Mvc;
 
 namespace ASPCoreMVC.Web.Pages.Dictionary.ExamCatInstructors.Partials
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.ExamManager.Default)]
     [Route("/manager/exam-cate-instructors")]
     public class PartialsController : AbpController
     {

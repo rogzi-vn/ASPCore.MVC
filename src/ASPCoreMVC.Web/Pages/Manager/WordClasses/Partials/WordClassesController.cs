@@ -1,4 +1,5 @@
-﻿using ASPCoreMVC.TCUEnglish.WordClasses;
+﻿using ASPCoreMVC.Permissions;
+using ASPCoreMVC.TCUEnglish.WordClasses;
 using ASPCoreMVC.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace ASPCoreMVC.Web.Pages.Manager.WordClasses.Partials
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.WordClassesManager.Default)]
     [Route("/manager/word-classes")]
     public class WordClassesController : Controller
     {

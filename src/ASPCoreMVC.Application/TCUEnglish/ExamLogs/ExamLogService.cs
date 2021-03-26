@@ -131,7 +131,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         public Guid? GetLastExamNotFinished()
         {
             return Repository.Where(x => x.CreatorId == CurrentUser.Id &&
-           (x.UserAnswers == null || x.UserAnswers.Length == 0)).FirstOrDefault()?.Id ?? null;
+            (x.UserAnswers == null || x.UserAnswers.Length == 0)).FirstOrDefault()?.Id ?? null;
         }
 
         public bool IsExamPassesed(float examScores, float examMaxScores)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ASPCoreMVC.Permissions;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using ASPCoreMVC.TCUEnglish.SkillParts;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ASPCoreMVC.Web.Pages.Manager.SkillParts
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.ExamManager.Default)]
     public class SkillPartsIndexModel : AppPageModel
     {
         private readonly IExamCategoryService _ExamCategoryService;

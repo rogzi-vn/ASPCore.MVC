@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ASPCoreMVC._Commons;
+using ASPCoreMVC.Permissions;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ASPCoreMVC.Web.Pages.Manager.SkillCategories.Partials
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.ExamManager.Default)]
     public class SkillCategoryCreateUpdateModel : AppPageModel
     {
         private readonly IExamCategoryService _ExamCategoryService;

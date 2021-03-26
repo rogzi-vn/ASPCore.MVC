@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ASPCoreMVC.Permissions;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ASPCoreMVC.Web.Pages.Manager.SkillCategories
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.ExamManager.Default)]
     public class SkillCategoriesIndexModel : AppPageModel
     {
         private readonly IExamCategoryService _ExamCategoryService;

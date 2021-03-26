@@ -98,6 +98,7 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
             {
                 query = query.Where(x => x.IsConfirmed);
             }
+            //query = query.OrderByDescending(x => x.Word.ToLowerInvariant().StartsWith(input.Filter));
             if (input.Sorting != null)
                 query = query.OrderBy(input.Sorting);
 

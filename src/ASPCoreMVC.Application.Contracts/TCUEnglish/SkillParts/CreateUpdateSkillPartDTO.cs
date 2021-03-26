@@ -19,20 +19,20 @@ namespace ASPCoreMVC.TCUEnglish.SkillParts
         /// </summary>
         [Required]
         [Display(Name = "Master content type")]
-        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value from {1}")]
         public MasterContentTypes MasterContentType { get; set; } = MasterContentTypes.Ignore;
         /// <summary>
         /// Kiểu trả lời
         /// </summary>
         [Required]
         [Display(Name = "Answer type")]
-        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value from {1}")]
         public AnswerTypes AnswerType { get; set; } = AnswerTypes.TextAnswer;
         /// <summary>
         /// Thứ tự sắp xếp
         /// </summary>
         [Required]
-        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value from {1}")]
         public int Order { get; set; } = 0;
         /// <summary>
         /// Tên phần của kỹ năng
@@ -46,7 +46,7 @@ namespace ASPCoreMVC.TCUEnglish.SkillParts
         /// </summary>
         [Required]
         [Display(Name = "Number of display")]
-        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value from {1}")]
         public int NumDisplay { get; set; }
         /// <summary>
         /// Hướng dẫn mở đầu cho phần làm bài
@@ -68,28 +68,28 @@ namespace ASPCoreMVC.TCUEnglish.SkillParts
         /// </summary>
         [Required]
         [Display(Name = "Number of sub-question")]
-        [Range(-1, int.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
+        [Range(-1, int.MaxValue, ErrorMessage = "Please enter a value from {1}")]
         public int NumSubQues { get; set; }
         /// <summary>
         /// Số câu trả lời
         /// </summary>
         [Required]
         [Display(Name = "Number of answer")]
-        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value from {1}")]
         public int NumAns { get; set; } = 4;
         /// <summary>
         /// Số phút giới hạn cho phần thi
         /// </summary>
         [Required]
         [Display(Name = "Limit time (minutes)")]
-        [Range(0F, float.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
+        [Range(0F, float.MaxValue, ErrorMessage = "Please enter a value from {1}")]
         public float LimitTimeInMinutes { get; set; }
         /// <summary>
         /// Số điểm tối đa cho phần thi
         /// </summary>
         [Required]
         [Display(Name = "Max scores (starts)")]
-        [Range(0F, float.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
+        [Range(1F, float.MaxValue, ErrorMessage = "Please enter a value from {1}")]
         public float MaxScores { get; set; }
         /// <summary>
         /// Loại hiển thị cho editor sửa bài báo,
@@ -97,7 +97,7 @@ namespace ASPCoreMVC.TCUEnglish.SkillParts
         /// </summary>
         [Required]
         [Display(Name = "Editor layout")]
-        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value from {1}")]
         public EditorDisplayOptions ArticleEditor { get; set; } = EditorDisplayOptions.FullOption;
         /// <summary>
         /// Có hay không hiển thị nội dung câu hỏi
@@ -110,7 +110,7 @@ namespace ASPCoreMVC.TCUEnglish.SkillParts
         /// </summary>
         [Required]
         [Display(Name = "True answer type")]
-        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value bigger than {1}")]
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter a value from {1}")]
         public TrueAnswerTypes TrueAnswerType { get; set; } = TrueAnswerTypes.OnlyOneCorrect;
     }
 }

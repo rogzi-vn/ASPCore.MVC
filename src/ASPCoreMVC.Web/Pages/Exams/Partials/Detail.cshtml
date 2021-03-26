@@ -1,4 +1,11 @@
-﻿<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+﻿@using Microsoft.AspNetCore.Authorization
+@using ASPCoreMVC.Permissions
+@inject IAuthorizationService _IAuthorizationService
+@{
+    var ExamManagerGranted = (await _IAuthorizationService
+.AuthorizeAsync(ASPCoreMVCPermissions.ExamManager.Default)).Succeeded;
+}
+<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
         <div class="modal-header bg-gradient-primary">
             <h6 class="modal-title text-white">@ViewBag.ModalName</h6>
@@ -10,7 +17,7 @@
             @Html.Raw(ViewBag.ModalContent)
         </div>
         <div class="modal-footer">
-            @if (ViewBag.ShowManagerButton)
+            @if (ViewBag.ShowManagerButton && ExamManagerGranted)
             {
                 <a href="/exams/partials/exam-partials/redirect-to-data-manager/@ViewBag.Id"
                    class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm mr-auto">

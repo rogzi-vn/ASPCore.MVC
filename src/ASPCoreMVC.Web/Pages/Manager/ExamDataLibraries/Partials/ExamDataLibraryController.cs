@@ -1,4 +1,5 @@
 ﻿using ASPCoreMVC.Common;
+using ASPCoreMVC.Permissions;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamDataLibraries;
 using ASPCoreMVC.TCUEnglish.ExamQuestionContainers;
@@ -19,7 +20,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries.Partials
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.ExamManager.Default)]
     [Route("/manager/exam-data-libraries")]
     public class ExamDataLibraryController : AbpController
     {

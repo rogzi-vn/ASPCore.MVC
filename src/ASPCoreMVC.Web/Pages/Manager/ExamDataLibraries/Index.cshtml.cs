@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ASPCoreMVC.Permissions;
 using ASPCoreMVC.TCUEnglish.ExamCategories;
 using ASPCoreMVC.TCUEnglish.ExamDataLibraries;
 using ASPCoreMVC.TCUEnglish.SkillCategories;
@@ -11,7 +12,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace ASPCoreMVC.Web.Pages.Manager.ExamDataLibraries
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.ExamManager.Default)]
     public class ExamDataLibrariesIndexModel : AppPageModel
     {
         private readonly IExamCategoryService _ExamCategoryService;

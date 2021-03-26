@@ -14,16 +14,18 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Authorization.Permissions;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Identity;
 using Volo.Abp.PermissionManagement;
 
 namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
 {
-    [Authorize]
+    [Authorize(ASPCoreMVCPermissions.UserManager.Default)]
     [Route("/manager/roles")]
     public class PartialsController : AbpController
     {
         private readonly IIdentityRoleAppService _IdentityRoleAppService;
+        private readonly IRepository<PermissionGrant, Guid> _PermissionGrantAppService;
 
         private readonly IPermissionManager _PermissionManager;
 
@@ -33,10 +35,12 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
 
         public PartialsController(
             IIdentityRoleAppService _IdentityRoleAppService,
-            IPermissionManager _PermissionManager)
+            IPermissionManager _PermissionManager,
+            IRepository<PermissionGrant, Guid> _PermissionGrantAppService)
         {
             this._IdentityRoleAppService = _IdentityRoleAppService;
             this._PermissionManager = _PermissionManager;
+            this._PermissionGrantAppService = _PermissionGrantAppService;
         }
 
         [Route("display")]
@@ -84,6 +88,8 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
             [FromBody] IdentityRoleCreateDto role,
             [FromQuery] string permissions)
         {
+            role.IsPublic = true;
+
             var res = await _IdentityRoleAppService
                 .CreateAsync(role);
             if (res != null)
@@ -94,7 +100,22 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
                     "FeatureManagement",
                     "AbpTenantManagement"
                     };
-                foreach (var permission in permissions.Split(","))
+                var newPermissions = permissions?.Split(",").ToList() ?? new List<string>();
+                if (newPermissions.Any(x => x == ASPCoreMVCPermissions.UserManager.Default))
+                {
+                    newPermissions.Add("AbpIdentity.Roles");
+                    newPermissions.Add("AbpIdentity.Roles.Create");
+                    newPermissions.Add("AbpIdentity.Roles.Update");
+                    newPermissions.Add("AbpIdentity.Roles.Delete");
+                    newPermissions.Add("AbpIdentity.Roles.ManagePermissions");
+                    newPermissions.Add("AbpIdentity.Users");
+                    newPermissions.Add("AbpIdentity.Users.Create");
+                    newPermissions.Add("AbpIdentity.Users.Update");
+                    newPermissions.Add("AbpIdentity.Users.Delete");
+                    newPermissions.Add("AbpIdentity.Users.ManagePermissions");
+                }
+                // Thêm quyền mới
+                foreach (var permission in newPermissions)
                 {
                     if (!ignorePermission.Any(x => x.Equals(permission, StringComparison.OrdinalIgnoreCase)))
                     {
@@ -147,6 +168,7 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
             "AbpTenantManagement"
             };
             var previousRoleName = await _IdentityRoleAppService.GetAsync(id);
+            // Ngăn cản update cho admin
             if (previousRoleName.Name.Equals("admin", StringComparison.OrdinalIgnoreCase))
             {
                 return Json(new ResponseWrapper<IdentityRoleDto>().SuccessReponseWrapper(default, "Update new role successful"));
@@ -155,21 +177,42 @@ namespace ASPCoreMVC.Web.Pages.Manager.Roles.Partials
                 .UpdateAsync(id, role);
             if (res != null)
             {
-                // Delete old permission
-                await _PermissionManager.DeleteAsync("R", previousRoleName.Name);
-                // Add new permisison
-                foreach (var permission in permissions.Split(","))
+                // Lấy danh sách các quyền cũ
+                var oldPermission = _PermissionGrantAppService.Where(x => x.ProviderName == "R" && x.ProviderKey == res.Name).ToList();
+
+                // Danh sách quyền mới
+                var newPermissions = permissions?.Split(",").ToList() ?? new List<string>();
+                if (newPermissions.Any(x => x == ASPCoreMVCPermissions.UserManager.Default))
                 {
-                    if (!ignorePermission.Any(x => x.Equals(permission, StringComparison.OrdinalIgnoreCase)))
+                    newPermissions.Add("AbpIdentity.Roles");
+                    newPermissions.Add("AbpIdentity.Roles.Create");
+                    newPermissions.Add("AbpIdentity.Roles.Update");
+                    newPermissions.Add("AbpIdentity.Roles.Delete");
+                    newPermissions.Add("AbpIdentity.Roles.ManagePermissions");
+                    newPermissions.Add("AbpIdentity.Users");
+                    newPermissions.Add("AbpIdentity.Users.Create");
+                    newPermissions.Add("AbpIdentity.Users.Update");
+                    newPermissions.Add("AbpIdentity.Users.Delete");
+                    newPermissions.Add("AbpIdentity.Users.ManagePermissions");
+                }
+                // Thêm quyền mới
+                foreach (var permission in newPermissions)
+                {
+                    if (!ignorePermission.Any(x => x.Equals(permission, StringComparison.OrdinalIgnoreCase)) ||
+                        !oldPermission.Any(x => x.Name.Equals(permission, StringComparison.OrdinalIgnoreCase)))
                     {
-                        Console.WriteLine($"Update for permission: {permission}");
-                        await _PermissionManager.SetForRoleAsync(res.Name, permission, true);
+                        await _PermissionGrantAppService.InsertAsync(new PermissionGrant(Guid.NewGuid(), permission, "R", res.Name));
+                        // Lọc lấy quyền cũ 
+                        oldPermission = oldPermission.Where(x => x.Name != permission).ToList();
                     }
                 }
+
+                // Xóa bỏ quyền cũ
+                await _PermissionGrantAppService.DeleteManyAsync(oldPermission.Select(x => x.Id));
                 return Json(new ResponseWrapper<IdentityRoleDto>().SuccessReponseWrapper(res, "Update new role successful"));
             }
             else
-                return Json(new ResponseWrapper<IdentityRoleDto>().ErrorReponseWrapper(default, "Update new role successful", 400));
+                return Json(new ResponseWrapper<IdentityRoleDto>().ErrorReponseWrapper(default, "Update new role faild", 400));
         }
     }
 }

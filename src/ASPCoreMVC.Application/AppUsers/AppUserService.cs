@@ -42,7 +42,7 @@ namespace ASPCoreMVC.AppUsers
             //DeletePolicyName = ASPCoreMVCPermissions.UserManager.Default;
         }
 
-        //[Authorize(ASPCoreMVCPermissions.UserManager.Default)]
+        [Authorize()]
         [Authorize]
         public async Task<ResponseWrapper<AppUserProfileDTO>> GetProfileAsync(Guid id)
         {
@@ -184,13 +184,20 @@ namespace ASPCoreMVC.AppUsers
         }
 
         [Authorize]
-        public override async Task<ResponseWrapper<AppUserDTO>> CreateAsync(CreateAppUserDTO input)
+        public override Task<ResponseWrapper<AppUserDTO>> CreateAsync(CreateAppUserDTO input)
+        {
+
+            return CreateAsync(input, new List<string>());
+        }
+
+        public async Task<ResponseWrapper<AppUserDTO>> CreateAsync(CreateAppUserDTO input, List<string> roles)
         {
             input.Id = Guid.NewGuid();
             var identityUser = ObjectMapper.Map<CreateAppUserDTO, IdentityUser>(input);
             var res = await userManager.CreateAsync(identityUser, input.Password);
             if (res.Succeeded)
             {
+                await userManager.SetRolesAsync(identityUser, roles);
                 // Khi đã tạo thành công, tiến ành cập nhật lại hồ sơ
                 // Lấy user vừa tạo thông qua username
                 var user = await Repository.GetAsync(x => x.UserName.Equals(input.UserName, StringComparison.OrdinalIgnoreCase));
@@ -239,5 +246,7 @@ namespace ASPCoreMVC.AppUsers
                 audiences: new[] { "ASPCore" }),
                 "Successful");
         }
+
+
     }
 }

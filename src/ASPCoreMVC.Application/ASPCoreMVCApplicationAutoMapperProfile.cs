@@ -45,6 +45,7 @@ namespace ASPCoreMVC
             CreateMap<AppUserProfileDTO, UpdateAppUserProfileDTO>();
             CreateMap<UpdateAppUserProfileDTO, AppUser>().ReverseMap();
             CreateMap<AppUserDTO, CreateAppUserDTO>().ReverseMap();
+            CreateMap<AppUser, CreateAppUserDTO>().ReverseMap();
             CreateMap<CreateAppUserDTO, AppUser>().ReverseMap();
             CreateMap<AppUserDTO, AppUserProfileDTO>().ReverseMap();
             CreateMap<CreateAppUserDTO, AppUserProfileDTO>().ReverseMap();
