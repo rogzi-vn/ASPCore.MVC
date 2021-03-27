@@ -1,0 +1,30 @@
+﻿@model ASPCoreMVC.TCUEnglish.VocabularyTopics.VocabularyTopicDTO
+<div class="">
+    @if (Model.Id != Guid.Empty)
+    {
+        <input type="hidden" asp-for="Id" />
+    }
+    @if (Model.IsConfirmed)
+    {
+        <input type="hidden" asp-for="IsConfirmed" />
+        <input type="hidden" asp-for="ConfirmedTime" />
+    }
+    @if (Model.ConfirmerId != null && Model.ConfirmerId == Guid.Empty)
+    {
+        <input type="hidden" asp-for="ConfirmerId" />
+    }
+    <div class="form-group">
+        <label asp-for="Name" class="mb-1"></label>
+        <input asp-for="Name" class="form-control">
+        <div class="form-text text-danger small">
+            <span asp-validation-for="Name"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="About" class="mb-1"></label>
+        <textarea asp-for="About" class="form-control editor-topic" editor-mint="true"></textarea>
+        <div class="form-text text-danger small">
+            <span asp-validation-for="About"></span>
+        </div>
+    </div>
+</div>

@@ -19,7 +19,7 @@ function syncVt(p = defVt.p, filter = defVt.filter) {
     };
     $("#vocabulary-topics").load(`/manager/vocabulary-topics/display?p=${p}&filter=${filter}`, function () {
         // After grammar category loaded
-        $("#add-grammar-category-btn").click(showVtModal);
+        $("#add-grammar-category-btn").click(showCreateUpdateVocabularyModal);
         // Init search action
         initSearchVt();
         // Init edit action
@@ -64,12 +64,12 @@ function initEditVt() {
         var obj = $(event.currentTarget);
         var id = obj.data('id');
         if (id) {
-            showVtModal(event, id);
+            showCreateUpdateVocabularyModal(event, id);
         }
     });
 }
 
-function showVtModal(event, id) {
+function showCreateUpdateVocabularyModal(event, id) {
     if (!id) {
         var url = `${vtCreateModalPartial}`;
         $(`#${ceVtModalId}-content`).load(url, function () {

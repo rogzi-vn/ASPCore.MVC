@@ -110,7 +110,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamCatInstructors
                     ExamCategoryName = x.x.ec.Name
                 });
 
-            var res = new PagedResultDto<ExamCatInstructDTO>(query.Count(), resQuery.ToList());
+            var res = new PagedResultDto<ExamCatInstructDTO>(tempQuery.Count(), resQuery.ToList());
             return new ResponseWrapper<
                 PagedResultDto<ExamCatInstructDTO>>(res, "Successful");
         }

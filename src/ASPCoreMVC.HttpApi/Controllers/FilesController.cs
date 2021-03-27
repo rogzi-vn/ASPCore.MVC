@@ -49,5 +49,19 @@ namespace ASPCoreMVC.Controllers
                 Name = fname
             }));
         }
+        [HttpPost]
+        [Route("/vocabulary/contribute/audio")]
+        public async Task<IActionResult> UploadVocabularyAudio([FromForm] IFormFile audio)
+        {
+            if (audio == null || audio.Length <= 0)
+            {
+                return BadRequest();
+            }
+            return Json(await _AppFileService.PostAudioUploadAsync(new RawAppFileDTO
+            {
+                Content = await audio.GetAllBytesAsync(),
+                Name = audio.Name
+            }));
+        }
     }
 }

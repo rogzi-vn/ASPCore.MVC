@@ -85,6 +85,7 @@ namespace ASPCoreMVC
             CreateMap<WordClass, WordClassDTO>().ReverseMap();
 
             CreateMap<VocabularyTopic, VocabularyTopicDTO>().ReverseMap();
+            CreateMap<VocabularyTopic, VocabularyTopicBaseDTO>();
 
             CreateMap<Vocabulary, VocabularyDTO>().ReverseMap();
             CreateMap<VocabularyDTO, VocabularyBaseDTO>();

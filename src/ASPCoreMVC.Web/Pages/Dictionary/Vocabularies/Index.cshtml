@@ -2,7 +2,7 @@
 @model ASPCoreMVC.Web.Pages.Dictionary.Vocabularies.DicVocaIndexModel
 @{
     Model.SetBreadcrumbBtn(L["Contribute"].Value,
-        $"javascript:showWcModal();",
+        $"/dictionary/vocabularies/contribute",
         icon: "fas fa-paper-plane",
         c: "btn-primary");
 
@@ -45,6 +45,12 @@
         }
 
     </script>
+    <script>
+        cVtT = "@L["Create vocabulary"]";
+        uVtT = "@L["Update vocabulary"]";
+        syncVt('1', '');
+        isConfirmable = true;
+    </script>
 }
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
@@ -58,3 +64,10 @@
         </div>
     </div>
 </div>
+
+<component type="typeof(FormModelComponent)"
+           render-mode="ServerPrerendered"
+           param-DeleteNoSubmit="true"
+           param-Id="@("ce-vt")"
+           param-Title="@("Create vocabulary")"
+           param-Callback="@("vtSynced")" />

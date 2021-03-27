@@ -1,0 +1,216 @@
+﻿@model ASPCoreMVC.TCUEnglish.Vocabularies.VocabularyDTO
+@{
+    var vocabuaries = (List<ASPCoreMVC.TCUEnglish.VocabularyTopics.VocabularyTopicDTO>)ViewBag.VocabularyTopics;
+    var wordClasses = (List<ASPCoreMVC.TCUEnglish.WordClasses.WordClassDTO>)ViewBag.WordClasses;
+}
+<script>
+    var defaultPath = $("#media-path-hidden").val();
+    $("#set-default-audio").hide();
+
+    $("#set-default-audio").click(event => {
+        $(event.currentTarget).hide();
+        loadAudio(defaultPath);
+        $("#picked-audio-file").val(null);
+    });
+
+    $("#create-update-vocabulary button[type='submit']")
+        .attr('id', 'push-vocabulary')
+        .attr('type', 'button');
+
+    if (!defaultPath || defaultPath.length <= 0) {
+        $("#btn-show-for-pick-first-file").show();
+        $("#btn-show-for-pick-update-file").hide();
+    } else {
+        loadAudio(defaultPath);
+        $("#btn-show-for-pick-first-file").hide();
+        $("#btn-show-for-pick-update-file").show();
+    }
+    $(".btn-choose-file").click(event => {
+        var p = $(event.currentTarget);
+        $("#picked-audio-file").click();
+    });
+    document
+        .getElementById("picked-audio-file")
+        .addEventListener("change", changeHandler);
+    function changeHandler({
+        target
+    }) {
+        // Make sure we have files to use
+        if (!target.files.length) return;
+
+        // Create a blob that we can use as an src for our audio element
+        const urlObj = URL.createObjectURL(target.files[0]);
+
+        if (!isAudio(target.files[0].name)) {
+            showToast('error', 'Please select audio file only!');
+            return;
+        }
+
+        loadAudio(urlObj);
+
+        $("#btn-show-for-pick-first-file").hide();
+        $("#btn-show-for-pick-update-file").show();
+        if (defaultPath) {
+            $("#set-default-audio").show();
+        }
+    }
+
+    function loadAudio(path) {
+        // Create an audio element
+        const audio = document.createElement("audio");
+
+        // Clean up the URL Object after we are done with it
+        audio.addEventListener("load", () => {
+            URL.revokeObjectURL(path);
+        });
+
+        // Append the audio element
+        //document.body.appendChild(audio);
+
+        // Allow us to control the audio
+        audio.controls = "true";
+
+        // Set the src and start loading the audio from the file
+        audio.src = path;
+
+        $("#selected-audio").html("");
+
+        document.getElementById("selected-audio").appendChild(audio);
+        initAudioPlayer("#selected-audio");
+    }
+
+    $("#push-vocabulary").click(event => {
+        event.preventDefault();
+        sync();
+    });
+
+    function sync() {
+        var file = document.querySelector('input#picked-audio-file[type="file"]').files[0];
+        if (!file) {
+            showToast('error', "Please select pronounce audio");
+            return;
+        }
+
+        var data = new FormData()
+        data.append('audio', file)
+
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        fetch('/vocabulary/contribute/audio', {
+            method: 'POST',
+            headers: {
+                RequestVerificationToken: token
+            },
+            body: data
+        }).then(r => r.json()).then(data => {
+            if (data.success && data.data) {
+                var uploadedPath = `/resources${data.data.path}`;
+                $("#media-path-hidden").val(uploadedPath);
+                $(`#create-update-vocabulary`)
+                    .parent().submit();
+            }
+        });
+    }
+
+</script>
+<div class="">
+    @if (Model.Id != Guid.Empty)
+    {
+        <input type="hidden" asp-for="Id" />
+    }
+    @if (Model.IsConfirmed)
+    {
+        <input type="hidden" asp-for="IsConfirmed" />
+        <input type="hidden" asp-for="ConfirmedTime" />
+        <input type="hidden" asp-for="ConfirmerId" />
+    }
+    <input type="hidden" id="default-media-path" value="@Model.PronounceAudio" />
+    <input type="hidden" asp-for="PronounceAudio" id="media-path-hidden" />
+    <input type="hidden" id="user-audio" />
+    <input type="file" class="d-none" id="picked-audio-file" />
+    <div class="form-group">
+        <label asp-for="Word" class="mb-1"></label>
+        <input asp-for="Word" class="form-control">
+        <div class="form-text text-danger small">
+            <span asp-validation-for="Word"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-lg-12">
+            <div class="form-group">
+                <label asp-for="WordClassId" class="mb-1"></label>
+                <div class="d-flex">
+                    <div class="flex-grow-1  mr-2">
+                        <select asp-for="WordClassId" class="form-control selectpicker bb-selector"
+                                data-live-search="true">
+                            @foreach (var item in wordClasses)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-text text-danger small">
+                    <span asp-validation-for="WordClassId"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-12">
+            <div class="form-group">
+                <label asp-for="VocabularyTopicId" class="mb-1"></label>
+                <div class="d-flex">
+                    <div class="flex-grow-1  mr-2">
+                        <select asp-for="VocabularyTopicId" class="form-control selectpicker bb-selector"
+                                data-live-search="true">
+                            @foreach (var item in vocabuaries)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-text text-danger small">
+                    <span asp-validation-for="VocabularyTopicId"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="PronounceAudio"></label>
+        <div id="selected-audio" class="text-center">
+        </div>
+        <div class="form-text text-danger small mt-2 text-center">
+            <span asp-validation-for="PronounceAudio"></span>
+        </div>
+        <div class="text-center mt-2">
+            <button type="button"
+                    id="btn-show-for-pick-first-file"
+                    class="btn btn-info btn-choose-file btn-sm shadow-sm btn-block">
+                @L["Upload pronounce audio"]
+            </button>
+            <button type="button"
+                    id="btn-show-for-pick-update-file"
+                    class="btn btn-info btn-choose-file btn-sm shadow-sm btn-block">
+                @L["Change pronounce audio"]
+            </button>
+            <button id="set-default-audio" type="button"
+                    class="btn btn-danger btn-sm shadow-sm btn-block">
+                @L["Remove to default"]
+            </button>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Pronounce" class="mb-1"></label>
+        <input asp-for="Pronounce" class="form-control"></input>
+        <div class="form-text text-danger small">
+            <span asp-validation-for="Pronounce"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Explain" class="mb-1"></label>
+        <textarea asp-for="Explain" class="form-control editor-vocabulary" editor-mint="true"></textarea>
+        <div class="form-text text-danger small">
+            <span asp-validation-for="Explain"></span>
+        </div>
+    </div>
+</div>

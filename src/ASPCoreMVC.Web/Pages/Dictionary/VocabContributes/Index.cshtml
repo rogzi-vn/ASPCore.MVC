@@ -1,0 +1,240 @@
+﻿@page "/dictionary/vocabularies/contribute"
+@model ASPCoreMVC.Web.Pages.Dictionary.VocabContributes.IndexModel
+@{
+    Model.SetBreadcrumbBtn(L["Discard &amp; Go back"].Value,
+    $"/dictionary/vocabularies",
+    icon: "fas fa-arrow-left",
+    c: "btn-danger");
+
+    Model.SetBreadcrumb(
+        new string[] { L["Dictionary"].Value, "#" },
+        new string[] { L["Vocabularies"].Value, "/dictionary/vocabularies" },
+        new string[] { L["Contribute"].Value });
+}
+
+@section Scripts {
+    <script>
+        var defVt = {
+            p: 1,
+            filter: ''
+        };
+        function syncVt(p = defVt.p, filter = defVt.filter) {
+            defVt = {
+                p: p,
+                filter: filter
+            };
+            $("#vocabs").load(`/dictionary/vocabularies/contribute/vocabulary-display?p=${p}&filter=${encodeURI(filter)}`, function () {
+                // Init search action
+                initSearchVt();
+                // Init tooltips
+                $(function () {
+                    $('[data-toggle="tooltip"]').tooltip()
+                });
+                $(".vocabulary-editable").click(event => {
+                    var p = $(event.currentTarget);
+                    var id = p.data('id');
+                    showCreateUpdateVocabularyModal(event, id);
+                });
+                $(".vocabulary-cannotedit").click(event => {
+                    var p = $(event.currentTarget);
+                    var message = p.data('original-title');
+                    showToast('error', message);
+                });
+            });
+        }
+
+        function syncDefVt() {
+            syncVt('1', '');
+        }
+
+        function initSearchVt() {
+            $("#search-vt-btn").click(function () {
+                var inp = $("#search-vt-inp").val();
+                syncVt('1', inp);
+            });
+        }
+
+        syncDefVt();
+
+        var defTopic = {
+            p: 1,
+            filter: ''
+        };
+        function syncTopic(p = defTopic.p, filter = defTopic.filter) {
+            defTopic = {
+                p: p,
+                filter: filter
+            };
+            $("#topics").load(`/dictionary/vocabularies/contribute/topic-display?p=${p}&filter=${encodeURI(filter)}`, function () {
+                // Init search action
+                initSearchTopic();
+                // Init tooltips
+                $(function () {
+                    $('[data-toggle="tooltip"]').tooltip()
+                });
+
+                $(".topic-editable").click(event => {
+                    var p = $(event.currentTarget);
+                    var id = p.data('id');
+                    showCreateUpdateTopicModal(event, id);
+                });
+                $(".topic-cannotedit").click(event => {
+                    var p = $(event.currentTarget);
+                    var message = p.data('original-title');
+                    showToast('error', message);
+                });
+            });
+        }
+
+        function syncDefTopic() {
+            syncTopic('1', '');
+        }
+
+        function initSearchTopic() {
+            $("#search-topic-btn").click(function () {
+                var inp = $("#search-topic-inp").val();
+                syncTopic('1', inp);
+            });
+        }
+
+        syncDefTopic();
+
+        $("#add-vocabulary").click(event => {
+            showCreateUpdateVocabularyModal(event);
+        });
+        $("#add-topic").click(event => {
+            showCreateUpdateTopicModal(event);
+        });
+
+        function showCreateUpdateVocabularyModal(event, id) {
+            var vtBaseAPI = "/api/app/vocabulary";
+            var ceVtModalId = "create-update-vocabulary";
+            if (!id) {
+                var url = `/dictionary/vocabularies/contribute/create-vocabulary`;
+                $(`#${ceVtModalId}-content`).load(url, function () {
+                    $(`#${ceVtModalId} h5.modal-title`).html("Contribute vocabulary");
+                    // Xử lý sự kiện sau khi load xong
+                    $(`#${ceVtModalId}`)
+                        .parent()
+                        .attr('action', `${vtBaseAPI}`)
+                        .attr('method', 'POST');
+                    // Hiển thị hộp thoại
+                    $(`#${ceVtModalId}`).modal('show');
+                    $(`#${ceVtModalId}-del-no-sub`).addClass("d-none");
+
+                    // Init selector
+                    $('.bb-selector').selectpicker('refresh');
+                    // bind editor
+                    bindCKEditor("editor-vocabulary");
+                });
+            } else {
+                pd(event);
+                var url = `/dictionary/vocabularies/contribute/update-vocabulary/${id}`;
+                $(`#${ceVtModalId}-content`).load(url, function () {
+                    $(`#${ceVtModalId} h5.modal-title`).html("Update contributed vocabulary");
+                    // Xử lý sự kiện sau khi load xong
+                    $(`#${ceVtModalId}`)
+                        .parent()
+                        .attr('action', `${vtBaseAPI}/${id}`)
+                        .attr('method', 'PUT');
+                    // Cho phép xóa
+                    $(`#${ceVtModalId}-del-no-sub`).removeClass("d-none");
+                    $(`#${ceVtModalId}-del-no-sub`).click(function () {
+                        // Ẩn hộp thoại
+                        $(`#${ceVtModalId}`).modal('hide');
+                        deleteConfirm(`${vtBaseAPI}/${id}`, function (res) {
+                            //if (id == selectedQuestionGroup) {
+                            //    $(`#remove-selected-question-group-btn`).click();
+                            //}
+                            syncDefVt();
+                        });
+                    });
+                    // Init selector
+                    $('.bb-selector').selectpicker('refresh');
+                    // Hiển thị hộp thoại
+                    $(`#${ceVtModalId}`).modal('show');
+                    // bind editor
+                    bindCKEditor("editor-vocabulary");
+                });
+            }
+        }
+        function showCreateUpdateTopicModal(event, id) {
+            var vtBaseAPI = "/api/app/vocabulary-topic";
+            var ceVtModalId = "create-update-topic";
+            if (!id) {
+                var url = `/dictionary/vocabularies/contribute/create-topic`;
+                $(`#${ceVtModalId}-content`).load(url, function () {
+                    $(`#${ceVtModalId} h5.modal-title`).html("Contribute topic");
+                    // Xử lý sự kiện sau khi load xong
+                    $(`#${ceVtModalId}`)
+                        .parent()
+                        .attr('action', `${vtBaseAPI}`)
+                        .attr('method', 'POST');
+                    // Hiển thị hộp thoại
+                    $(`#${ceVtModalId}`).modal('show');
+                    $(`#${ceVtModalId}-del-no-sub`).addClass("d-none");
+                    // bind editor
+                    bindCKEditor("editor-topic");
+                });
+            } else {
+                pd(event);
+                var url = `/dictionary/vocabularies/contribute/update-topic/${id}`;
+                $(`#${ceVtModalId}-content`).load(url, function () {
+                    $(`#${ceVtModalId} h5.modal-title`).html("Update contributed topic");
+                    // Xử lý sự kiện sau khi load xong
+                    $(`#${ceVtModalId}`)
+                        .parent()
+                        .attr('action', `${vtBaseAPI}/${id}`)
+                        .attr('method', 'PUT');
+                    // Cho phép xóa
+                    $(`#${ceVtModalId}-del-no-sub`).removeClass("d-none");
+                    $(`#${ceVtModalId}-del-no-sub`).click(function () {
+                        // Ẩn hộp thoại
+                        $(`#${ceVtModalId}`).modal('hide');
+                        deleteConfirm(`${vtBaseAPI}/${id}`, function (res) {
+                            //if (id == selectedQuestionGroup) {
+                            //    $(`#remove-selected-question-group-btn`).click();
+                            //}
+                            syncDefTopic();
+                        });
+                    });
+                    // Hiển thị hộp thoại
+                    $(`#${ceVtModalId}`).modal('show');
+                    // bind editor
+                    bindCKEditor("editor-topic");
+                });
+            }
+        }
+    </script>
+}
+@Html.AntiForgeryToken()
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">@L["Contribution history"]</h6>
+        <div class="">
+            <button class="btn btn-sm btn-success" type="button" id="add-vocabulary"><i class="fas fa-plus mr-1"></i> @L["Vocabulary"]</button>
+            <button class="btn btn-sm btn-success" type="button" id="add-topic"><i class="fas fa-plus mr-1"></i> @L["Topic"]</button>
+        </div>
+    </div>
+    <div class="card-body row">
+        <div class="col-12 col-lg-7" id="vocabs">
+
+        </div>
+        <div class="col-12 col-lg-5 p-0 border-left-primary" id="topics">
+        </div>
+    </div>
+</div>
+
+<component type="typeof(FormModelComponent)"
+           render-mode="ServerPrerendered"
+           param-DeleteNoSubmit="true"
+           param-Id="@("create-update-vocabulary")"
+           param-Title="@("Create vocabulary")"
+           param-Callback="@("syncDefVt")" />
+
+<component type="typeof(FormModelComponent)"
+           render-mode="ServerPrerendered"
+           param-DeleteNoSubmit="true"
+           param-Id="@("create-update-topic")"
+           param-Title="@("Create vocabulary topic")"
+           param-Callback="@("syncDefTopic")" />

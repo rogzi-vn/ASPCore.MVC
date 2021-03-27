@@ -21,7 +21,7 @@ function syncVt(p = defVt.p, filter = defVt.filter, vcId = defVt.vcId, wcId = de
     };
     $("#vocabulary-topics").load(`/manager/vocabularies/display?p=${p}&filter=${filter}&topicId=${vcId}&wcId=${wcId}`, function () {
         // After grammar category loaded
-        $("#add-grammar-category-btn").click(showVtModal);
+        $("#add-grammar-category-btn").click(showCreateUpdateVocabularyModal);
         // Init search action
         initSearchVt();
         // Init edit action
@@ -66,12 +66,12 @@ function initEditVt() {
         var obj = $(event.currentTarget);
         var id = obj.data('id');
         if (id) {
-            showVtModal(event, id);
+            showCreateUpdateVocabularyModal(event, id);
         }
     });
 }
 
-function showVtModal(event, id) {
+function showCreateUpdateVocabularyModal(event, id) {
     if (!id) {
         var url = `${vtCreateModalPartial}`;
         $(`#${ceVtModalId}-content`).load(url, function () {

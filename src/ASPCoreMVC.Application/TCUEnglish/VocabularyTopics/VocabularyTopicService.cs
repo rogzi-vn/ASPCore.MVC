@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 
 namespace ASPCoreMVC.TCUEnglish.VocabularyTopics
@@ -22,6 +23,17 @@ namespace ASPCoreMVC.TCUEnglish.VocabularyTopics
             return new ResponseWrapper<List<VocabularyTopicDTO>>()
                 .SuccessReponseWrapper(ObjectMapper.Map<
                 List<VocabularyTopic>, List<VocabularyTopicDTO>>(await Repository.GetListAsync()), "Successful");
+        }
+
+        public async Task<PagedResultDto<VocabularyTopicBaseDTO>> GetContributedVocabularyTopicAsync(GetVocabularyTopicDTO inp)
+        {
+            var query = await CreateFilteredQueryAsync(inp);
+            query = query.Where(x => x.CreatorId == CurrentUser.Id.Value);
+            query = ApplySorting(query, inp);
+            var totalCount = query.Count();
+            query = ApplyPaging(query, inp);
+            return new PagedResultDto<VocabularyTopicBaseDTO>(totalCount,
+                ObjectMapper.Map<List<VocabularyTopic>, List<VocabularyTopicBaseDTO>>(query.ToList()));
         }
 
         public async Task<ResponseWrapper<bool>> PutConfirm(Guid id)

@@ -52,6 +52,18 @@ function isImage(filename) {
     return false;
 }
 
+function isAudio(filename) {
+    var ext = getExtension(filename);
+    switch (ext.toLowerCase()) {
+        case 'mp3':
+        case 'mp4':
+        case 'aif':
+            //etc
+            return true;
+    }
+    return false;
+}
+
 function isVideo(filename) {
     var ext = getExtension(filename);
     switch (ext.toLowerCase()) {

@@ -13,6 +13,9 @@
             $("#current-page").val(page);
             $("#change-page-form").submit();
         }
+        $("#question-groups-selector").on('change', function () {
+            $("#change-page-form").submit();
+        });
     </script>
 }
 
@@ -61,7 +64,7 @@
                         @if (!((string)Model.Filter).IsNullOrEmpty())
                         {
                             <br />
-                            <a href="javascript:syncDefaultData();"
+                            <a href="javascript:movePage(1);"
                                class="d-inline-block btn btn-sm btn-primary shadow-sm mt-4"
                                style="font-style: normal;">
                                 @L["Show All"]

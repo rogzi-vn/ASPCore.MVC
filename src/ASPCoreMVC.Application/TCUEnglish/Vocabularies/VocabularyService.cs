@@ -156,5 +156,21 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
                 .SuccessReponseWrapper(resQuery.ToList(),
                 "Successful");
         }
+
+        public async Task<PagedResultDto<VocabularyBaseDTO>> GetContributedListAsync(GetVocabularyDTO input)
+        {
+            var query = await CreateFilteredQueryAsync(input);
+            // Get by creator
+            query = query.Where(x => x.CreatorId == CurrentUser.Id.Value);
+            query = ApplySorting(query, input);
+
+            var totalCount = query.Count();
+            query = query
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount);
+            var res = ObjectMapper.Map<List<Vocabulary>, List<VocabularyBaseDTO>>(query.ToList());
+
+            return new PagedResultDto<VocabularyBaseDTO>(totalCount, res);
+        }
     }
 }
