@@ -83,7 +83,7 @@ namespace ASPCoreMVC.Web.Pages.Manager.Users
             }
 
 
-            var res = await _AppUserService.CreateAsync(UserAccount,
+            var res = await _AppUserService.CreateWithRoleAsync(UserAccount,
                 CurrentUserRoles.Where(x => x.Value).Select(x => x.Key).ToList());
             if (res.Success)
             {

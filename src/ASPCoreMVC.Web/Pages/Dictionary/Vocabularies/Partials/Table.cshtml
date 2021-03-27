@@ -44,12 +44,10 @@
                            data-audio="@item.PronounceAudio"
                            data-toggle="tooltip" data-placement="bottom" title="@L["Pronunciation"]"></i> @Html.Raw(item.Pronounce)
                     </div>
-                    @if (!item.Explain.IsNullOrEmpty())
-                    {
-                        <div class="border border-warning my-2 p-2">
-                            @Html.Raw(item.Explain)
-                        </div>
-                    }
+                    <div class="border border-warning my-2 p-2">
+                        <div>@Html.Raw(item.Mean)</div>
+                        @Html.Raw(item.Explain)
+                    </div>
                 </div>
             }
         </div>

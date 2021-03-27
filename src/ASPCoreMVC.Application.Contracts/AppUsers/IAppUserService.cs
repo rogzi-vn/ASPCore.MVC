@@ -21,6 +21,6 @@ namespace ASPCoreMVC.AppUsers
         public Task<ResponseWrapper<AppUserProfileDTO>> UpdateSelfProfileAsync(AppUserProfileDTO profile);
         public Task<ResponseWrapper<bool>> PasswordValidate(string password);
         public Task<ResponseWrapper<string>> GetSelftShortTimeToken();
-        public Task<ResponseWrapper<AppUserDTO>> CreateAsync(CreateAppUserDTO input, List<string> roles);
+        public Task<ResponseWrapper<AppUserDTO>> CreateWithRoleAsync(CreateAppUserDTO input, List<string> roles);
     }
 }

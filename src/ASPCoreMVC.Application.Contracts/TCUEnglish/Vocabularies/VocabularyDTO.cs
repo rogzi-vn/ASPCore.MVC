@@ -17,6 +17,8 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
         [Required]
         // Từ vựng
         public string Word { get; set; }
+        [Required]
+        public string Mean { get; set; }
         // Giải nghĩa
         public string Explain { get; set; }
         [Required]

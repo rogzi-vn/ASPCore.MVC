@@ -18,6 +18,8 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
         // Từ vựng
         public string Word { get; set; }
         [Required]
+        public string Mean { get; set; }
+        [Required]
         // Phát âm dưới dạng ký tự biểu diễn
         public string Pronounce { get; set; }
         // Phát âm dưới dạng âm thanh

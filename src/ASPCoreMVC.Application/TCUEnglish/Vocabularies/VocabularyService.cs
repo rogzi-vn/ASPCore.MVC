@@ -2,11 +2,13 @@
 using ASPCoreMVC._Commons.Services;
 using ASPCoreMVC.TCUEnglish.VocabularyTopics;
 using ASPCoreMVC.TCUEnglish.WordClasses;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
@@ -118,6 +120,7 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
                     TopicName = x.vc.Name,
                     WordClassName = x.wc.Name,
                     Word = x.v.Word,
+                    Mean = x.v.Mean,
                     Pronounce = x.v.Pronounce,
                     PronounceAudio = x.v.PronounceAudio,
                     Explain = x.v.Explain
@@ -149,6 +152,7 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
                 {
                     Id = x.v.Id,
                     Word = x.v.Word,
+                    Mean = x.v.Mean,
                     PronounceAudio = x.v.PronounceAudio,
                 });
 
@@ -171,6 +175,94 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
             var res = ObjectMapper.Map<List<Vocabulary>, List<VocabularyBaseDTO>>(query.ToList());
 
             return new PagedResultDto<VocabularyBaseDTO>(totalCount, res);
+        }
+
+        public async Task<List<QuickVocabularyTestDTO>> GenerateQuickVocabularyTests(int size)
+        {
+            var query = await Repository.GetQueryableAsync();
+            var qts = new List<QuickVocabularyTestDTO>();
+            // Lấy cho đủ số câu hỏi
+            Random rand = new Random();
+            for (int i = 0; i < size; i++)
+            {
+                var tempQuery = query;
+
+                // Không lấy những record đã tồn tại trong danh sách kết quả
+                foreach (var record in qts)
+                    tempQuery = tempQuery.Where(x => x.Id != record.Id);
+
+                int skip = rand.Next(0, tempQuery.Count());
+
+                var tempRes = tempQuery
+                    .Skip(skip)
+                    .Take(1)
+                    .Select(x => new QuickVocabularyTestDTO
+                    {
+                        Id = x.Id,
+                        Vocabulary = x.Word,
+                        Mean = x.Mean,
+                        Answers = new List<string> { x.Mean }
+                    })
+                    .First();
+                var tempVocabulary = new List<Vocabulary>();
+
+                for (int j = 0; j < 3; j++)
+                {
+                    var tempAnsQuery = query.Where(x => x.Id != tempRes.Id);
+
+                    // Không lấy những record đã tồn tại trong danh sách kết quả
+                    foreach (var record in tempVocabulary)
+                        tempAnsQuery = tempAnsQuery.Where(x => x.Id != record.Id);
+
+                    int skipAns = rand.Next(0, tempAnsQuery.Count());
+
+                    var tempAns = tempAnsQuery
+                        .Skip(skipAns)
+                        .Take(1)
+                        .First();
+                    tempVocabulary.Add(tempAns);
+                }
+
+                tempRes.Answers.AddRange(tempVocabulary.Select(x => x.Mean));
+                tempRes.Answers = Shuffle(tempRes.Answers);
+                qts.Add(tempRes);
+            }
+            return qts;
+        }
+        public List<T> Shuffle<T>(List<T> list)
+        {
+            Random rng = new Random();
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+            return list;
+        }
+
+        public async Task<dynamic> QuickFix()
+        {
+            //var res = await Repository.ToListAsync();
+            //res = res.Where(x => x.Mean == null || x.Mean.Length <= 0).ToList();
+            //for (int i = 0; i < res.Count; i++)
+            //{
+            //    var regex = new Regex(@"<p>(.*?)<\/p>");
+            //    var match = regex.Match(res[i].Explain);
+            //    if (match.Success)
+            //    {
+            //        var mean = match.Groups[1].Value;
+            //        var newExplain = res[i].Explain.Replace($"<p>{mean}</p>", "").Trim();
+            //        res[i].Mean = mean;
+            //        res[i].Explain = newExplain;
+            //    }
+            //}
+            //await Repository.UpdateManyAsync(res);
+            //return res;
+            throw new Exception("Nố nồ nồ");
         }
     }
 }

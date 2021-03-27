@@ -187,10 +187,10 @@ namespace ASPCoreMVC.AppUsers
         public override Task<ResponseWrapper<AppUserDTO>> CreateAsync(CreateAppUserDTO input)
         {
 
-            return CreateAsync(input, new List<string>());
+            return CreateWithRoleAsync(input, new List<string>());
         }
 
-        public async Task<ResponseWrapper<AppUserDTO>> CreateAsync(CreateAppUserDTO input, List<string> roles)
+        public async Task<ResponseWrapper<AppUserDTO>> CreateWithRoleAsync(CreateAppUserDTO input, List<string> roles)
         {
             input.Id = Guid.NewGuid();
             var identityUser = ObjectMapper.Map<CreateAppUserDTO, IdentityUser>(input);

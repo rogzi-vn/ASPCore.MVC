@@ -1,0 +1,121 @@
+﻿@model List<ASPCoreMVC.TCUEnglish.Vocabularies.QuickVocabularyTestDTO>
+@{
+
+}
+
+<script>
+    var defCir = "rounded-circle border px-2";
+    var isComfirmed = false;
+    $(".option-clickable").click(event => {
+        if (isComfirmed)
+            return;
+        var p = $(event.currentTarget);
+        var id = p.data('id');
+        var crrChar = p.data('char');
+        var optionId = `${id}-${crrChar}`;
+        $(`span[id^='${id}-']`).each(function () {
+            $(this).removeClass(defCir);
+            $(this).removeClass("border-dark");
+            $(`.${id}`).attr('data-selected', false);
+        });
+        $(`#${optionId}`).addClass(defCir).addClass("border-dark");
+        $(p).attr('data-selected', true);
+    });
+    $("#see-result-btn").click(event => {
+        var p = $(event.currentTarget);
+        p.html("Close");
+
+        $("#close-by-done").removeClass("d-none");
+        p.remove();
+        isComfirmed = true;
+
+        var totalCount = @Model.Count;
+        var correctCount = 0;
+        $(".option-clickable").each(function () {
+            var p = $(this);
+            var selected = p.data('selected');
+            var isCorrect = p.data('is-correct');
+            var crrChar = p.data('char');
+            var id = p.data('id');
+            var optionId = `${id}-${crrChar}`;
+
+            if (selected == true && isCorrect == true) {
+                correctCount++;
+                $(`#${optionId}`).addClass(defCir).removeClass("border-dark").addClass("border-success");
+            } else if (isCorrect == true) {
+                $(`#${optionId}`).addClass(defCir).removeClass("border-dark").addClass("border-danger");
+            }
+        });
+        $("#result-ahtoreacgroilutrebjwplqjhv").html(`${correctCount}/${totalCount}`);
+        $("#result-ahtoreacgroilutrebjwplqjhv-percent").html(`(${Math.round(correctCount * 100 / totalCount).toFixed(1)}%)`)
+        makeIgnoreQuickTest();
+    });
+
+    $("#make-ignore-quick-test").click(makeIgnoreQuickTest);
+
+    function makeIgnoreQuickTest() {
+        var date = new Date();
+        date.setDate(date.getDate() + 1);
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        // sets the cookie cookie2 (cookie1 is *not* overwritten)
+        document.cookie = `quicktest=ok; expires=${date.toUTCString()}; path=/`;
+    }
+</script>
+<!-- Large modal -->
+<div class="modal fade" id="quick-test-modal" tabindex="-1" role="dialog" aria-labelledby="QuickTestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary">
+                <h5 class="mb-0 text-white">@L["Quick test"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-3">
+                <div class="row">
+                    <div class="col-12 col-lg-4">
+                        <div class="">
+                            <img src="/dist/img/img-teacher.png" class="w-100" />
+                        </div>
+                        <div class="border border-danger text-center mt-3 py-3">
+                            <h4 class="font-weight-bolder text-danger my-0">
+                                @L["Result"]: <span id="result-ahtoreacgroilutrebjwplqjhv">--/--</span>
+                            </h4>
+                            <span class="small text-danger" id="result-ahtoreacgroilutrebjwplqjhv-percent"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-8">
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            var col = Math.Ceiling(12F / Model[i].Answers.Count);
+                            <div class="q-container mb-2">
+                                <div class="font-weight-bold" style="color: #000;">@(i+1). @Model[i].Vocabulary</div>
+                                <div class="row">
+                                    @for (int j = 0; j < Model[i].Answers.Count; j++)
+                                    {
+                                        var charX = ((char)(65 + j)).ToString();
+                                        <div class="col-6 col-lg-@col option-clickable ans-@Model[i].Id" style="cursor: pointer;"
+                                             data-id="ans-@Model[i].Id"
+                                             data-selected="false"
+                                             data-is-correct="@((Model[i].Answers[j]==Model[i].Mean).ToString().ToLower())"
+                                             data-char="@charX"><span id="ans-@Model[i].Id-@charX" class="">@charX</span>. @Html.Raw(Model[i].Answers[j])</div>
+                                        }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-sm shadow-sm" id="make-ignore-quick-test" data-dismiss="modal">@L["Ignore"]</button>
+                <button type="button" class="btn btn-primary btn-sm shadow-sm" id="see-result-btn">@L["See results"]</button>
+                <button type="button" class="btn btn-primary btn-sm shadow-sm d-none" id="close-by-done" data-dismiss="modal">@L["Close"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#quick-test-modal').modal({ backdrop: 'static', keyboard: false })
+</script>

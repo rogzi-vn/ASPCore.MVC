@@ -18,6 +18,8 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
         public Task<ResponseWrapper<bool>> PutConfirm(Guid id);
         public Task<ResponseWrapper<bool>> PutNoConfirm(Guid id);
         public Task<ResponseWrapper<List<VocabularyBaseDTO>>> GetAllVocabularies();
+        public Task<dynamic> QuickFix();
+        public Task<List<QuickVocabularyTestDTO>> GenerateQuickVocabularyTests(int size);
         public Task<ResponseWrapper<List<VocabularySimpifyDTO>>> GetRandomVocabularies(int maxCount);
     }
 }

@@ -39,6 +39,7 @@
         <!-- End of Content Wrapper -->
 
     </div>
+    <div id="quick-test"></div>
     <!-- End of Page Wrapper -->
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
@@ -54,6 +55,21 @@
     <script src="/dist/js/messable.js"></script>
     @RenderSection("Scripts", false)
     @Html.PageScripts()
+    <script>
+        if (!readCookie("quicktest")) {
+            $("#quick-test").load("/load-quick-test");
+        }
+        function readCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+    </script>
 </body>
 
 </html>

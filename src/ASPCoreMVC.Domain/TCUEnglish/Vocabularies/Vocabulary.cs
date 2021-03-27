@@ -12,6 +12,7 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
         public Guid WordClassId { get; set; }
         // Từ vựng
         public string Word { get; set; }
+        public string Mean { get; set; }
         // Giải nghĩa
         public string Explain { get; set; }
         // Phát âm dưới dạng ký tự biểu diễn
