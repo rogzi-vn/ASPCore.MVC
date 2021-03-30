@@ -19,8 +19,10 @@ namespace ASPCoreMVC.AppUsers
         [MaxLength(AppUsersConsts.DisplayNameMaxLength)]
         [CheckDisplayname(nameof(Name), nameof(Surname))]
         public string DisplayName { get; set; }
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
         public bool EmailConfirmed { get; private set; }
+        [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
         public bool PhoneNumberConfirmed { get; private set; }
         [MaxLength(AppUsersConsts.PictureMaxLength)]
@@ -33,6 +35,7 @@ namespace ASPCoreMVC.AppUsers
         public string Address { get; set; }
         [MaxLength(AppUsersConsts.IdentityCardNumberMaxLength)]
         public string IdentityCardNumber { get; set; }
+        [DataType(DataType.DateTime)]
         public DateTime? BirthDay { get; set; }
         public GenderTypes Gender { get; set; }
         [MaxLength(AppUsersConsts.ShortBioMaxLength)]

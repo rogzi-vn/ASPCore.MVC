@@ -265,7 +265,7 @@ function putConfirm(
         showLoaderOnConfirm: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, change it!',
+        confirmButtonText: 'Yes, delete!',
         preConfirm: () => {
             var token = $('input[name="__RequestVerificationToken"]').val();
             return fetch(decodeURI(confirmUrl), {
