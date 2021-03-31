@@ -68,12 +68,12 @@ function initEditVt() {
         var obj = $(event.currentTarget);
         var id = obj.data('id');
         if (id) {
-            showCreateUpdateVocabularyModal(event, id);
+            showVtModal(event, id);
         }
     });
 }
 
-function showCreateUpdateVocabularyModal(event, id) {
+function showVtModal(event, id) {
     if (!id) {
         var url = `${vtCreateModalPartial}`;
         $(`#${ceVtModalId}-content`).load(url, function () {
