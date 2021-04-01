@@ -490,14 +490,21 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                             ExamCount = 1
                         };
                         // Get user info
-                        var user = await AppUserRepository.GetAsync(examLog.CreatorId.Value);
-                        if (user != null)
+                        try
                         {
-                            els.UserName = user.UserName;
-                            els.Name = user.Name;
-                            els.DisplayName = user.DisplayName;
-                            els.Surname = user.Surname;
-                            result.Add(els);
+                            var user = await AppUserRepository.GetAsync(examLog.CreatorId.Value);
+                            if (user != null)
+                            {
+                                els.UserName = user.UserName;
+                                els.Name = user.Name;
+                                els.DisplayName = user.DisplayName;
+                                els.Surname = user.Surname;
+                                result.Add(els);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            continue;
                         }
                     }
                     else

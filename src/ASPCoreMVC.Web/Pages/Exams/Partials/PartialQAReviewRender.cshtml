@@ -197,9 +197,9 @@
                            max="@(Model.SkillPart.MaxScores/Model.SkillPart.QuestionContainers.Sum(x=>x.Questions.Count))">
                 </div>
                 <div class="form-group">
-                    <label for="correctContentByInstructor">@L["Comment and edit"]</label>
+                    <label for="CorrectContentByInstructor">@L["Comment and edit"]</label>
                     <textarea class="form-control editor-auto-value"
-                              name="correctContentByInstructor"
+                              name="CorrectContentByInstructor"
                               editor-mint="true">@q.CorrectContentByInstructor</textarea>
                 </div>
                 <script>
@@ -272,9 +272,9 @@
                                        max="@(Model.SkillPart.MaxScores/Model.SkillPart.QuestionContainers.Sum(x=>x.Questions.Count))">
                             </div>
                             <div class="form-group">
-                                <label for="correctContentByInstructor">@L["Correct student paragraph"]</label>
-                                <textarea class="form-control editor"
-                                          name="correctContentByInstructor"
+                                <label for="CorrectContentByInstructor">@L["Correct student paragraph"]</label>
+                                <textarea class="form-control editor-auto-value"
+                                          name="CorrectContentByInstructor"
                                           editor-mint="true">@q.CorrectContentByInstructor</textarea>
                             </div>
                             <script>
