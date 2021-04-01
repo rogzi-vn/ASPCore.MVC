@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -91,7 +91,7 @@ namespace ASPCoreMVC.Web.Pages.Instructors
 
             var searchInp = new GetExamCatInstructDTO
             {
-                UserId = CurrentUser.Id,
+                //UserId = null, // Không có phần này để có thể lấy tất cả giáo viên hướng dẫn
                 ExamCategoryId = ExamCategoryId,
                 FilterDisplayName = Filter,
                 MaxResultCount = AppTheme.Limit,

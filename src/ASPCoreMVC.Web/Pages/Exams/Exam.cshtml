@@ -3,6 +3,7 @@
 @model ASPCoreMVC.Web.Models.ExamRenderViewModel
 @{
     Layout = AppTheme.ExamLayout;
+    var renderType = (ASPCoreMVC.Common.RenderExamTypes)ViewBag.RenderType;
 }
 @section Styles {
     <link rel="stylesheet"
@@ -144,10 +145,17 @@
                                 <div class="row mb-4">
                                     @if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Article)
                                     {
-                                        <div class="col-12 p-2 my-2 border rounded border-dark replace-count artical load-artical-async"
-                                             data-qc-id="@qc.Id"
-                                             data-start-count="@qCount">
-                                        </div>
+                                        if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.WriteAnswer && renderType == ASPCoreMVC.Common.RenderExamTypes.Synthetic)
+                                        {
+                                            // Nếu nội dung chủ là Đoạn ăn và kiểu trả lời là viết lại đoạn văn thì khi ở phàn thi tổng hợp sẽ ẩn phần nội dung đoạn văn chủ
+                                        }
+                                        else
+                                        {
+                                            <div class="col-12 p-2 my-2 border rounded border-dark replace-count artical load-artical-async"
+                                                 data-qc-id="@qc.Id"
+                                                 data-start-count="@qCount">
+                                            </div>
+                                        }
                                     }
                                     else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Audio)
                                     {
@@ -168,12 +176,19 @@
                                     }
                                     else if (skp.MasterContentType == ASPCoreMVC.Common.MasterContentTypes.Video)
                                     {
-                                        <div class="col-12 text-center my-2">
-                                            <video class="w-100 player" preload="metadata" playsinline controls>
-                                                <source src="@qc.MediaPath">
-                                                @L["Your browser does not support the video tag."]
-                                            </video>
-                                        </div>
+                                        if (skp.AnswerType == ASPCoreMVC.Common.AnswerTypes.RecorderAnswer && renderType == ASPCoreMVC.Common.RenderExamTypes.Synthetic)
+                                        {
+                                            // Nếu nội dung chủ là Video và kiểu trả lời là ghi âm thì khi ở phàn thi tổng hợp sẽ ẩn phần nội dung video chủ
+                                        }
+                                        else
+                                        {
+                                            <div class="col-12 text-center my-2">
+                                                <video class="w-100 player" preload="metadata" playsinline controls>
+                                                    <source src="@qc.MediaPath">
+                                                    @L["Your browser does not support the video tag."]
+                                                </video>
+                                            </div>
+                                        }
                                     }
                                     else
                                     {

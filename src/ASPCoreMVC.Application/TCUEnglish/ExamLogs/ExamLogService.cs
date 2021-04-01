@@ -93,23 +93,20 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             }
             input.IsDoneScore = false;
 
-            #region Nếu user lần đầu chọn GVDH
-            if (!Repository.Any(x => x.ExamCatInstructorId == input.ExamCatInstructorId))
-            {
-                var instructorUser = await ExamCatInstructorRepository.GetAsync(x => x.Id == input.ExamCatInstructorId);
-                var currentUser = await AppUserRepository.GetAsync(CurrentUser.Id.Value);
-                string msg = L["{0} chooses you as the instructor for the first time and begins the \"{1}\" exam. Please enthusiastically support that student"];
-                msg = string.Format(msg, currentUser.DisplayName, input.Name);
+            #region Thông báo cho GVHD là có học viên chọn 
+            var instructorUser = await ExamCatInstructorRepository.GetAsync(x => x.Id == input.ExamCatInstructorId);
+            var currentUser = await AppUserRepository.GetAsync(CurrentUser.Id.Value);
+            string msg = L["\"{0}\" chooses you as the instructor for the \"{1}\" exam. Please enthusiastically support that student"];
+            msg = string.Format(msg, currentUser.DisplayName, input.Name);
 
-                var notification = new Notification
-                {
-                    TargetUserId = instructorUser.UserId,
-                    NotificationMessage = msg,
-                    HerfLink = "#",
-                    IsChecked = false
-                };
-                await NotificationRepository.InsertAsync(notification, true);
-            }
+            var notification = new Notification
+            {
+                TargetUserId = instructorUser.UserId,
+                NotificationMessage = msg,
+                HerfLink = "#",
+                IsChecked = false
+            };
+            await NotificationRepository.InsertAsync(notification, true);
             #endregion
 
             return await base.CreateAsync(input);

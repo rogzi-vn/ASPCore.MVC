@@ -103,15 +103,17 @@ namespace ASPCoreMVC.TCUEnglish.MessGroups
 
             for (int i = 0; i < allMesGroup.Count; i++)
             {
-                var unreadQuery = userMessageQuery
+                var tempCurrentUserMessageQuery =
+                    userMessageQuery
                     .Where(x => x.MessGroupId == allMesGroup[i].Id)
                     .Where(x => x.CreatorId != CurrentUser.Id.Value)
-                    .Where(x => x.IsReaded == false)
                     .OrderBy(x => x.CreationTime);
+                var unreadQuery = tempCurrentUserMessageQuery
+                    .Where(x => x.IsReaded == false);
 
-                allMesGroup[i].LatestMessage = userMessageQuery.LastOrDefault()?.Message ?? "";
+                allMesGroup[i].LatestMessage = tempCurrentUserMessageQuery.LastOrDefault()?.Message ?? "";
                 allMesGroup[i].UnReadCount = unreadQuery.Count();
-                allMesGroup[i].LatestMessageTime = (userMessageQuery.LastOrDefault()?.CreationTime ?? DateTime.Now);
+                allMesGroup[i].LatestMessageTime = (tempCurrentUserMessageQuery.LastOrDefault()?.CreationTime ?? DateTime.Now);
             }
 
             if (input.Filter.IsNullOrEmpty())
