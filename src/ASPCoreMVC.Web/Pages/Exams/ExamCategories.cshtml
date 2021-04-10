@@ -94,6 +94,7 @@
             var instructorId = $(`#${instructorRef}`).val();
             if (instructorId) {
                 $("#exam-detail-modal").load(`/exams/partials/exam-partials/${type}/${id}/detail?ex=${ex}&sc=${sc}&instructor=${instructorId}`, function () {
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
                     $("#exam-detail-modal").modal('show');
                 });
             } else {

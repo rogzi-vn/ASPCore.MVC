@@ -33,6 +33,8 @@ $(".load-artical-async").each(function () {
             return count++;
         });
         p.html(paragraph);
+        // equation initialize
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
     });
 });
 

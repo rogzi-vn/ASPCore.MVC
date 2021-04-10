@@ -57,6 +57,7 @@
             var p = $(event.currentTarget);
             var id = p.data('trans-id');
             $("#exam-transcript-modal").load(`/exams/partials/exam-partials/transcript/${id}`, function () {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
                 $("#exam-transcript-modal").modal('show');
             });
         });

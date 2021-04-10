@@ -188,6 +188,8 @@ function showQuestionPreview(id) {
             });
             // Hiển thị hộp thoại
             $("#preview-question").modal('show');
+            // equation initialize
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         });
 }
 //========================= END QUESTION PREVIEW =========================//
