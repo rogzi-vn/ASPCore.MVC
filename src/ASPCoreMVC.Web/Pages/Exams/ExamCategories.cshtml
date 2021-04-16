@@ -93,7 +93,7 @@
         function loadDetail(instructorRef, type, id, ex, sc) {
             var instructorId = $(`#${instructorRef}`).val();
             if (instructorId) {
-                $("#exam-detail-modal").load(`/exams/partials/exam-partials/${type}/${id}/detail?ex=${ex}&sc=${sc}&instructor=${instructorId}`, function () {
+                $("#exam-detail-modal").load(`/exams/partials/exam-partials/${type}/${id}/detail?ex=${encodeURI(ex)}&sc=${encodeURI(sc)}&instructor=${instructorId}`, function () {
                     MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
                     $("#exam-detail-modal").modal('show');
                 });

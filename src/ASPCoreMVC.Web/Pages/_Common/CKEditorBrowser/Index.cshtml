@@ -72,7 +72,6 @@
                     ]
                 },
                 getFileCallback: function (file) {
-                    console.log(file);
                     var retUrl = file.url.substring(file.url.indexOf('@ViewData["RootDirectory"]'));
                     window.opener.CKEDITOR.tools.callFunction(funcNum, getTruePath(retUrl));
                     window.close();
