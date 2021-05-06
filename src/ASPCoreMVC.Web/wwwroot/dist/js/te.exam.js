@@ -371,4 +371,6 @@ function optimizeMathJaxAnswer() {
     });
 }
 
-optimizeMathJaxAnswer();
+MathJax.Hub.Queue(function () {
+    optimizeMathJaxAnswer();
+});
