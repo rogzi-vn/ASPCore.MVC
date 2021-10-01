@@ -9,6 +9,7 @@ notificationHubConnection.start({
 }).then(function () {
 
 }).catch(function (err) {
+    console.log(err);
     return console.error(err.toString());
 });
 

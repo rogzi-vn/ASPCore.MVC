@@ -69,7 +69,6 @@ namespace ASPCoreMVC.TCUEnglish.ScoreLogs
 
         private async Task<float> _GetSkillCategoryGPA(Guid skillCatId, DateTime? dest)
         {
-            var gpa = 0F;
             var skillCat = await ExamSkillCategoryRepositoty.GetAsync(skillCatId);
 
             var skpQuery = await ExamSkillPartRepositoty.GetQueryableAsync();
@@ -80,27 +79,22 @@ namespace ASPCoreMVC.TCUEnglish.ScoreLogs
             if (dest != null)
             {
                 query = query.Join(ExamLogRepository,
-                    s => s.ExamLogId,
-                    e => e.Id,
-                    (s, e) => new { s, e })
+                        s => s.ExamLogId,
+                        e => e.Id,
+                        (s, e) => new {s, e})
                     .Where(x => x.e.CreationTime.Year == dest.Value.Year &&
-                     x.e.CreationTime.Month == dest.Value.Month &&
-                      x.e.CreationTime.Day == dest.Value.Day)
+                                x.e.CreationTime.Month == dest.Value.Month &&
+                                x.e.CreationTime.Day == dest.Value.Day)
                     .Select(x => x.s);
             }
 
-            foreach (var skp in skillParts)
-            {
-                var avrgRate = query
-                    .Where(x => x.CreatorId == CurrentUser.Id)
+            return (from skp in skillParts
+                let avgRate = query.Where(x => x.CreatorId == CurrentUser.Id)
                     .Where(x => x.DestId == skp.Id)
                     .Select(x => x.RateInParent)
                     .DefaultIfEmpty()
-                    .Average();
-                gpa += avrgRate * skp.MaxScores;
-            }
-
-            return gpa;
+                    .Average()
+                select avgRate * skp.MaxScores).Sum();
         }
 
         public async Task<float> GetSkillCategoryGPA(Guid skillCategoryGPA)

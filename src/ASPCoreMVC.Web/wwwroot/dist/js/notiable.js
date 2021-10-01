@@ -29,15 +29,16 @@
     })
 }
 
-var previousNewCount = 0;
+const intervalTime = 60000 * 2;
+
 function syncCountNotification() {
     fetch("/api/app/notification/count-unread-notification")
         .then(r => r.text())
         .then(data => {
-            var count = data;
+            const count = data;
             if (count > 0) {
                 $("#alert-center-badge").removeClass("d-none");
-                var countZ = count;
+                let countZ;
                 if (count > 5) {
                     countZ = "5+";
                 } else {
@@ -47,6 +48,10 @@ function syncCountNotification() {
             } else {
                 $("#alert-center-badge").addClass("d-none");
             }
+            setTimeout(syncCountNotification, intervalTime);
+        })
+        .catch((error) => {
+            setTimeout(syncCountNotification, intervalTime);
         });
 }
 
@@ -68,5 +73,3 @@ function markAllAsRead() {
 syncCountNotification();
 
 $("#alertsDropdown").click(syncAlertCenter);
-
-setInterval(syncCountNotification, 2000);

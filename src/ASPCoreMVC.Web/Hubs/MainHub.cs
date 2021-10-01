@@ -30,6 +30,7 @@ namespace ASPCoreMVC.Web.Hubs
         private Guid CurrentRoomId = Guid.Empty;
 
         private readonly IHubContext<NotificationHub> _NotificationHub;
+
         public MainHub(IReadOnlyRepository<AppUser, Guid> AppUserRepository,
             IMessGroupService _MessGroupService,
             IUserMessageService _UserMessageService,
@@ -49,11 +50,13 @@ namespace ASPCoreMVC.Web.Hubs
 
         private async Task GeneralRoomAdd(SmallAppUser currentUser)
         {
-            if (!UserInGeneralDiscussRoom.Any(x => x.Id == currentUser.Id))
+            if (UserInGeneralDiscussRoom.All(x => x.Id != currentUser.Id))
             {
-                var msg = string.Format("Welcome, \"{0}\" has joined the discussion - {1}",
-                    currentUser.DisplayName, DateTime.Now.ToString("HH:mm"));
-                await Clients.AllExcept(UserConnecteds.Where(x => x.Id == CurrentUser.Id.Value).Select(x => x.ConnectionId).Append(Context.ConnectionId)).SendAsync("ReceiveWelcome", msg);
+                var msg =
+                    $"Welcome, \"{currentUser.DisplayName}\" has joined the discussion - {DateTime.Now.ToString("HH:mm")}";
+                await Clients
+                    .AllExcept(UserConnecteds.Where(x => x.Id == CurrentUser.Id.Value).Select(x => x.ConnectionId)
+                        .Append(Context.ConnectionId)).SendAsync("ReceiveWelcome", msg);
                 await Clients.Client(Context.ConnectionId).SendAsync("ReceiveWelcome", "You has join the discussion");
             }
 
@@ -63,19 +66,23 @@ namespace ASPCoreMVC.Web.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            var currentUser = await AppUserRepository.GetAsync(CurrentUser.Id.Value);
-
-            var mapped = new SmallAppUser
+            if (CurrentUser.Id != null)
             {
-                Id = currentUser.Id,
-                DisplayName = currentUser.DisplayName,
-                Picture = currentUser.Picture,
-                ConnectionId = Context.ConnectionId
-            };
+                var currentUser = await AppUserRepository.GetAsync(CurrentUser.Id.Value);
 
-            await GeneralRoomAdd(mapped);
+                var mapped = new SmallAppUser
+                {
+                    Id = currentUser.Id,
+                    DisplayName = currentUser.DisplayName,
+                    Picture = currentUser.Picture,
+                    ConnectionId = Context.ConnectionId
+                };
 
-            UserConnecteds.Add(mapped);
+                await GeneralRoomAdd(mapped);
+
+                UserConnecteds.Add(mapped);
+            }
+
             await base.OnConnectedAsync();
         }
 
@@ -90,19 +97,23 @@ namespace ASPCoreMVC.Web.Hubs
 
         private async Task GeneralRoomRemove(SmallAppUser currentUser)
         {
-            var msg = string.Format("\"{0}\" has left the discussion - {1}",
-                currentUser.DisplayName, DateTime.Now.ToString("HH:mm"));
+            var msg = $"\"{currentUser.DisplayName}\" has left the discussion - {DateTime.Now.ToString("HH:mm")}";
             if (UserInGeneralDiscussRoom.Any(x => x.ConnectionId == Context.ConnectionId))
             {
-                await Clients.AllExcept(UserConnecteds.Where(x => x.Id == CurrentUser.Id.Value).Select(x => x.ConnectionId)).SendAsync("ReceiveBye", msg);
-                UserInGeneralDiscussRoom = UserInGeneralDiscussRoom.Where(x => x.ConnectionId != Context.ConnectionId).ToList();
+                await Clients
+                    .AllExcept(UserConnecteds.Where(x => CurrentUser.Id != null && x.Id == CurrentUser.Id.Value)
+                        .Select(x => x.ConnectionId))
+                    .SendAsync("ReceiveBye", msg);
+                UserInGeneralDiscussRoom =
+                    UserInGeneralDiscussRoom.Where(x => x.ConnectionId != Context.ConnectionId).ToList();
                 await UpdateOnlineCounter();
             }
         }
 
         public async Task ChangeRoom(string roomId, string roomName)
         {
-            var currentUser = UserConnecteds.FirstOrDefault(x => x.Id == CurrentUser.Id.Value);
+            var currentUser =
+                UserConnecteds.FirstOrDefault(x => CurrentUser.Id != null && x.Id == CurrentUser.Id.Value);
             if (!roomId.IsNullOrEmpty())
             {
                 await GeneralRoomRemove(currentUser);
@@ -118,6 +129,7 @@ namespace ASPCoreMVC.Web.Hubs
         private async Task ExtractAffectedUser(string roomId)
         {
             #region Xử lý để lấy danh sách người dùng sẽ nhận tin nhắn
+
             AffectedUser.Clear();
             var gottedMessGroup = await _MessGroupService.GetAsync(Guid.Parse(roomId));
             AffectedUser.Add(gottedMessGroup.Starter);
@@ -127,6 +139,7 @@ namespace ASPCoreMVC.Web.Hubs
             }
 
             CurrentRoomId = Guid.Parse(roomId);
+
             #endregion
         }
 
@@ -157,7 +170,9 @@ namespace ASPCoreMVC.Web.Hubs
             if (msgDTO.Id != Guid.Empty)
             {
                 // Gửi tin nhắn đến tất cả người dùng trong danh sách
-                await _NotificationHub.Clients.Users(AffectedUser.Where(x => x != CurrentUser.Id.Value).Select(x => x.ToString())).SendAsync("NotyHaveNewMsgReciver", msgDTO);
+                await _NotificationHub.Clients
+                    .Users(AffectedUser.Where(x => x != CurrentUser.Id.Value).Select(x => x.ToString()))
+                    .SendAsync("NotyHaveNewMsgReciver", msgDTO);
                 await Clients.Users(AffectedUser.Select(x => x.ToString())).SendAsync("ReceiveMessage", msgDTO);
             }
         }

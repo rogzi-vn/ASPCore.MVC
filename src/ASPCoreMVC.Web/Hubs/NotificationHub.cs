@@ -16,6 +16,7 @@ namespace ASPCoreMVC.Web.Hubs
     public class NotificationHub : AbpHub
     {
         private readonly IReadOnlyRepository<AppUser, Guid> AppUserRepository;
+
         public NotificationHub(IReadOnlyRepository<AppUser, Guid> AppUserRepository)
         {
             this.AppUserRepository = AppUserRepository;

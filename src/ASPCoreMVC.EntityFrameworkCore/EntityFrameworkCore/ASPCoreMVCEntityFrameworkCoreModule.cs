@@ -24,7 +24,7 @@ namespace ASPCoreMVC.EntityFrameworkCore
         typeof(AbpAuditLoggingEntityFrameworkCoreModule),
         typeof(AbpTenantManagementEntityFrameworkCoreModule),
         typeof(AbpFeatureManagementEntityFrameworkCoreModule)
-        )]
+    )]
     public class ASPCoreMVCEntityFrameworkCoreModule : AbpModule
     {
         public override void PreConfigureServices(ServiceConfigurationContext context)
@@ -38,7 +38,7 @@ namespace ASPCoreMVC.EntityFrameworkCore
             {
                 /* Remove "includeAllEntities: true" to create
                  * default repositories only for aggregate roots */
-                options.AddDefaultRepositories(includeAllEntities: true);
+                options.AddDefaultRepositories(true);
             });
 
             Configure<AbpDbContextOptions>(options =>

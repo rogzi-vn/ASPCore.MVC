@@ -1,17 +1,17 @@
 ﻿<meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="@await s.GetOrNullAsync(PageSettingProvider.SITE_DESCRIPTION)">
-<meta name="keywords" content="@await s.GetOrNullAsync(PageSettingProvider.SITE_KEYWORDS)">
-<meta name="author" content="@await s.GetOrNullAsync(PageSettingProvider.SITE_AUTHOR)">
+<meta name="description" content="@(await s.GetOrNullAsync(PageSettingProvider.SITE_DESCRIPTION))">
+<meta name="keywords" content="@(await s.GetOrNullAsync(PageSettingProvider.SITE_KEYWORDS))">
+<meta name="author" content="@(await s.GetOrNullAsync(PageSettingProvider.SITE_AUTHOR))">
 
 @if (ViewData["Title"] != null)
 {
-    <title>@L[ViewData["Title"].ToString()] | @await s.GetOrNullAsync(PageSettingProvider.SITE_NAME)</title>
+    <title>@L[ViewData["Title"].ToString()] | @(await s.GetOrNullAsync(PageSettingProvider.SITE_NAME))</title>
 }
 else
 {
-    <title>@await s.GetOrNullAsync(PageSettingProvider.SITE_NAME)</title>
+    <title>@(await s.GetOrNullAsync(PageSettingProvider.SITE_NAME))</title>
 }
 
 <!-- Custom fonts for this template-->
@@ -22,13 +22,13 @@ else
 <!-- Custom styles for this template-->
 <link href="/dist/css/sb-admin-2.min.css" rel="stylesheet">
 
-<link rel="stylesheet" href="/plugins/noty/noty.css" />
-<link rel="stylesheet" href="/plugins/noty/themes/nest.css" />
+<link rel="stylesheet" href="/plugins/noty/noty.css"/>
+<link rel="stylesheet" href="/plugins/noty/themes/nest.css"/>
 
 <link rel="stylesheet"
-      href="/plugins/bootstrap-extends/bootstrap-select.min.css" />
+      href="/plugins/bootstrap-extends/bootstrap-select.min.css"/>
 <link rel="stylesheet"
-      href="/plugins/bootstrap-extends/bootstrap-datepicker.min.css" />
+      href="/plugins/bootstrap-extends/bootstrap-datepicker.min.css"/>
 
 <link href="/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet">
 

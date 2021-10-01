@@ -2,21 +2,21 @@
 <html lang="@System.Globalization.CultureInfo.CurrentCulture.Name">
 
 <head>
-    <partial name="@AppTheme.HeaderImports" />
-    @RenderSection("Styles", false)
+    <partial name="@AppTheme.HeaderImports"/>
+    @await RenderSectionAsync("Styles", false)
     @Html.PageStyles()
 </head>
 
 <body class="bg-gradient-primary">
 
-    <div class="container">
-        @RenderBody()
-    </div>
+<div class="container">
+    @RenderBody()
+</div>
 
-    <partial name="@AppTheme.FooterImports" />
-    @RenderSection("Scripts", false)
-    @Html.PageScripts()
-    <script>
+<partial name="@AppTheme.FooterImports"/>
+@await RenderSectionAsync("Scripts", false)
+@Html.PageScripts()
+<script>
         function deleteCookie(name) {
             document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         }

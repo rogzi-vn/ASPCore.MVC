@@ -36,6 +36,7 @@ using ASPCoreMVC.Helpers;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using ASPCoreMVC.Web.Middleware;
 using Volo.Abp.AspNetCore.SignalR;
+using Volo.Abp.Auditing;
 
 namespace ASPCoreMVC.Web
 {
@@ -51,7 +52,7 @@ namespace ASPCoreMVC.Web
         typeof(AbpAspNetCoreSerilogModule), // :v Log
         typeof(AbpSwashbuckleModule), // Swagger
         typeof(AbpAspNetCoreSignalRModule)
-        )]
+    )]
     public class ASPCoreMVCWebModule : AbpModule
     {
         public override void PreConfigureServices(ServiceConfigurationContext context)
@@ -90,6 +91,11 @@ namespace ASPCoreMVC.Web
             ConfigureBlobStorage(hostingEnvironment);
 
             ConfigureSignalR(context.Services);
+
+            Configure<AbpAuditingOptions>(options =>
+            {
+                options.IsEnabled = false; //Disables the auditing system
+            });
         }
 
         private void ConfigureSignalR(IServiceCollection services)
@@ -137,6 +143,7 @@ namespace ASPCoreMVC.Web
                         {
                             Directory.CreateDirectory(hostingEnvironment.WebRootPath);
                         }
+
                         fileSystem.BasePath = hostingEnvironment.WebRootPath;
                     });
                 });
@@ -171,16 +178,12 @@ namespace ASPCoreMVC.Web
             {
                 config.LoginPath = "/account/login";
                 //config.LogoutPath = "/account/logout";
-
             });
         }
 
         private void ConfigureTheme()
         {
-            Configure<AbpThemingOptions>(options =>
-            {
-                options.Themes.Add<AppTheme>();
-            });
+            Configure<AbpThemingOptions>(options => { options.Themes.Add<AppTheme>(); });
         }
 
         private void ConfigureUrls(IConfiguration configuration)
@@ -204,10 +207,7 @@ namespace ASPCoreMVC.Web
 
         private void ConfigureAutoMapper()
         {
-            Configure<AbpAutoMapperOptions>(options =>
-            {
-                options.AddMaps<ASPCoreMVCWebModule>();
-            });
+            Configure<AbpAutoMapperOptions>(options => { options.AddMaps<ASPCoreMVCWebModule>(); });
         }
 
         private void ConfigureVirtualFileSystem(IWebHostEnvironment hostingEnvironment)
@@ -216,10 +216,18 @@ namespace ASPCoreMVC.Web
             {
                 Configure<AbpVirtualFileSystemOptions>(options =>
                 {
-                    options.FileSets.ReplaceEmbeddedByPhysical<ASPCoreMVCDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}ASPCoreMVC.Domain.Shared"));
-                    options.FileSets.ReplaceEmbeddedByPhysical<ASPCoreMVCDomainModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}ASPCoreMVC.Domain"));
-                    options.FileSets.ReplaceEmbeddedByPhysical<ASPCoreMVCApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}ASPCoreMVC.Application.Contracts"));
-                    options.FileSets.ReplaceEmbeddedByPhysical<ASPCoreMVCApplicationModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}ASPCoreMVC.Application"));
+                    options.FileSets.ReplaceEmbeddedByPhysical<ASPCoreMVCDomainSharedModule>(
+                        Path.Combine(hostingEnvironment.ContentRootPath,
+                            $"..{Path.DirectorySeparatorChar}ASPCoreMVC.Domain.Shared"));
+                    options.FileSets.ReplaceEmbeddedByPhysical<ASPCoreMVCDomainModule>(
+                        Path.Combine(hostingEnvironment.ContentRootPath,
+                            $"..{Path.DirectorySeparatorChar}ASPCoreMVC.Domain"));
+                    options.FileSets.ReplaceEmbeddedByPhysical<ASPCoreMVCApplicationContractsModule>(
+                        Path.Combine(hostingEnvironment.ContentRootPath,
+                            $"..{Path.DirectorySeparatorChar}ASPCoreMVC.Application.Contracts"));
+                    options.FileSets.ReplaceEmbeddedByPhysical<ASPCoreMVCApplicationModule>(
+                        Path.Combine(hostingEnvironment.ContentRootPath,
+                            $"..{Path.DirectorySeparatorChar}ASPCoreMVC.Application"));
                     options.FileSets.ReplaceEmbeddedByPhysical<ASPCoreMVCWebModule>(hostingEnvironment.ContentRootPath);
                 });
             }
@@ -247,7 +255,7 @@ namespace ASPCoreMVC.Web
             services.AddSwaggerGen(
                 options =>
                 {
-                    options.SwaggerDoc("v1", new OpenApiInfo { Title = "ASPCoreMVC API", Version = "v1" });
+                    options.SwaggerDoc("v1", new OpenApiInfo {Title = "ASPCoreMVC API", Version = "v1"});
                     options.DocInclusionPredicate((docName, description) => true);
                     options.CustomSchemaIds(type => type.FullName);
                 }
@@ -290,10 +298,7 @@ namespace ASPCoreMVC.Web
             app.UseIdentityServer();
             app.UseAuthorization();
             app.UseSwagger();
-            app.UseAbpSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "ASPCoreMVC API");
-            });
+            app.UseAbpSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json", "ASPCoreMVC API"); });
             app.UseAuditing();
             app.UseAbpSerilogEnrichers();
             app.UseConfiguredEndpoints();

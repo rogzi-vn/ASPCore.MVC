@@ -91,12 +91,16 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
 
                 input.Name = $"{skillCat.Name} - {exam.Name}";
             }
+
             input.IsDoneScore = false;
 
-            #region Thông báo cho GVHD là có học viên chọn 
+            #region Thông báo cho GVHD là có học viên chọn
+
             var instructorUser = await ExamCatInstructorRepository.GetAsync(x => x.Id == input.ExamCatInstructorId);
             var currentUser = await AppUserRepository.GetAsync(CurrentUser.Id.Value);
-            string msg = L["\"{0}\" chooses you as the instructor for the \"{1}\" exam. Please enthusiastically support that student"];
+            string msg =
+                L[
+                    "\"{0}\" chooses you as the instructor for the \"{1}\" exam. Please enthusiastically support that student"];
             msg = string.Format(msg, currentUser.DisplayName, input.Name);
 
             var notification = new Notification
@@ -107,6 +111,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                 IsChecked = false
             };
             await NotificationRepository.InsertAsync(notification, true);
+
             #endregion
 
             return await base.CreateAsync(input);
@@ -121,14 +126,21 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                 Message = res.Message,
                 ErrorCode = res.ErrorCode,
                 Data = new PagedResultDto<ExamLogBaseDTO>(res.Data.TotalCount,
-                ObjectMapper.Map<IReadOnlyList<ExamLogDTO>, IReadOnlyList<ExamLogBaseDTO>>(res.Data.Items))
+                    ObjectMapper.Map<IReadOnlyList<ExamLogDTO>, IReadOnlyList<ExamLogBaseDTO>>(res.Data.Items))
             };
         }
 
         public Guid? GetLastExamNotFinished()
         {
-            return Repository.Where(x => x.CreatorId == CurrentUser.Id &&
-            (x.UserAnswers == null || x.UserAnswers.Length == 0)).FirstOrDefault()?.Id ?? null;
+            try
+            {
+                return Repository.FirstOrDefault(x => x.CreatorId == CurrentUser.Id &&
+                                                      (x.UserAnswers == null || x.UserAnswers.Length == 0))?.Id;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public bool IsExamPassesed(float examScores, float examMaxScores)
@@ -152,7 +164,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             examLog.CompletionTime = DateTime.Now;
 
             // Thời gian thực hiện bài thi
-            examLog.ExamTimeInMinutes = (float)(examLog.CompletionTime.Value - examLog.CreationTime).Seconds / 60;
+            examLog.ExamTimeInMinutes = (float) (examLog.CompletionTime.Value - examLog.CreationTime).Seconds / 60;
 
             // Phân giải để thực hiện chấm bài thi
             for (int i = 0; i < exam.SkillCategories.Count; i++)
@@ -171,28 +183,33 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
 
                     // Điểm khả dụng cho mỗi câu hỏi đúng
                     var skpScorePerQuestion = skp.MaxScores /
-                        skp.QuestionContainers.SelectMany(x => x.Questions).Count();
+                                              skp.QuestionContainers.SelectMany(x => x.Questions).Count();
 
                     // Cờ kiểm tra có thể chấm tự động hay không
                     var isAutoCorrectable = skp.AnswerType == Common.AnswerTypes.TextAnswer ||
-                               skp.AnswerType == Common.AnswerTypes.ImageAnswer ||
-                               skp.AnswerType == Common.AnswerTypes.FillAnswer;
+                                            skp.AnswerType == Common.AnswerTypes.ImageAnswer ||
+                                            skp.AnswerType == Common.AnswerTypes.FillAnswer;
 
 
                     #region Bắt đầu phần chấm tự động
+
                     // Phân giải khung chứa ds câu hỏi
-                    for (int k = 0; k < exam
-                    .SkillCategories[i]
-                    .SkillParts[j]
-                    .QuestionContainers
-                    .Count; k++)
+                    for (int k = 0;
+                        k < exam
+                            .SkillCategories[i]
+                            .SkillParts[j]
+                            .QuestionContainers
+                            .Count;
+                        k++)
                     {
                         // Phân giải danh sách câu hỏi
-                        for (int l = 0; l < exam
-                        .SkillCategories[i]
-                        .SkillParts[j]
-                        .QuestionContainers[k]
-                        .Questions.Count; l++)
+                        for (int l = 0;
+                            l < exam
+                                .SkillCategories[i]
+                                .SkillParts[j]
+                                .QuestionContainers[k]
+                                .Questions.Count;
+                            l++)
                         {
                             // Luu tam cau hoi hien tai
                             var question = exam.SkillCategories[i].SkillParts[j].QuestionContainers[k].Questions[l];
@@ -213,15 +230,16 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                                 {
                                     // Xử ký KQ cho phần điền
                                     isCorrect = question.Answers.Any(
-                                        x => x.AnswerContent.Equals(userAnswer?.Answer ?? "", StringComparison.OrdinalIgnoreCase) &&
-                                        x.IsCorrect) && (!userAnswer?.Answer.IsNullOrEmpty() == true);
+                                        x => x.AnswerContent.Equals(userAnswer?.Answer ?? "",
+                                                 StringComparison.OrdinalIgnoreCase) &&
+                                             x.IsCorrect) && (!userAnswer?.Answer.IsNullOrEmpty() == true);
                                 }
                                 else
                                 {
                                     // Xử lý theo kiểu trắc nghiệm
                                     isCorrect = question.Answers.Any(x => x.Id.ToString()
-                                    .Equals(userAnswer?.Answer ?? "",
-                                    StringComparison.OrdinalIgnoreCase) && x.IsCorrect);
+                                        .Equals(userAnswer?.Answer ?? "",
+                                            StringComparison.OrdinalIgnoreCase) && x.IsCorrect);
                                 }
 
                                 // Luu ket qua dung sai
@@ -241,7 +259,6 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                                     .SkillParts[j]
                                     .QuestionContainers[k]
                                     .Questions[l].CorrectionContentTime = DateTime.Now;
-
                             }
                             else
                             {
@@ -251,17 +268,17 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                                     .Questions[l].IsCorrect)
                                 {
                                     exam.SkillCategories[i]
-                                    .SkillParts[j]
-                                    .QuestionContainers[k]
-                                    .Questions[l].CorrectionContentTime = DateTime.Now;
+                                        .SkillParts[j]
+                                        .QuestionContainers[k]
+                                        .Questions[l].CorrectionContentTime = DateTime.Now;
                                 }
                             }
 
                             // Tính điểm nếu câu trả lời này là đúng
                             if (exam.SkillCategories[i]
-                                    .SkillParts[j]
-                                    .QuestionContainers[k]
-                                    .Questions[l].IsCorrect)
+                                .SkillParts[j]
+                                .QuestionContainers[k]
+                                .Questions[l].IsCorrect)
                             {
                                 totalScore += exam.SkillCategories[i]
                                     .SkillParts[j]
@@ -274,6 +291,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                             }
                         }
                     }
+
                     #endregion
 
                     // Lưu điểm vào log điểm
@@ -282,14 +300,12 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                         // Lưu kết quả chấm vào log Điểm
                         await SaveScoreLog(examLog.Id, skp.Id, skpScores, skpMaxScores);
                     }
-
                 }
             }
 
-            if (!exam.SkillCategories
-                .SelectMany(x => x.SkillParts
-                .SelectMany(y => y.QuestionContainers
-                .SelectMany(z => z.Questions))).Any(x => x.CorrectionContentTime == null))
+            if (exam.SkillCategories
+                .SelectMany(x => x.SkillParts.SelectMany(y => y.QuestionContainers.SelectMany(z => z.Questions)))
+                .All(x => x.CorrectionContentTime != null))
             {
                 // Đánh dấu rằng bài thi đã được chấm hoàn tất
                 examLog.IsDoneScore = true;
@@ -408,7 +424,8 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             };
         }
 
-        public async Task<PagedResultDto<ExamLogBaseDTO>> GetExamHistories(Guid? destId, PagedAndSortedResultRequestDto input)
+        public async Task<PagedResultDto<ExamLogBaseDTO>> GetExamHistories(Guid? destId,
+            PagedAndSortedResultRequestDto input)
         {
             var query = await Repository.GetQueryableAsync();
             query = query
@@ -417,6 +434,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             {
                 query = query.Where(x => x.DestinationId == destId.Value);
             }
+
             if (!input.Sorting.IsNullOrEmpty())
             {
                 query = query.OrderBy(input.Sorting);
@@ -430,21 +448,23 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             {
                 query = query.Skip(input.SkipCount);
             }
+
             if (input.MaxResultCount > 0)
             {
                 query = query.Take(input.MaxResultCount);
             }
+
             var resultList = new List<ExamLogBaseDTO>();
 
             query
                 .Join(ExamCatInstructorRepository,
-                el => el.ExamCatInstructorId,
-                eci => eci.Id,
-                (el, eci) => new { el, eci })
+                    el => el.ExamCatInstructorId,
+                    eci => eci.Id,
+                    (el, eci) => new {el, eci})
                 .Join(AppUserRepository,
-                x => x.eci.UserId,
-                au => au.Id,
-                (x, au) => new { x, au })
+                    x => x.eci.UserId,
+                    au => au.Id,
+                    (x, au) => new {x, au})
                 .ToList().ForEach(x =>
                 {
                     var el = ObjectMapper.Map<ExamLog, ExamLogBaseDTO>(x.x.el);
@@ -466,18 +486,19 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         {
             var examCatInstructor = ExamCatInstructorRepository.FirstOrDefault(x => x.UserId == CurrentUser.Id);
             if (examCatInstructor == null)
-                throw new Exception("Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
+                throw new Exception(
+                    "Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
 
             var query = await Repository.GetQueryableAsync();
             query = query
-                 .Where(x => x.ExamCategoryId == examCategoryId)
-                 .Where(x => x.ExamCatInstructorId == examCatInstructor.Id);
+                .Where(x => x.ExamCategoryId == examCategoryId)
+                .Where(x => x.ExamCatInstructorId == examCatInstructor.Id);
 
             var result = new List<ExamLogStudentDTO>();
             foreach (var examLog in query.ToList())
             {
                 if (examLog.CreatorId != null &&
-                   examLog.CreatorId != Guid.Empty)
+                    examLog.CreatorId != Guid.Empty)
                 {
                     if (!result.Any(z => z.Id == examLog.CreatorId))
                     {
@@ -514,14 +535,17 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                     }
                 }
             }
+
             return result;
         }
 
-        public async Task<PagedResultDto<ExamLogBaseDTO>> GetStudentExams(Guid? creatorId, PagedAndSortedResultRequestDto input)
+        public async Task<PagedResultDto<ExamLogBaseDTO>> GetStudentExams(Guid? creatorId,
+            PagedAndSortedResultRequestDto input)
         {
             var examCatInstructor = ExamCatInstructorRepository.FirstOrDefault(x => x.UserId == CurrentUser.Id);
             if (examCatInstructor == null)
-                throw new Exception("Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
+                throw new Exception(
+                    "Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
 
             var query = await Repository.GetQueryableAsync();
             query = query
@@ -531,6 +555,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             {
                 query = query.Where(x => x.CreatorId == creatorId.Value);
             }
+
             if (!input.Sorting.IsNullOrEmpty())
             {
                 query = query.OrderBy(input.Sorting);
@@ -545,16 +570,18 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             {
                 query = query.Skip(input.SkipCount);
             }
+
             if (input.MaxResultCount > 0)
             {
                 query = query.Take(input.MaxResultCount);
             }
+
             var resultList = new List<ExamLogBaseDTO>();
 
             query.Join(AppUserRepository,
-                x => x.CreatorId,
-                au => au.Id,
-                (x, au) => new { x, au })
+                    x => x.CreatorId,
+                    au => au.Id,
+                    (x, au) => new {x, au})
                 .ToList().ForEach(x =>
                 {
                     var el = ObjectMapper.Map<ExamLog, ExamLogBaseDTO>(x.x);
@@ -570,7 +597,8 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             var examCatInstructor = ExamCatInstructorRepository.FirstOrDefault(x => x.UserId == CurrentUser.Id);
             var examLog = await Repository.GetAsync(examLogId);
             if (examCatInstructor == null || examLog.ExamCatInstructorId != examCatInstructor.Id)
-                throw new Exception("Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
+                throw new Exception(
+                    "Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
 
             // Tổng điểm của bài thi hiện tại
             var totalScore = 0F;
@@ -599,28 +627,33 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
 
                     // Điểm khả dụng cho mỗi câu hỏi đúng
                     var skpScorePerQuestion = skp.MaxScores /
-                        skp.QuestionContainers.SelectMany(x => x.Questions).Count();
+                                              skp.QuestionContainers.SelectMany(x => x.Questions).Count();
 
                     // Cờ kiểm tra có thể chấm tự động hay không
                     var isAutoCorrectable = skp.AnswerType == Common.AnswerTypes.TextAnswer ||
-                               skp.AnswerType == Common.AnswerTypes.ImageAnswer ||
-                               skp.AnswerType == Common.AnswerTypes.FillAnswer;
+                                            skp.AnswerType == Common.AnswerTypes.ImageAnswer ||
+                                            skp.AnswerType == Common.AnswerTypes.FillAnswer;
 
 
                     #region Bắt đầu phần chấm tự động
+
                     // Phân giải khung chứa ds câu hỏi
-                    for (int k = 0; k < exam
-                    .SkillCategories[i]
-                    .SkillParts[j]
-                    .QuestionContainers
-                    .Count; k++)
+                    for (int k = 0;
+                        k < exam
+                            .SkillCategories[i]
+                            .SkillParts[j]
+                            .QuestionContainers
+                            .Count;
+                        k++)
                     {
                         // Phân giải danh sách câu hỏi
-                        for (int l = 0; l < exam
-                        .SkillCategories[i]
-                        .SkillParts[j]
-                        .QuestionContainers[k]
-                        .Questions.Count; l++)
+                        for (int l = 0;
+                            l < exam
+                                .SkillCategories[i]
+                                .SkillParts[j]
+                                .QuestionContainers[k]
+                                .Questions.Count;
+                            l++)
                         {
                             // Luu tam cau hoi hien tai
                             var question = exam.SkillCategories[i].SkillParts[j].QuestionContainers[k].Questions[l];
@@ -652,21 +685,22 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
 
                             // Tính điểm nếu câu trả lời này là đúng
                             if (exam.SkillCategories[i]
-                                    .SkillParts[j]
-                                    .QuestionContainers[k]
-                                    .Questions[l].IsCorrect)
-                            {
-                                totalScore += exam.SkillCategories[i]
-                                     .SkillParts[j]
-                                     .QuestionContainers[k]
-                                     .Questions[l].Scores;
-                                skpScores += exam.SkillCategories[i]
                                 .SkillParts[j]
                                 .QuestionContainers[k]
-                                .Questions[l].Scores;
+                                .Questions[l].IsCorrect)
+                            {
+                                totalScore += exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].Scores;
+                                skpScores += exam.SkillCategories[i]
+                                    .SkillParts[j]
+                                    .QuestionContainers[k]
+                                    .Questions[l].Scores;
                             }
                         }
                     }
+
                     #endregion
 
                     // Lưu điểm vào log điểm
@@ -679,8 +713,8 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
 
             if (!exam.SkillCategories
                 .SelectMany(x => x.SkillParts
-                .SelectMany(y => y.QuestionContainers
-                .SelectMany(z => z.Questions))).Any(x => x.CorrectionContentTime == null))
+                    .SelectMany(y => y.QuestionContainers
+                        .SelectMany(z => z.Questions))).Any(x => x.CorrectionContentTime == null))
             {
                 // Đánh dấu rằng bài thi đã được chấm hoàn tất
                 examLog.IsDoneScore = true;
@@ -698,9 +732,12 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             await Repository.UpdateAsync(examLog);
 
             #region Nếu user lần đầu chọn GVDH
+
             var exCatInstructor = await ExamCatInstructorRepository.GetAsync(x => x.Id == examLog.ExamCatInstructorId);
             var instructor = await AppUserRepository.GetAsync(exCatInstructor.UserId);
-            string msg = L["Instructor \"{0}\" has updated the score for the test \"{1} - {2}\" with a total score of {3}/{4} ({5})"];
+            string msg =
+                L[
+                    "Instructor \"{0}\" has updated the score for the test \"{1} - {2}\" with a total score of {3}/{4} ({5})"];
             var passedStateText = "";
             if (examLog.IsPassed)
             {
@@ -710,6 +747,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             {
                 passedStateText = L["Failed"];
             }
+
             msg = string.Format(msg,
                 instructor.DisplayName,
                 examLog.Name,
@@ -726,6 +764,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                 IsChecked = false
             };
             await NotificationRepository.InsertAsync(notification, true);
+
             #endregion
         }
 
@@ -734,7 +773,8 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             var examCatInstructor = ExamCatInstructorRepository.FirstOrDefault(x => x.UserId == CurrentUser.Id);
             var examLog = await Repository.GetAsync(examLogId);
             if (examCatInstructor == null || examLog.ExamCatInstructorId != examCatInstructor.Id)
-                throw new Exception("Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
+                throw new Exception(
+                    "Đừng cố gắng xâm nhập. Bạn không phải là giáo viên hướng dẫn cho kỳ thi này... :P");
 
             examLog.InstructorComments = comments;
             examLog.InstructorCompletionTime = DateTime.Now;
@@ -743,6 +783,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             await Repository.UpdateAsync(examLog);
 
             #region Nếu user lần đầu chọn GVDH
+
             var exCatInstructor = await ExamCatInstructorRepository.GetAsync(x => x.Id == examLog.ExamCatInstructorId);
             var instructor = await AppUserRepository.GetAsync(exCatInstructor.UserId);
             string msg = L["Instructor \"{0}\" has updated the critique of your \"{1} - {2}\" exam"];
@@ -759,8 +800,8 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                 IsChecked = false
             };
             await NotificationRepository.InsertAsync(notification, true);
+
             #endregion
         }
-
     }
 }

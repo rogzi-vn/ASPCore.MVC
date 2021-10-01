@@ -23,11 +23,12 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
     {
         private readonly IRepository<WordClass, Guid> _WordClassRepository;
         private readonly IRepository<VocabularyTopic, Guid> _VocabularyTopicRepository;
+
         public VocabularyService(
             IRepository<Vocabulary, Guid> repo,
             IRepository<WordClass, Guid> _WordClassRepository,
             IRepository<VocabularyTopic, Guid> _VocabularyTopicRepository
-            ) : base(repo)
+        ) : base(repo)
         {
             this._WordClassRepository = _WordClassRepository;
             this._VocabularyTopicRepository = _VocabularyTopicRepository;
@@ -37,7 +38,7 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
         {
             var _res = await GetListAsync(input);
             var paged = new PagedResultDto<VocabularyBaseDTO>(_res.Data.TotalCount,
-               ObjectMapper.Map<IReadOnlyList<VocabularyDTO>, IReadOnlyList<VocabularyBaseDTO>>(_res.Data.Items));
+                ObjectMapper.Map<IReadOnlyList<VocabularyDTO>, IReadOnlyList<VocabularyBaseDTO>>(_res.Data.Items));
             return new ResponseWrapper<PagedResultDto<VocabularyBaseDTO>>().SuccessReponseWrapper(paged, _res.Message);
         }
 
@@ -48,6 +49,7 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
             {
                 query = query.Where(x => x.IsConfirmed);
             }
+
             if (input.VocabularyTopicId != null && input.VocabularyTopicId != Guid.Empty)
                 query = query.Where(x => x.VocabularyTopicId == input.VocabularyTopicId);
 
@@ -89,10 +91,11 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
         {
             return new ResponseWrapper<List<VocabularyBaseDTO>>()
                 .SuccessReponseWrapper(ObjectMapper.Map<
-                List<Vocabulary>, List<VocabularyBaseDTO>>(await Repository.GetListAsync()), "Successful");
+                    List<Vocabulary>, List<VocabularyBaseDTO>>(await Repository.GetListAsync()), "Successful");
         }
 
-        public async Task<ResponseWrapper<PagedResultDto<VocabularySearchResultDTO>>> GetVocabSearchRes(GetSearchVocabularyDTO input)
+        public async Task<ResponseWrapper<PagedResultDto<VocabularySearchResultDTO>>> GetVocabSearchRes(
+            GetSearchVocabularyDTO input)
         {
             var query = await Repository.GetQueryableAsync();
             query = query.Where(x => input.Filter.IsNullOrEmpty() || x.Word.Contains(input.Filter));
@@ -100,6 +103,7 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
             {
                 query = query.Where(x => x.IsConfirmed);
             }
+
             //query = query.OrderByDescending(x => x.Word.ToLowerInvariant().StartsWith(input.Filter));
             if (input.Sorting != null)
                 query = query.OrderBy(input.Sorting);
@@ -108,13 +112,13 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
                 .Skip(input.SkipCount)
                 .Take(input.MaxResultCount)
                 .Join(_WordClassRepository,
-                v => v.WordClassId,
-                wc => wc.Id,
-                (v, wc) => new { v, wc })
+                    v => v.WordClassId,
+                    wc => wc.Id,
+                    (v, wc) => new {v, wc})
                 .Join(_VocabularyTopicRepository,
-                x => x.v.VocabularyTopicId,
-                vc => vc.Id,
-                (x, vc) => new { v = x.v, wc = x.wc, vc })
+                    x => x.v.VocabularyTopicId,
+                    vc => vc.Id,
+                    (x, vc) => new {v = x.v, wc = x.wc, vc})
                 .Select(x => new VocabularySearchResultDTO
                 {
                     TopicName = x.vc.Name,
@@ -127,7 +131,8 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
                 });
 
             var paged = new PagedResultDto<VocabularySearchResultDTO>(query.Count(), resQuery.ToList());
-            return new ResponseWrapper<PagedResultDto<VocabularySearchResultDTO>>().SuccessReponseWrapper(paged, "Successful");
+            return new ResponseWrapper<PagedResultDto<VocabularySearchResultDTO>>().SuccessReponseWrapper(paged,
+                "Successful");
         }
 
         public async Task<ResponseWrapper<List<VocabularySimpifyDTO>>> GetRandomVocabularies(int maxCount)
@@ -141,13 +146,13 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
                 .Skip(toSkip)
                 .Take(maxCount)
                 .Join(_WordClassRepository,
-                v => v.WordClassId,
-                wc => wc.Id,
-                (v, wc) => new { v, wc })
+                    v => v.WordClassId,
+                    wc => wc.Id,
+                    (v, wc) => new {v, wc})
                 .Join(_VocabularyTopicRepository,
-                x => x.v.VocabularyTopicId,
-                vc => vc.Id,
-                (x, vc) => new { v = x.v, wc = x.wc, vc })
+                    x => x.v.VocabularyTopicId,
+                    vc => vc.Id,
+                    (x, vc) => new {v = x.v, wc = x.wc, vc})
                 .Select(x => new VocabularySimpifyDTO
                 {
                     Id = x.v.Id,
@@ -158,7 +163,7 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
 
             return new ResponseWrapper<List<VocabularySimpifyDTO>>()
                 .SuccessReponseWrapper(resQuery.ToList(),
-                "Successful");
+                    "Successful");
         }
 
         public async Task<PagedResultDto<VocabularyBaseDTO>> GetContributedListAsync(GetVocabularyDTO input)
@@ -182,16 +187,17 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
             var query = await Repository.GetQueryableAsync();
             var qts = new List<QuickVocabularyTestDTO>();
             // Lấy cho đủ số câu hỏi
-            Random rand = new Random();
-            for (int i = 0; i < size; i++)
+            var rand = new Random();
+            var count = query.Count();
+            for (var i = 0; i < size; i++)
             {
-                var tempQuery = query;
+                var tempQuery = qts
+                    .Aggregate(query, (current, record) =>
+                        current.Where(x => x.Id != record.Id));
 
                 // Không lấy những record đã tồn tại trong danh sách kết quả
-                foreach (var record in qts)
-                    tempQuery = tempQuery.Where(x => x.Id != record.Id);
 
-                int skip = rand.Next(0, tempQuery.Count());
+                var skip = rand.Next(0, count);
 
                 var tempRes = tempQuery
                     .Skip(skip)
@@ -201,25 +207,37 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
                         Id = x.Id,
                         Vocabulary = x.Word,
                         Mean = x.Mean,
-                        Answers = new List<string> { x.Mean }
+                        Answers = new List<string> {x.Mean}
                     })
                     .First();
+
+                if (qts.Any(x => x.Id == tempRes.Id))
+                {
+                    i--;
+                    continue;
+                }
+
                 var tempVocabulary = new List<Vocabulary>();
 
-                for (int j = 0; j < 3; j++)
+                var tempAnsQuery = query.Where(x => x.Id != tempRes.Id);
+                // Không lấy những record đã tồn tại trong danh sách kết quả
+                tempAnsQuery = tempVocabulary.Aggregate(tempAnsQuery,
+                    (current, record1) => current.Where(x => x.Id != record1.Id));
+                var countAns = tempAnsQuery.Count();
+                for (var j = 0; j < 3; j++)
                 {
-                    var tempAnsQuery = query.Where(x => x.Id != tempRes.Id);
-
-                    // Không lấy những record đã tồn tại trong danh sách kết quả
-                    foreach (var record in tempVocabulary)
-                        tempAnsQuery = tempAnsQuery.Where(x => x.Id != record.Id);
-
-                    int skipAns = rand.Next(0, tempAnsQuery.Count());
+                    var skipAns = rand.Next(0, countAns);
 
                     var tempAns = tempAnsQuery
                         .Skip(skipAns)
                         .Take(1)
                         .First();
+                    if (tempVocabulary.Any(x => x.Id == tempAns.Id))
+                    {
+                        j--;
+                        continue;
+                    }
+
                     tempVocabulary.Add(tempAns);
                 }
 
@@ -227,20 +245,23 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
                 tempRes.Answers = Shuffle(tempRes.Answers);
                 qts.Add(tempRes);
             }
+
             return qts;
         }
-        public List<T> Shuffle<T>(List<T> list)
+
+        private static List<T> Shuffle<T>(List<T> list)
         {
-            Random rng = new Random();
-            int n = list.Count;
+            var rng = new Random();
+            var n = list.Count;
             while (n > 1)
             {
                 n--;
-                int k = rng.Next(n + 1);
-                T value = list[k];
+                var k = rng.Next(n + 1);
+                var value = list[k];
                 list[k] = list[n];
                 list[n] = value;
             }
+
             return list;
         }
 

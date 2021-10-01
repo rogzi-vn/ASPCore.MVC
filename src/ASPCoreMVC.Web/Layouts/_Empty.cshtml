@@ -2,25 +2,25 @@
 <html lang="@System.Globalization.CultureInfo.CurrentCulture.Name">
 
 <head>
-    <partial name="@AppTheme.HeaderImports" />
-    @RenderSection("Styles", false)
+    <partial name="@AppTheme.HeaderImports"/>
+    @await RenderSectionAsync("Styles", false)
     @Html.PageStyles()
 </head>
 
 <body class="bg-gradient-primary" id="page-top">
 
-    <div class="container">
-        @RenderBody()
-    </div>
+<div class="container">
+    @RenderBody()
+</div>
 
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
 
-    <partial name="@AppTheme.FooterImports" />
-    @RenderSection("Scripts", false)
-    @Html.PageScripts()
+<partial name="@AppTheme.FooterImports"/>
+@await RenderSectionAsync("Scripts", false)
+@Html.PageScripts()
 </body>
 
 </html>

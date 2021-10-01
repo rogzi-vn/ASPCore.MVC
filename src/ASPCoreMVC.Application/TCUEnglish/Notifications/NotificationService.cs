@@ -11,7 +11,6 @@ namespace ASPCoreMVC.TCUEnglish.Notifications
     {
         public NotificationService(IRepository<Notification, Guid> repo) : base(repo)
         {
-
         }
 
         public async Task UpdateNotificationSeenState(Guid id)
@@ -26,7 +25,8 @@ namespace ASPCoreMVC.TCUEnglish.Notifications
             }
         }
 
-        protected override async Task<IQueryable<Notification>> CreateFilteredQueryAsync(PagedAndSortedResultRequestDto input)
+        protected override async Task<IQueryable<Notification>> CreateFilteredQueryAsync(
+            PagedAndSortedResultRequestDto input)
         {
             var query = await Repository.GetQueryableAsync();
             query = query.Where(x => CurrentUser.Id == null || x.TargetUserId.Value == CurrentUser.Id.Value);
@@ -37,7 +37,7 @@ namespace ASPCoreMVC.TCUEnglish.Notifications
         {
             return query
                 .OrderByDescending(x => x.CreationTime)
-                .OrderBy(x => x.IsChecked);
+                .ThenBy(x => x.IsChecked);
         }
 
         public async Task<int> GetCountUnreadNotification()
@@ -54,10 +54,7 @@ namespace ASPCoreMVC.TCUEnglish.Notifications
             query = query.Where(x => CurrentUser.Id == null || x.TargetUserId.Value == CurrentUser.Id.Value);
             query = query.Where(x => !x.IsChecked);
             var unread = query.ToList();
-            unread.ForEach(notify =>
-            {
-                notify.IsChecked = true;
-            });
+            unread.ForEach(notify => { notify.IsChecked = true; });
             await Repository.UpdateManyAsync(unread);
         }
     }

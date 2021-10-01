@@ -1,20 +1,19 @@
 ﻿function syncAlertCenter() {
     $("#message-center-content").load("/message-center/sync", function () {
-        var total = $("#alert-center-count").val();
+        const total = $("#alert-center-count").val();
         bindNotifyClick();
 
     })
 }
 
-var previousNewCount = 0;
 function syncCountMessage() {
     fetch("/api/app/user-message/count-unread-message")
         .then(r => r.text())
         .then(data => {
-            var count = data;
+            const count = data;
             if (count > 0) {
                 $("#message-center-badge").removeClass("d-none");
-                var countZ = count;
+                let countZ;
                 if (count > 5) {
                     countZ = "5+";
                 } else {

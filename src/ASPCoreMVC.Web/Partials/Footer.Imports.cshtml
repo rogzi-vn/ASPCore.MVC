@@ -50,15 +50,15 @@
 
 
 <script>
-    var images = document.getElementsByTagName("img");
-    var defaultImage = '@await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE)';
-    for (var i = 0; i < images.length; i++) {
+    const images = document.getElementsByTagName("img");
+    const defaultImage = '@(await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE))';
+    for (let i = 0; i < images.length; i++) {
         if (images[i].src == undefined || images[i].src == null || images[i].src == '') {
-                images[i].src = '@await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE)';
+                images[i].src = '@(await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE))';
             } else {
                 images[i].onerror = function () {
                     this.onerror = null;
-                    this.src = '@await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE)';
+                    this.src = '@(await s.GetOrNullAsync(PageSettingProvider.SITE_HOLDER_IMAGE))';
             }
         }
     }

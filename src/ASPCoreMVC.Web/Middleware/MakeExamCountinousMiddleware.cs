@@ -20,20 +20,30 @@ namespace ASPCoreMVC.Web.Middleware
 
         public async Task Invoke(HttpContext httpContext, IExamLogService examLogService)
         {
-            var guid = examLogService.GetLastExamNotFinished();
-            if (guid != null && guid != Guid.Empty)
+            var ignores = new List<string>
             {
-                var ignores = new List<string> {
-                    "/api",
-                    "/exams",
-                    "/resources"
-                };
-                var destinationUri = $"/exams/re-work/{guid}";
-                if (!ignores.Any(x => httpContext.Request.Path.StartsWithSegments(x, StringComparison.OrdinalIgnoreCase)))
+                "/api",
+                "/exams",
+                "/resources"
+            };
+            if (!ignores.Any(
+                x => httpContext.Request.Path.StartsWithSegments(x, StringComparison.OrdinalIgnoreCase)))
+            {
+                try
                 {
-                    httpContext.Response.Redirect(destinationUri);
+                    var guid = examLogService.GetLastExamNotFinished();
+                    if (guid != null && guid != Guid.Empty)
+                    {
+                        var destinationUri = $"/exams/re-work/{guid}";
+                        httpContext.Response.Redirect(destinationUri);
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignore
                 }
             }
+
             await _next(httpContext);
         }
     }

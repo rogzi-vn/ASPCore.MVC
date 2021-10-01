@@ -1,19 +1,19 @@
 ﻿@page
 @model ASPCoreMVC.Web.Pages.Dashboard.DashboardIndexModel
 @{
-    Model.SetBreadcrumb(new string[] { L["Dashboard"].Value, "#" });
+    Model.SetBreadcrumb(new string[] {L["Dashboard"].Value, "#"});
 
     Model.SetBreadcrumbBtn(string
         .Format(L["Statistics for \"<span class=\"font-weight-bold\" style=\"color:#ffe000;\">{0}</span>\""].Value,
-        Model.CurrentExamCategory.Name),
-    $"javascript:$(\"#csem-modal\").modal('show');",
-    icon: "",
-    c: "btn-info");
+            Model.CurrentExamCategory.Name),
+        $"javascript:$(\"#csem-modal\").modal('show');",
+        icon: "",
+        c: "btn-info");
 }
 
 @section Scripts {
 
-    <partial name="~/Pages/Dashboard/Partials/ChangeStatisticsExamModal.cshtml" model="Model.ExamCats" />
+    <partial name="~/Pages/Dashboard/Partials/ChangeStatisticsExamModal.cshtml" model="Model.ExamCats"/>
 
     <!-- Page level plugins -->
     <script src="/dist/vendor/chart.js/Chart.min.js"></script>
@@ -30,15 +30,15 @@
 
         balanceSkillPieChart("balance-skill-pie-chart", @Html.Raw(ViewData["BalanceSkillsJson"]));
 
-        var defHis = {
+        let defHis = {
             desId: null,
             p:1
-        }
+        };
         function loadHistories(desId = defHis.desId, p = defHis.p) {
             defHis.desId = desId;
             defHis.p = p;
 
-            var requestUrl = `/dasboard/histories?p=${p}`;
+            let requestUrl = `/dasboard/histories?p=${p}`;
             if (desId && desId.length > 0)
                 requestUrl += `&desId=${desId}`;
             $("#history-content").load(requestUrl, function () {
@@ -68,28 +68,28 @@
         syncChartGPAOverview('@Model.ExamCategoryId', 'week');
 
         $(".gpa-overview-changeable").click(event => {
-            var p = $(event.currentTarget);
-            var type = p.data('type');
+            const p = $(event.currentTarget);
+            const type = p.data('type');
             syncChartGPAOverview('@Model.ExamCategoryId', type);
         });
     </script>
 
-    @if (ViewData["IsInstructor"] != null && (bool)ViewData["IsInstructor"] == true)
+    @if (ViewData["IsInstructor"] != null && (bool) ViewData["IsInstructor"] == true)
     {
         <script>
-            var defStudentExam = {
+        let defStudentExam = {
             studentId: null,
             p: 1
-        }
+        };
         function loadStudentExam(studentId = defStudentExam.studentId, p = defStudentExam.p) {
             defStudentExam.studentId = studentId;
             defStudentExam.p = p;
 
-            var requestUrl = `/dasboard/student-exams?p=${p}`;
+            let requestUrl = `/dasboard/student-exams?p=${p}`;
             if (studentId && studentId.length > 0)
                 requestUrl += `&studentId=${studentId}`;
             $("#student-exam-log-content").load(requestUrl, function () {
-                var count = $("#total-student-exam-loaded-count").val();
+                const count = $("#total-student-exam-loaded-count").val();
                 $("#student-show-count").html(count);
                 $(".st-exam-i").click(event => {
                     var id = $(event.currentTarget).data('id');
@@ -104,7 +104,7 @@
         loadStudentExam();
 
         $("#students-list-selector").change(function () {
-            var value = this.value;
+            const value = this.value;
             if (value) {
                 loadStudentExam(value, 1);
             } else {
@@ -115,18 +115,18 @@
     }
 }
 
-<partial name="~/Pages/Dashboard/Partials/SummaryTopDetail.cshtml" />
+<partial name="~/Pages/Dashboard/Partials/SummaryTopDetail.cshtml"/>
 
 <div class="row">
 
     <!-- Area Chart -->
     <div class="col-xl-8 col-lg-7">
-        <partial name="~/Pages/Dashboard/Partials/GPAOverview.cshtml" />
+        <partial name="~/Pages/Dashboard/Partials/GPAOverview.cshtml"/>
     </div>
 
     <!-- Pie Chart -->
     <div class="col-xl-4 col-lg-5">
-        <partial name="~/Pages/Dashboard/Partials/BalanceSkills.cshtml" />
+        <partial name="~/Pages/Dashboard/Partials/BalanceSkills.cshtml"/>
     </div>
 </div>
 
@@ -135,21 +135,21 @@
 
     <!-- Content Column -->
     <div class="col-12 mb-4">
-        <partial name="~/Pages/Dashboard/Partials/SkillsAssessment.cshtml" />
+        <partial name="~/Pages/Dashboard/Partials/SkillsAssessment.cshtml"/>
     </div>
 </div>
 
 <div class="row">
     <div class="col-12">
-        <partial name="~/Pages/Dashboard/Partials/History.cshtml" />
+        <partial name="~/Pages/Dashboard/Partials/History.cshtml"/>
     </div>
 </div>
 
-@if (ViewData["IsInstructor"] != null && (bool)ViewData["IsInstructor"] == true)
+@if (ViewData["IsInstructor"] != null && (bool) ViewData["IsInstructor"] == true)
 {
     <div class="row">
         <div class="col-12">
-            <partial name="~/Pages/Dashboard/Partials/StudentExamLog.cshtml" />
+            <partial name="~/Pages/Dashboard/Partials/StudentExamLog.cshtml"/>
         </div>
     </div>
 }

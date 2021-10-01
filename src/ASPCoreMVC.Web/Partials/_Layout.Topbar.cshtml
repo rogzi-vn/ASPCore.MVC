@@ -3,7 +3,7 @@
 @inject IAppUserService _AppUserService
 @{
     var user = (await _AppUserService.GetSelfProfileAsync()).Data;
-    var displayName = (string)user.DisplayName;
+    var displayName = (string) user.DisplayName;
     if (displayName == null || displayName.Length <= 0)
     {
         displayName = CurrentUser.GetFullName();
@@ -57,7 +57,7 @@
             </div>
         </li>
 
-        <partial name="@AppTheme.LayoutTopbarAdminMenu" />
+        <partial name="@AppTheme.LayoutTopbarAdminMenu"/>
         <div class="topbar-divider d-none d-sm-block"></div>
 
         <!-- Nav Item - Alerts -->
@@ -137,4 +137,4 @@
 
 </nav>
 <!-- End of Topbar -->
-<partial name="@AppTheme.LayoutLogoutModal" />
+<partial name="@AppTheme.LayoutLogoutModal"/>

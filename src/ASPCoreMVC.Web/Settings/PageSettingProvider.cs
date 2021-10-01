@@ -24,26 +24,24 @@ namespace ASPCoreMVC.Web.Settings
         public const string LOGIN_SIBAR_INTRO = nameof(LOGIN_SIBAR_INTRO);
         public const string LOGIN_SIBAR_DESCRIPTION = nameof(LOGIN_SIBAR_DESCRIPTION);
 
-        public const string USER_CREATOR_DEFAULT_PASSWORD_FOR_NEW_USER = nameof(USER_CREATOR_DEFAULT_PASSWORD_FOR_NEW_USER);
+        public const string USER_CREATOR_DEFAULT_PASSWORD_FOR_NEW_USER =
+            nameof(USER_CREATOR_DEFAULT_PASSWORD_FOR_NEW_USER);
 
         public override void Define(ISettingDefinitionContext context)
         {
             context.Add(
-                        new SettingDefinition(SITE_NAME, "ASPCoreMVC"),
-                        new SettingDefinition(SITE_LOGO, "/dist/img/logo.png"),
-                        new SettingDefinition(SITE_FAVICON, "/dist/img/favicon.ico"),
-                        new SettingDefinition(SITE_DESCRIPTION, "ASPCore Description"),
-                        new SettingDefinition(SITE_KEYWORDS, "ASPCore, Vistark, Nguyen Trong Nghia"),
-                        new SettingDefinition(SITE_AUTHOR, "Nguyen Trong Nghia"),
-
-                        new SettingDefinition(SITE_HOLDER_IMAGE, "/dist/img/holder.png"),
-
-                        new SettingDefinition(LOGIN_ENABLE, "true"),
-                        new SettingDefinition(REGISTRATION_ENABLE, "true"),
-                        new SettingDefinition(LOGIN_SIBAR_IMAGE, "/dist/img/login-banner.png"),
-
-                        new SettingDefinition(USER_CREATOR_DEFAULT_PASSWORD_FOR_NEW_USER, "12345678")
-                    );
+                new SettingDefinition(SITE_NAME, "ELEARNING"),
+                new SettingDefinition(SITE_LOGO, "/dist/img/logo.png"),
+                new SettingDefinition(SITE_FAVICON, "/dist/img/favicon.ico"),
+                new SettingDefinition(SITE_DESCRIPTION, "ASPCore Description"),
+                new SettingDefinition(SITE_KEYWORDS, "vinacent, nguyen trong nghia"),
+                new SettingDefinition(SITE_AUTHOR, "vinacent.com"),
+                new SettingDefinition(SITE_HOLDER_IMAGE, "/dist/img/holder.png"),
+                new SettingDefinition(LOGIN_ENABLE, "true"),
+                new SettingDefinition(REGISTRATION_ENABLE, "true"),
+                new SettingDefinition(LOGIN_SIBAR_IMAGE, "/dist/img/login-banner.png"),
+                new SettingDefinition(USER_CREATOR_DEFAULT_PASSWORD_FOR_NEW_USER, "12345678")
+            );
         }
     }
 }

@@ -41,8 +41,7 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
 
         public ExamCategoryBaseDTO CurrentExamCategory { get; set; }
 
-        [BindProperty]
-        public Guid? ExamCategoryId { get; set; }
+        [BindProperty] public Guid? ExamCategoryId { get; set; }
 
         public int CompletedTests { get; set; }
         public int PassedTests { get; set; }
@@ -65,11 +64,15 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
             // Lấy danh sách các loại kỳ thi hiện đang có
             var res = await _ExamCategoryService.GetBase();
             if (res.Success && res.Data != null)
+            {
                 ExamCats = res.Data;
+            }
 
             // Nếu không được truyền giá trị là hiển thị thống kê cho kỳ thi nào thì tiến hành hiển thị cho record kỳ thi đầu tiên
             if (ExamCategoryId == null || ExamCategoryId == Guid.Empty)
+            {
                 ExamCategoryId = ExamCats.FirstOrDefault()?.Id ?? Guid.Empty;
+            }
 
             // Lấy các thông số thống kê cơ bản
             CompletedTests = await _ExamLogService.GetCompletedTest(ExamCategoryId.Value);
@@ -95,7 +98,8 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
 
             var isInstructor = false;
             // Kiểm tra xem đây có phải là giáo viên hướng dẫn không
-            if (await _ExamCatInstructorRepository.AnyAsync(x => x.UserId == CurrentUser.Id && x.ExamCategoryId == ExamCategoryId.Value))
+            if (await _ExamCatInstructorRepository.AnyAsync(x =>
+                x.UserId == CurrentUser.Id && x.ExamCategoryId == ExamCategoryId.Value))
             {
                 isInstructor = true;
                 ViewData["IsInstructor"] = isInstructor;
@@ -103,7 +107,6 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
                 // Lấy danh sách học viên
                 ViewData["Students"] = await _ExamLogService.GetExamLogStudents(ExamCategoryId.Value);
             }
-
         }
     }
 }

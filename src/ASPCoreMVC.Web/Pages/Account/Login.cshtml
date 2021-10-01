@@ -7,7 +7,7 @@
 @section Styles {
     <style>
         .bg-login-image {
-            background: url('@await s.GetOrNullAsync(PageSettingProvider.LOGIN_SIBAR_IMAGE)');
+            background: url('@(await s.GetOrNullAsync(PageSettingProvider.LOGIN_SIBAR_IMAGE))');
             background-position: center;
             background-size: cover;
         }
@@ -39,8 +39,8 @@
                                 </div>
                             }
                             <form class="user" method="post">
-                                <input type="hidden" asp-for="ReturnUrl" />
-                                <input type="hidden" asp-for="ReturnUrlHash" />
+                                <input type="hidden" asp-for="ReturnUrl"/>
+                                <input type="hidden" asp-for="ReturnUrlHash"/>
                                 <div class="form-group">
                                     <input type="text" class="form-control form-control-user"
                                            asp-for="LoginInput.UserNameOrEmailAddress"
