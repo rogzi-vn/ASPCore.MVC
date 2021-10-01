@@ -12,6 +12,7 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 
@@ -134,8 +135,9 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         {
             try
             {
-                return Repository.FirstOrDefault(x => x.CreatorId == CurrentUser.Id &&
-                                                      (x.UserAnswers == null || x.UserAnswers.Length == 0))?.Id;
+                return Repository.IgnoreAutoIncludes().FirstOrDefault(x => x.CreatorId == CurrentUser.Id &&
+                                                                           (x.UserAnswers == null ||
+                                                                            x.UserAnswers.Length == 0))?.Id;
             }
             catch (Exception)
             {
@@ -150,9 +152,11 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
 
         private async Task<ExamLog> ExamLogProcessing(ExamLogResultDTO examResult)
         {
-            var examLog = await Repository.GetAsync(examResult.LogId);
+            var examLog = await Repository.IgnoreAutoIncludes().FirstOrDefaultAsync(x => x.Id == examResult.LogId);
             if (examLog.CompletionTime != null)
+            {
                 return null;
+            }
 
             // Tổng điểm của bài thi hiện tại
             var totalScore = 0F;
@@ -357,6 +361,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         {
             var query = await Repository.GetQueryableAsync();
             query = query
+                .IgnoreAutoIncludes()
                 .Where(x => x.CreatorId == CurrentUser.Id)
                 .Where(x => x.ExamCategoryId == examCategoryId)
                 .Where(x => x.CompletionTime != null);
@@ -367,6 +372,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         {
             var query = await Repository.GetQueryableAsync();
             query = query
+                .IgnoreAutoIncludes()
                 .Where(x => x.CreatorId == CurrentUser.Id)
                 .Where(x => x.ExamCategoryId == examCategoryId)
                 .Where(x => x.CompletionTime != null)
@@ -379,6 +385,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         {
             var query = await Repository.GetQueryableAsync();
             query = query
+                .IgnoreAutoIncludes()
                 .Where(x => x.CreatorId == CurrentUser.Id)
                 .Where(x => x.ExamCategoryId == examCategoryId)
                 .Where(x => x.CompletionTime != null)
@@ -391,6 +398,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         {
             var query = await Repository.GetQueryableAsync();
             query = query
+                .IgnoreAutoIncludes()
                 .Where(x => x.CreatorId == CurrentUser.Id)
                 .Where(x => x.ExamCategoryId == examCategoryId)
                 .Where(x => x.CompletionTime != null)
@@ -403,18 +411,19 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         {
             var query = await Repository.GetQueryableAsync();
             query = query
+                .IgnoreAutoIncludes()
                 .Where(x => x.CreatorId == CurrentUser.Id)
                 .Where(x => x.CompletionTime != null)
                 .Where(x => x.IsDoneScore);
 
             if (destId != null && destId != Guid.Empty)
             {
-                query = query.Where(x => x.DestinationId == destId.Value);
+                query = query.IgnoreAutoIncludes().Where(x => x.DestinationId == destId.Value);
             }
 
-            var passedCount = query.Where(x => x.IsPassed).Count();
-            var failedCount = query.Where(x => !x.IsPassed).Count();
-            var highestScores = query.Select(x => x.ExamScores).DefaultIfEmpty().Max();
+            var passedCount = query.IgnoreAutoIncludes().Count(x => x.IsPassed);
+            var failedCount = query.IgnoreAutoIncludes().Count(x => !x.IsPassed);
+            var highestScores = query.IgnoreAutoIncludes().Select(x => x.ExamScores).DefaultIfEmpty().Max();
 
             return new ExamHistoryStatDTO
             {
@@ -429,34 +438,48 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         {
             var query = await Repository.GetQueryableAsync();
             query = query
+                .IgnoreAutoIncludes()
                 .Where(x => x.CreatorId == CurrentUser.Id);
             if (destId != null && destId != Guid.Empty)
             {
-                query = query.Where(x => x.DestinationId == destId.Value);
+                query = query
+                    .IgnoreAutoIncludes()
+                    .Where(x => x.DestinationId == destId.Value);
             }
 
             if (!input.Sorting.IsNullOrEmpty())
             {
-                query = query.OrderBy(input.Sorting);
+                query = query
+                    .IgnoreAutoIncludes()
+                    .OrderBy(input.Sorting);
             }
 
-            query = query.OrderByDescending(x => x.CreationTime);
+            query = query
+                .IgnoreAutoIncludes()
+                .OrderByDescending(x => x.CreationTime);
 
-            var totalCount = query.Count();
+            var totalCount = query
+                .IgnoreAutoIncludes()
+                .Count();
 
             if (input.SkipCount > 0)
             {
-                query = query.Skip(input.SkipCount);
+                query = query
+                    .IgnoreAutoIncludes()
+                    .Skip(input.SkipCount);
             }
 
             if (input.MaxResultCount > 0)
             {
-                query = query.Take(input.MaxResultCount);
+                query = query
+                    .IgnoreAutoIncludes()
+                    .Take(input.MaxResultCount);
             }
 
             var resultList = new List<ExamLogBaseDTO>();
 
             query
+                .IgnoreAutoIncludes()
                 .Join(ExamCatInstructorRepository,
                     el => el.ExamCatInstructorId,
                     eci => eci.Id,
@@ -478,7 +501,9 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
         public async Task<Guid?> GetCreatorId(Guid examLogId)
         {
             var query = await Repository.GetQueryableAsync();
-            return query.Where(x => x.Id == examLogId)
+            return query
+                .IgnoreAutoIncludes()
+                .Where(x => x.Id == examLogId)
                 .DefaultIfEmpty().Select(x => x.CreatorId).FirstOrDefault();
         }
 
@@ -491,6 +516,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
 
             var query = await Repository.GetQueryableAsync();
             query = query
+                .IgnoreAutoIncludes()
                 .Where(x => x.ExamCategoryId == examCategoryId)
                 .Where(x => x.ExamCatInstructorId == examCatInstructor.Id);
 
@@ -500,7 +526,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
                 if (examLog.CreatorId != null &&
                     examLog.CreatorId != Guid.Empty)
                 {
-                    if (!result.Any(z => z.Id == examLog.CreatorId))
+                    if (result.All(z => z.Id != examLog.CreatorId))
                     {
                         var els = new ExamLogStudentDTO
                         {
@@ -549,6 +575,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
 
             var query = await Repository.GetQueryableAsync();
             query = query
+                .IgnoreAutoIncludes()
                 .Where(x => x.ExamCatInstructorId == examCatInstructor.Id)
                 .Where(x => x.CompletionTime != null);
             if (creatorId != null && creatorId != Guid.Empty)
@@ -562,6 +589,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamLogs
             }
 
             query = query
+                .IgnoreAutoIncludes()
                 .OrderBy(x => x.IsDoneScore);
 
             var totalCount = query.Count();

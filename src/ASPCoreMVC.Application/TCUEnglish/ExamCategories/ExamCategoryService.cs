@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 
@@ -18,7 +19,6 @@ namespace ASPCoreMVC.TCUEnglish.ExamCategories
         PagedAndSortedResultRequestDto,
         CreateUpdateExamCategoryDTO>, IExamCategoryService
     {
-
         private readonly IRepository<ExamSkillCategory, Guid> ExamSkillCategoryRepory;
         private readonly IRepository<ExamSkillPart, Guid> ExamSkillPartRepository;
 
@@ -30,48 +30,45 @@ namespace ASPCoreMVC.TCUEnglish.ExamCategories
             this.ExamSkillPartRepository = ExamSkillPartRepository;
         }
 
-        protected override IQueryable<ExamCategory> ApplySorting(IQueryable<ExamCategory> query, PagedAndSortedResultRequestDto input)
+        protected override IQueryable<ExamCategory> ApplySorting(IQueryable<ExamCategory> query,
+            PagedAndSortedResultRequestDto input)
         {
             return query.OrderBy(x => x.CreationTime);
         }
 
-        public override Task DeleteAsync(Guid id)
-        {
-            return base.DeleteAsync(id);
-        }
-
         public async Task<ResponseWrapper<List<ExamCategoryBaseDTO>>> GetBase()
         {
-            return new ResponseWrapper<List<ExamCategoryBaseDTO>>(
+            return new(
                 ObjectMapper.Map<List<ExamCategory>, List<ExamCategoryBaseDTO>>(
-                await Repository.GetListAsync()),
+                    await Repository.IgnoreAutoIncludes().ToListAsync()),
                 "Successful");
         }
 
         public async Task<ResponseWrapper<CreateUpdateExamCategoryDTO>> GetForUpdate(Guid guid)
         {
-            return new ResponseWrapper<CreateUpdateExamCategoryDTO>(
-               ObjectMapper.Map<ExamCategory, CreateUpdateExamCategoryDTO>(
-               await Repository.GetAsync(guid)),
-               "Successful");
+            return new(
+                ObjectMapper.Map<ExamCategory, CreateUpdateExamCategoryDTO>(
+                    await Repository.IgnoreAutoIncludes().FirstOrDefaultAsync(x => x.Id == guid)),
+                "Successful");
         }
 
         public async Task<ResponseWrapper<bool>> GetHasAsync(Guid id)
         {
-            return new ResponseWrapper<bool>(await Repository.AnyAsync(x => x.Id == id), "Successful");
+            return new(await Repository.IgnoreAutoIncludes().AnyAsync(x => x.Id == id), "Successful");
         }
 
         public async Task<ResponseWrapper<ExamCategoryBaseDTO>> GetSimpify(Guid guid)
         {
-            return new ResponseWrapper<ExamCategoryBaseDTO>(
-                            ObjectMapper.Map<ExamCategory, ExamCategoryBaseDTO>(
-                            await Repository.GetAsync(guid)),
-                            "Successful");
+            return new(
+                ObjectMapper.Map<ExamCategory, ExamCategoryBaseDTO>(
+                    await Repository.IgnoreAutoIncludes().FirstOrDefaultAsync(x => x.Id == guid)),
+                "Successful");
         }
 
         public float GetMaxScores(Guid id)
         {
             return ExamSkillCategoryRepory
+                .IgnoreAutoIncludes()
                 .Where(x => x.ExamCategoryId == id)
                 .Sum(x => x.MaxScores);
         }
@@ -81,6 +78,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamCategories
             // Lấy danh sách các mục kỹ năng
             var scQuery = await ExamSkillCategoryRepory.GetQueryableAsync();
             var skillCats = scQuery
+                .IgnoreAutoIncludes()
                 .Where(x => x.ExamCategoryId == id)
                 .OrderBy(x => x.Order)
                 .Select(x => new SkillCatMinifyDTO
@@ -92,9 +90,10 @@ namespace ASPCoreMVC.TCUEnglish.ExamCategories
                 }).ToList();
             // Ráp các phần thi thuộc các mục kỹ năng vào
             var spQuery = await ExamSkillPartRepository.GetQueryableAsync();
-            for (int i = 0; i < skillCats.Count; i++)
+            for (var i = 0; i < skillCats.Count; i++)
             {
-                var skps = spQuery
+                var skips = spQuery
+                    .IgnoreAutoIncludes()
                     .Where(x => x.ExamSkillCategoryId == skillCats[i].Id)
                     .OrderBy(x => x.Order)
                     .Select(x => new SkillPartMinifyDTO
@@ -104,7 +103,7 @@ namespace ASPCoreMVC.TCUEnglish.ExamCategories
                         Order = x.Order,
                         Name = x.Name
                     }).ToList();
-                skillCats[i].SkillParts = skps;
+                skillCats[i].SkillParts = skips;
             }
 
             return skillCats;

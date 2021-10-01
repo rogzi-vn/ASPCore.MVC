@@ -10,6 +10,7 @@ using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 
@@ -185,6 +186,7 @@ namespace ASPCoreMVC.TCUEnglish.Vocabularies
         public async Task<List<QuickVocabularyTestDTO>> GenerateQuickVocabularyTests(int size)
         {
             var query = await Repository.GetQueryableAsync();
+            query = query.IgnoreAutoIncludes();
             var qts = new List<QuickVocabularyTestDTO>();
             // Lấy cho đủ số câu hỏi
             var rand = new Random();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -35,6 +36,7 @@ namespace ASPCoreMVC.TCUEnglish.Notifications
 
         protected override IQueryable<Notification> ApplyDefaultSorting(IQueryable<Notification> query)
         {
+            query = query.IgnoreAutoIncludes();
             return query
                 .OrderByDescending(x => x.CreationTime)
                 .ThenBy(x => x.IsChecked);
@@ -43,6 +45,7 @@ namespace ASPCoreMVC.TCUEnglish.Notifications
         public async Task<int> GetCountUnreadNotification()
         {
             var query = await Repository.GetQueryableAsync();
+            query = query.IgnoreAutoIncludes();
             query = query.Where(x => CurrentUser.Id == null || x.TargetUserId.Value == CurrentUser.Id.Value);
             query = query.Where(x => !x.IsChecked);
             return query.Count();
@@ -51,6 +54,7 @@ namespace ASPCoreMVC.TCUEnglish.Notifications
         public async Task MarkAllAsRead()
         {
             var query = await Repository.GetQueryableAsync();
+            query = query.IgnoreAutoIncludes();
             query = query.Where(x => CurrentUser.Id == null || x.TargetUserId.Value == CurrentUser.Id.Value);
             query = query.Where(x => !x.IsChecked);
             var unread = query.ToList();

@@ -153,7 +153,7 @@ function vtSynced(res) {
     } else {
         try {
             res.responseJSON.error.validationErrors.forEach(item => {
-                console.log(item);
+                //console.log(item);
                 showToast('error', item.message);
             });
         } catch (ez) {

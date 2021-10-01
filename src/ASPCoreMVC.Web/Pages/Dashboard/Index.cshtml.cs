@@ -11,6 +11,7 @@ using ASPCoreMVC.TCUEnglish.SkillParts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Volo.Abp.Domain.Repositories;
 
@@ -96,13 +97,11 @@ namespace ASPCoreMVC.Web.Pages.Dashboard
             ViewData["CurrentExamCatId"] = ExamCategoryId.Value;
             ViewData["CurrentExamCatName"] = CurrentExamCategory.Name;
 
-            var isInstructor = false;
             // Kiểm tra xem đây có phải là giáo viên hướng dẫn không
-            if (await _ExamCatInstructorRepository.AnyAsync(x =>
+            if (await _ExamCatInstructorRepository.IgnoreAutoIncludes().AnyAsync(x =>
                 x.UserId == CurrentUser.Id && x.ExamCategoryId == ExamCategoryId.Value))
             {
-                isInstructor = true;
-                ViewData["IsInstructor"] = isInstructor;
+                ViewData["IsInstructor"] = true;
 
                 // Lấy danh sách học viên
                 ViewData["Students"] = await _ExamLogService.GetExamLogStudents(ExamCategoryId.Value);

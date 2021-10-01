@@ -1,7 +1,7 @@
 ﻿$(".form-update-corrent-question").submit(e => {
     e.preventDefault();
     var f = $(e.currentTarget);
-    console.log(f);
+    //console.log(f);
     var fdata = new FormData(f[0]);
 
     var token = $('input[name="__RequestVerificationToken"]').val();
