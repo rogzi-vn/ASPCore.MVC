@@ -255,7 +255,7 @@ namespace ASPCoreMVC.Web
             services.AddSwaggerGen(
                 options =>
                 {
-                    options.SwaggerDoc("v1", new OpenApiInfo {Title = "ASPCoreMVC API", Version = "v1"});
+                    options.SwaggerDoc("v1", new OpenApiInfo { Title = "ASPCoreMVC API", Version = "v1" });
                     options.DocInclusionPredicate((docName, description) => true);
                     options.CustomSchemaIds(type => type.FullName);
                 }
@@ -267,17 +267,18 @@ namespace ASPCoreMVC.Web
             var app = context.GetApplicationBuilder();
             var env = context.GetEnvironment();
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseDeveloperExceptionPage();
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
 
             app.UseAbpRequestLocalization();
 
-            if (!env.IsDevelopment())
-            {
-                app.UseErrorPage();
-            }
+            //if (!env.IsDevelopment())
+            //{
+            //    app.UseErrorPage();
+            //}
 
             app.UseHttpsRedirection();
 
